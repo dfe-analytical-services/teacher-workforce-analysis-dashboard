@@ -1,0 +1,662 @@
+# -----------------------------------------------------------------------------
+# This is the plotting.R file.
+#
+# This is where we've stored the functions for creating the plots in the app.
+#
+# It is up to you whether you put all plots in this script, move the plots to
+# the helper_functions.R script or have a multiple scripts or even a folder of
+# scripts that contain your custom plotting functions.
+# -----------------------------------------------------------------------------
+
+# Pupil vs Teacher timeseries ---------------------------
+
+
+plot_pupil_teacher_timeseries <- function(
+    df, phase = NULL,
+    axis_lock = NULL) {
+  #--------------------------
+  # Set y axis name, projection years, legend position
+  #--------------------------
+
+  pupils_axis_name <- paste(phase, "pupil numbers")
+  teachers_axis_name <- paste(phase, "teacher numbers")
+
+  last_census_year <- 2024
+
+  legend_pos <- if (phase == "Secondary") c(0.4, 0.4) else c(0.4, 0.15)
+
+  #--------------------------
+  # Axis-lock settings
+  #--------------------------
+  use_axis_lock <- !is.null(axis_lock)
+
+  if (use_axis_lock) {
+    p0 <- axis_lock$p0
+    t0 <- axis_lock$t0
+    pup_step <- axis_lock$pup_step
+    teach_step <- axis_lock$teach_step
+    p_max <- axis_lock$p_max
+    t_max <- axis_lock$t_max
+    force_lim <- isTRUE(axis_lock$force_limits)
+
+    r <- pup_step / teach_step # pupil scalar per teacher step
+  } else {
+    r <- max(df$pupil_numbers, na.rm = TRUE) / max(df$teacher_numbers, na.rm = TRUE)
+  }
+
+  #--------------------------
+  # Prepare data
+  #--------------------------
+  df2 <- df %>%
+    dplyr::mutate(
+      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
+      is_projection = start_year > last_census_year,
+      tooltip = dplyr::if_else(
+        is_projection,
+        paste0(
+          "<p>", academic_year, "</p>",
+          "<p><b>Projected ", tolower(phase), " pupil numbers (left):</b> ",
+          scales::comma(pupil_numbers), "</p>",
+          "<p><b>Projected ", tolower(phase), " teacher demand (right):</b> ",
+          scales::comma(teacher_numbers), "</p>"
+        ),
+        paste0(
+          "<p>", academic_year, "</p>",
+          "<p><b>", phase, " pupil numbers (left):</b> ",
+          scales::comma(pupil_numbers), "</p>",
+          "<p><b>", phase, " teacher numbers (right):</b> ",
+          scales::comma(teacher_numbers), "</p>"
+        )
+      ),
+      hover_id = paste0("year-", start_year)
+    )
+
+  #--------------------------
+  # Long format for segment plotting
+  #--------------------------
+  df_long <- df2 %>%
+    tidyr::pivot_longer(
+      cols = c(pupil_numbers, teacher_numbers),
+      names_to = "series_raw",
+      values_to = "value_raw"
+    ) %>%
+    dplyr::mutate(
+      series = factor(ifelse(series_raw == "pupil_numbers", "Pupils", "Teachers"),
+        levels = c("Pupils", "Teachers")
+      ),
+      value = dplyr::if_else(
+        series == "Teachers",
+        if (use_axis_lock) (value_raw - t0) * r + p0 else value_raw * r,
+        value_raw
+      )
+    ) %>%
+    dplyr::group_by(series) %>%
+    dplyr::arrange(start_year) %>%
+    dplyr::mutate(
+      next_year = dplyr::lead(start_year),
+      next_value = dplyr::lead(value),
+      segment_linetype = ifelse(start_year >= last_census_year, "Projected", "Historic"),
+      seg_type = paste(series, segment_linetype)
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(!is.na(next_year))
+
+  #--------------------------
+  # Axis breaks
+  #--------------------------
+  year_breaks <- df2$start_year[df2$start_year %% 2 == 0]
+
+  primary_limits <- NULL
+  if (use_axis_lock) {
+    if (force_lim) {
+      primary_breaks <- seq(p0, p_max, by = pup_step)
+      secondary_breaks <- seq(t0, t_max, by = teach_step)
+      primary_limits <- c(p0, p_max)
+    } else {
+      # fallback auto behaviour (never used in your use-case)
+      transformed_teacher <- (df2$teacher_numbers - t0) * r + p0
+      y_min <- min(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
+      y_max <- max(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
+      start <- p0 + floor((y_min - p0) / pup_step) * pup_step
+      end <- p0 + ceiling((y_max - p0) / pup_step) * pup_step
+
+      primary_breaks <- seq(start, end, by = pup_step)
+      secondary_breaks <- (primary_breaks - p0) / r + t0
+    }
+  }
+
+  #--------------------------
+  # Build plot
+  #--------------------------
+  p <- ggplot(df2, aes(x = start_year)) +
+    ggiraph::geom_vline_interactive(
+      aes(xintercept = start_year, tooltip = tooltip, data_id = hover_id),
+      linetype = "dashed", linewidth = 1, color = "grey40", alpha = 0
+    ) +
+    ggiraph::geom_segment_interactive(
+      data = df_long,
+      aes(
+        x = start_year, xend = next_year,
+        y = value, yend = next_value,
+        colour = series,
+        linetype = seg_type,
+        tooltip = tooltip, data_id = hover_id
+      ),
+      linewidth = 1
+    ) +
+    geom_point(aes(y = pupil_numbers), color = "#F46A25", shape = 8, size = 3) +
+    geom_point(
+      aes(y = if (use_axis_lock) (teacher_numbers - t0) * r + p0 else teacher_numbers * r),
+      color = "#12436D", shape = 21, fill = "#12436D", size = 2
+    ) +
+    ggiraph::geom_point_interactive(
+      aes(y = pupil_numbers, tooltip = tooltip, data_id = hover_id),
+      alpha = 0, size = 8
+    ) +
+    ggiraph::geom_point_interactive(
+      aes(
+        y = if (use_axis_lock) (teacher_numbers - t0) * r + p0 else teacher_numbers * r,
+        tooltip = tooltip, data_id = hover_id
+      ),
+      alpha = 0, size = 8
+    ) +
+    scale_x_continuous(
+      name = "Academic year",
+      breaks = year_breaks,
+      labels = paste0(year_breaks, "/", sprintf("%02d", (year_breaks + 1) %% 100))
+    ) +
+
+    #--------------------------
+    # Conditional Y‑axis using list()
+    #--------------------------
+    (
+      if (use_axis_lock) {
+        list(
+          scale_y_continuous(
+            name = pupils_axis_name,
+            breaks = primary_breaks,
+            labels = scales::comma,
+            limits = primary_limits,
+            expand = c(0, 0),
+            sec.axis = sec_axis(
+              transform = ~ (. - p0) / r + t0,
+              name      = teachers_axis_name,
+              breaks    = secondary_breaks,
+              labels    = scales::comma
+            )
+          )
+        )
+      } else {
+        list(
+          scale_y_continuous(
+            name = pupils_axis_name,
+            labels = scales::comma,
+            sec.axis = sec_axis(~ . / r, name = teachers_axis_name, labels = scales::comma)
+          )
+        )
+      }) +
+    coord_cartesian(ylim = primary_limits, clip = "on") +
+    scale_colour_manual(
+      name = "", values = c("Pupils" = "#F46A25", "Teachers" = "#12436D")
+    ) +
+    scale_linetype_manual(
+      name = "",
+      values = c(
+        "Pupils Historic"    = "solid",
+        "Teachers Historic"  = "solid",
+        "Pupils Projected"   = "dotted",
+        "Teachers Projected" = "dotted"
+      ),
+      breaks = c("Pupils Projected", "Teachers Projected"),
+      labels = c(
+        "Pupils Projected"   = "Projected pupil numbers",
+        "Teachers Projected" = "Projected teacher demand"
+      )
+    ) +
+    guides(
+      colour = guide_legend(
+        order = 1, # series appears first
+        nrow = 1,
+        title = NULL
+      ),
+      linetype = guide_legend(
+        order = 2, # projections appear second
+        nrow = 1,
+        title = NULL,
+        override.aes = list(
+          colour = c("#F46A25", "#12436D"), # orange, blue
+          linetype = c("dotted", "dotted"),
+          size = 0.8
+        )
+      )
+    ) +
+    afcharts::theme_af() +
+    theme(
+      axis.title.y.left = element_text(color = "#F46A25", angle = 90, vjust = 0.5),
+      axis.title.y.right = element_text(color = "#12436D", angle = 270, vjust = 0.5),
+      axis.text.y.left = element_text(color = "#F46A25"),
+      axis.text.y.right = element_text(color = "#12436D"),
+      legend.position = "inside",
+      legend.justification = "left",
+      legend.box = "vertical", # stack colour row above projection row
+      legend.direction = "horizontal",
+      legend.box.margin = margin(t = -5, l = 0),
+      legend.position.inside = legend_pos, # dynamic legend pos based on phase
+      legend.spacing.x = unit(0.4, "cm"),
+      legend.spacing.y = unit(0.1, "cm"),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      legend.key = element_rect(fill = "transparent", colour = NA)
+    )
+
+  return(p)
+}
+
+
+
+
+
+# pgitt trainee need timeseries
+
+plot_pgitt_need_timeseries <- function(df) {
+  df2 <- df %>%
+    dplyr::mutate(
+      subject = stringr::str_to_title(stringr::str_trim(subject)),
+      start_year = as.numeric(start_year),
+      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
+      # Row-wise tooltip (correct year per point)
+      tooltip = paste0(
+        "<p>", academic_year, "</p>",
+        "<p><b>Phase:</b> ", phase, "</p>",
+        "<p><b>Subject:</b> ", subject, "</p>",
+        "<p><b>PGITT trainee need:</b> ", scales::comma(pgitt_trainee_need), "</p>"
+      ),
+      # Only create a label candidate at the final year (for potential multi-line charts)
+      lab = ifelse(start_year == max(start_year), stringr::str_wrap(subject, 12), "")
+    ) %>%
+    dplyr::arrange(subject, start_year)
+
+  # Axis helpers
+  min_year <- min(df2$start_year, na.rm = TRUE)
+  max_year <- max(df2$start_year, na.rm = TRUE)
+  year_breaks <- sort(unique(df2$start_year))
+  year_labels <- df2 %>%
+    dplyr::distinct(start_year, academic_year) %>%
+    dplyr::arrange(start_year) %>%
+    dplyr::pull(academic_year)
+
+  # If only one subject is present, we’ll suppress the end-of-line label
+  n_subjects <- dplyr::n_distinct(df2$subject)
+
+  p <- ggplot(
+    df2,
+    aes(
+      x = start_year,
+      y = pgitt_trainee_need,
+      group = subject
+    )
+  ) +
+    # Keep the line interactive for hover styling/selection if needed,
+    # but do NOT attach a tooltip to the whole line (tooltip would be constant per group)
+    ggiraph::geom_line_interactive(
+      aes(data_id = subject),
+      linewidth = 1,
+      colour = "#801650"
+    ) +
+    # Attach tooltip to points so it varies by year (row-wise)
+    ggiraph::geom_point_interactive(
+      aes(
+        tooltip = tooltip,
+        # Make each point uniquely addressable so hover/select doesn't stick across years
+        data_id = paste(subject, start_year, sep = "_")
+      ),
+      size = 2,
+      colour = "#801650"
+    ) +
+    afcharts::theme_af() +
+    xlab("Academic year") +
+    ylab("PGITT trainee need") +
+    theme(
+      text = element_text(size = 12),
+      axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
+      axis.title.y = element_text(
+        angle = 90, vjust = 0.5,
+        margin = margin(r = 12), family = "dejavu"
+      ),
+      axis.line = element_line(linewidth = 0.75),
+      legend.position = "none",
+      # Optional: angle labels if you want better readability with many years
+      # axis.text.x = element_text(angle = 45, hjust = 1),
+      # Add extra right margin so the last tick label isn't clipped
+      plot.margin = margin(t = 5.5, r = 18, b = 5.5, l = 5.5)
+    ) +
+    # 1) Ensure every academic year is labeled
+    # 2) Add a little right-side expansion so the final tick label isn't cut off
+    scale_x_continuous(
+      name   = "Academic year",
+      limits = c(min_year, max_year),
+      breaks = year_breaks,
+      labels = year_labels,
+      expand = expansion(add = c(0, 0.25)) # small right padding
+    ) +
+    # Start y-axis at 0; keep nice commas in tick labels
+    scale_y_continuous(
+      labels = scales::comma,
+      limits = c(0, NA),
+      # Optional: tiny top padding for aesthetics
+      expand = expansion(mult = c(0.05, 0.05))
+    ) +
+    # Allow tick labels / repelled end labels to overflow the panel if needed
+    coord_cartesian(clip = "off")
+
+  # Conditionally add end-of-line labels ONLY if multiple subjects exist
+  if (n_subjects > 1) {
+    p <- p +
+      ggrepel::geom_text_repel(
+        aes(label = lab),
+        xlim = c(NA, Inf),
+        nudge_x = 1,
+        direction = "y",
+        hjust = "left",
+        size = 3.2,
+        min.segment.length = Inf,
+        segment.colour = NA
+      )
+  }
+  p
+}
+
+# drivers analysis waterfall graph
+
+plot_drivers_waterfall <- function(
+    df_raw,
+    axis_title_size = 16,
+    axis_text_size = 12,
+    data_label_size = 4,
+    base_size = 14) {
+  start_label <- "Last year's need"
+  end_label <- "This year's need"
+
+  # ---- Definitions lookup ---------------------------------------------------
+  defs <- c(
+    "Last year's need" = "2025/26 PGITT trainee need",
+    "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
+    "Leavers" = "Teachers leaving the sector between years. Orange = fewer leavers; Green = more leavers.",
+    "Working hour losses" = "Reduction in working hours for individual teachers between years. Orange = fewer hours lost; Green = more hours lost.",
+    "Returners" = "Teachers re entering service after previously working in the state funded sector. Orange = more returners expected; Green = fewer returners expected.",
+    "NTSF" = "Teachers new to the state-funded sector (including deferrer NQEs). Orange = more NTSF expected; Green = fewer NTSF expected.",
+    "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
+    "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
+    "Under-supply adjustment" = "Adjustment countering estimated undersupply where relevant resulting from previous two ITT cycles.  Orange = smaller adjustment. Green = larger adjustment. No bar = no adjustment needed.",
+    "This year's need" = "2026/27 PGITT trainee need."
+  )
+
+  # ---- Data preparation ------------------------------------------------------
+  df <- df_raw %>%
+    dplyr::filter(driver != "Overall difference") %>%
+    dplyr::mutate(
+      type = dplyr::case_when(
+        driver == start_label ~ "start",
+        driver == end_label ~ "end",
+        TRUE ~ "delta"
+      ),
+      order_id = dplyr::row_number()
+    )
+
+  start_val <- df$value[df$type == "start"][1]
+
+  df <- df %>%
+    dplyr::mutate(
+      delta_val = ifelse(type == "delta", value, 0),
+      cum_delta_before = dplyr::lag(cumsum(delta_val), default = 0),
+      level_before = start_val + cum_delta_before,
+      ymin = dplyr::case_when(
+        type == "start" ~ 0,
+        type == "delta" ~ level_before,
+        type == "end" ~ 0
+      ),
+      ymax = dplyr::case_when(
+        type == "start" ~ value,
+        type == "delta" ~ level_before + value,
+        type == "end" ~ value
+      ),
+      fill_col = dplyr::case_when(
+        type != "delta" ~ "total",
+        value >= 0 ~ "increase",
+        TRUE ~ "decrease"
+      ),
+
+      # factor for x axis
+      driver = factor(driver, levels = driver),
+
+      # ---- Tooltip (escape both ' and ’) ------------------------------------
+      definition = dplyr::coalesce(defs[as.character(driver)], "Definition coming soon."),
+      tooltip = paste0(
+        "<b>",
+        gsub("['’]", "&#39;", as.character(driver)),
+        ":</b><br/>",
+        gsub("['’]", "&#39;", definition)
+      ),
+
+      # ---- data_id must NOT contain quotes or unsafe chars -------------------
+      data_id = paste0(
+        "bar-",
+        # make a safe slug from driver
+        tolower(gsub("[^A-Za-z0-9_-]+", "-", as.character(driver)))
+      )
+    )
+
+  # ---- Plot -----------------------------------------------------------------
+  ggplot(df, aes(x = driver)) +
+    ggiraph::geom_rect_interactive(
+      aes(
+        xmin = as.numeric(driver) - 0.45,
+        xmax = as.numeric(driver) + 0.45,
+        ymin = ymin,
+        ymax = ymax,
+        fill = fill_col,
+        tooltip = tooltip,
+        data_id = data_id
+      ),
+      colour = "grey40",
+      linewidth = 0.3
+    ) +
+
+    # large invisible hover targets to make tooltips reliable
+    ggiraph::geom_point_interactive(
+      data = df,
+      inherit.aes = FALSE,
+      aes(
+        x = as.numeric(driver),
+        y = (ymin + ymax) / 2,
+        tooltip = tooltip,
+        data_id = data_id
+      ),
+      size = 30,
+      alpha = 0
+    ) +
+    geom_text(
+      aes(
+        x = as.numeric(driver),
+        y = ifelse(type == "delta", pmax(ymin, ymax), ymax),
+        label = scales::comma(ymax - ymin)
+      ),
+      vjust = -0.25,
+      size = data_label_size
+    ) +
+    scale_fill_manual(
+      values = c(increase = "#28A197", decrease = "#F46A25", total = "#12436D"),
+      guide = "none"
+    ) +
+    scale_y_continuous(
+      labels = scales::comma,
+      expand = expansion(mult = c(0.02, 0.08))
+    ) +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 12)) +
+    labs(x = NULL, y = "PGITT trainees") +
+    theme_minimal(base_size = base_size) +
+    theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      axis.title.y = element_text(size = axis_title_size),
+      axis.title.x = element_text(size = axis_title_size),
+      axis.text.y = element_text(size = axis_text_size),
+      axis.text.x = element_text(
+        size = axis_text_size,
+        margin = margin(t = 6),
+        lineheight = 0.95
+      )
+    )
+}
+
+# plot flow trajectories -----------------------------------------------------------
+
+plot_flow_trajectories <- function(df) {
+  leaver_types <- c("Total leaver rate", "55+ leaver rate", "Under 55 leaver rate")
+
+  # --- DEFINE per-row last census year based on version ------------------------
+  df <- df %>%
+    dplyr::mutate(
+      last_census_year_row = dplyr::case_when(
+        version == "Last year" ~ 2023L,
+        version == "This year (dummy data)" ~ 2024L,
+        TRUE ~ 2023L # fallback/default; adjust if you have other versions
+      )
+    )
+
+  # ---------- labels & tooltip (switch wording for trajectories) ----------
+
+  df <- df %>%
+    dplyr::mutate(
+      academic_year_label = paste0(year, "/", sprintf("%02d", (year + 1) %% 100)),
+      is_trajectory = year > last_census_year_row, # <<< changed to per-row
+      type_lower = ifelse(type %in% c("NQEs", "NTSF"), type, tolower(type)),
+      value_formatted = dplyr::case_when(
+        type %in% leaver_types ~ scales::label_percent(accuracy = 0.1)(value),
+        TRUE ~ paste0(scales::label_number(accuracy = 1, big.mark = ",")(value), " (FTE)")
+      ),
+      tooltip = ifelse(
+        is_trajectory,
+        paste0(
+          "<p>", academic_year_label, "</p>",
+          "<p><b>Phase:</b> ", phase, "</p>",
+          "<p><b>Subject:</b> ", subject, "</p>",
+          "<p><b>Version:</b> ", version, "</p>",
+          "<p><b>", type, " trajectory:</b> ", value_formatted, "</p>"
+        ),
+        paste0(
+          "<p>", academic_year_label, "</p>",
+          "<p><b>Phase:</b> ", phase, "</p>",
+          "<p><b>Subject:</b> ", subject, "</p>",
+          "<p><b>Version:</b> ", version, "</p>",
+          "<p><b>", type, ":</b> ", value_formatted, "</p>"
+        )
+      )
+    )
+
+
+  # ---------- y scale ----------
+  unique_type <- unique(df$type)
+  if (all(df$type %in% leaver_types)) {
+    y_scale <- ggplot2::scale_y_continuous(
+      labels = scales::label_percent(accuracy = 0.1),
+      limits = c(0, NA)
+    )
+    y_title <- paste0(unique_type, " (%)")
+  } else {
+    y_scale <- ggplot2::scale_y_continuous(
+      labels = scales::label_comma(),
+      limits = c(0, NA)
+    )
+    y_title <- paste0(unique_type, " (FTE)")
+  }
+
+  # ---------- build segment data like in plot_pupil_teacher_timeseries ----------
+  # group by any series identifiers that exist (phase/subject/type) so joins are correct
+
+  df_seg <- df %>%
+    dplyr::arrange(year) %>%
+    dplyr::group_by(dplyr::across(dplyr::any_of(c("phase", "subject", "type", "version")))) %>%
+    dplyr::mutate(
+      next_year = dplyr::lead(year),
+      next_value = dplyr::lead(value),
+      # IMPORTANT: compare the segment's start year against its row-specific cutover
+      segment_linetype = ifelse(year >= last_census_year_row, "Projection", "Historic"),
+      tooltip_seg = tooltip
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(!is.na(next_year))
+
+
+  # ---------- plot ----------
+  ggplot2::ggplot(df, ggplot2::aes(x = year)) +
+
+    # Lines as segments with linetype mapped to Historic/Projected (consistent with your other chart)
+    ggiraph::geom_segment_interactive(
+      data = df_seg,
+      ggplot2::aes(
+        x = year, xend = next_year,
+        y = value, yend = next_value,
+        linetype = segment_linetype,
+        colour = version,
+        tooltip = tooltip_seg
+      ),
+      linewidth = 1
+    ) +
+
+    # Points remain interactive
+    ggiraph::geom_point_interactive(
+      ggplot2::aes(y = value, colour = version, tooltip = tooltip),
+      shape = 16, size = 2.5, na.rm = TRUE
+    ) +
+
+    # Theme & labels
+    afcharts::theme_af() +
+    ggplot2::xlab("Academic year") +
+    ggplot2::ylab(y_title) +
+    ggplot2::theme(
+      text = element_text(size = 12),
+      axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
+      axis.title.y = element_text(angle = 90, vjust = 0.5, margin = margin(r = 12), family = "dejavu"),
+      axis.line = element_line(linewidth = 0.75),
+      # show a small legend for Projected (dotted)
+      legend.position = "inside",
+      legend.position.inside = c(0.95, 0.18),
+      legend.justification = "right",
+      legend.background = element_rect(fill = "transparent", colour = NA)
+    ) +
+
+    # X axis: biennial ticks (unchanged)
+    ggplot2::scale_x_continuous(
+      breaks = seq(2011, max(df$year, na.rm = TRUE), by = 2),
+      labels = df %>%
+        dplyr::distinct(year, academic_year_label) %>%
+        dplyr::arrange(year) %>%
+        dplyr::filter(year %in% seq(2011, max(df$year), 2)) %>%
+        dplyr::pull(academic_year_label)
+    ) +
+
+    # Linetype scale & legend entry for Projected (matches your other function's semantics)
+    scale_linetype_manual(
+      name = "",
+      values = c("Historic" = "solid", "Projection" = "dotted"),
+      breaks = "Projection",
+      guide = "none"
+    ) +
+    scale_colour_manual(
+      name = "",
+      values = c(
+        "This year (dummy data)" = "#801650",
+        "Last year" = "#28A197"
+      ),
+      labels = c(
+        "This year (dummy data)" = "This year's DUMMY data (dotted line = trajectory)",
+        "Last year" = "Last year's DUMMY data (dotted line = trajectory)"
+      )
+    ) +
+    guides(
+      colour = guide_legend(order = 1)
+    ) +
+
+    # y scale as computed
+    y_scale
+}
