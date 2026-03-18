@@ -491,7 +491,7 @@ server <- function(input, output, session) {
     reactable::reactable(
       df,
       defaultPageSize = 10,
-      pagination = FALSE, # If FALSE, defaultPageSize is ignored, but it's okay to leave
+      pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
       striped = TRUE,
@@ -532,7 +532,7 @@ server <- function(input, output, session) {
     reactable::reactable(
       df,
       defaultPageSize = 10,
-      pagination = FALSE, # If FALSE, defaultPageSize is ignored, but it's okay to leave
+      pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
       striped = TRUE,
@@ -552,7 +552,8 @@ server <- function(input, output, session) {
         ),
         Value = reactable::colDef(
           align = "right",
-          headerStyle = list(textAlign = "right")
+          headerStyle = list(textAlign = "right"),
+          format = reactable::colFormat(separators = TRUE)
         )
       ),
       defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
