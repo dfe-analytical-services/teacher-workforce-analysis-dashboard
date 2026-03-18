@@ -34,6 +34,72 @@ twm_tab_panel <- function() {
 
             #####################################################################
 
+            #   Introduction tab
+
+            #####################################################################
+
+            tabPanel(
+              "Introduction",
+              h2("Introduction"),
+
+              # Intro to dashboard section
+              bslib::card(
+                bslib::card_header("About this section"),
+                bslib::card_body(
+                  p(
+                    "This interactive dashboard accompanies the ",
+                    strong("Teacher demand and postgraduate trainee need "),
+                    "publication, available here: [link]"
+                  ), # TO ADD: PUB LINK
+                  p(
+                    "It is designed to help users understand how PGITT trainee need is estimated using the ",
+                    "Department for Education’s Teacher Workforce Model (TWM). The dashboard also highlights ",
+                    "the key factors driving changes in PGITT trainee need over time and provides greater ",
+                    "transparency around the model’s forecasted inflows and outflows."
+                  ),
+                  p(
+                    "Data is available for state-funded nursery & primary, and secondary schools in England. ",
+                    "Where possible, secondary data is also broken down by individual subject."
+                  ),
+                  p(strong("Last updated:"), "XX/XX/XXXX"), # TO ADD: PUB DATE
+                  p(
+                    strong("Data sources:"), "Underlying data can be found in XX, XX, and XX tables of the ", # TO ADD TABLE NAMES
+                    "latest publication, and for the ", em("Flow trajectories "), "tab, in last year’s publication."
+                  )
+                )
+              ),
+
+              # Disclaimers text box
+              bslib::card(
+                bslib::card_header("Disclaimers"),
+                bslib::card_body(
+                  p(
+                    "Figures used within the TWM may differ to the School workforce in England publication ",
+                    "which includes special schools and PRUs within the state-funded schools sector."
+                  ),
+                  p(
+                    "Leavers are counted in different academic years in the TWM and School workforce publication. ",
+                    "In the TWM, teachers that are recorded as being in service in the November 2023 School Workforce Census (SWC), ",
+                    "but not within the November 2024 SWC are assumed to be leavers in the 2024/25 academic year. Whereas, ",
+                    "in the SWC, these leavers would be counted as leavers in the 2023/24 academic year."
+                  ),
+                  p(
+                    "The TWM includes post-16 pupils in state-funded secondary school settings. ",
+                    "Other publications may exclude these pupils, so figures may differ slightly."
+                  ),
+                  p(
+                    "Pupil projections displayed in this dashboard differ slightly to those published in ",
+                    "the National pupil projections publication due to slight coverage differences, to ensure that ",
+                    "they are consistent with the methodology of the TWM. Finally, they have been adjusted ",
+                    "slightly to account for the actual number of pupils captured in October 2025 via school returns."
+                  )
+                )
+              )
+            ),
+
+
+            #####################################################################
+
             #   Demand trajectories tab
 
             #####################################################################
