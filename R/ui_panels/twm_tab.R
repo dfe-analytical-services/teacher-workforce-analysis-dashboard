@@ -209,12 +209,45 @@ twm_tab_panel <- function() {
                 )
               ),
 
-              # Text box below graph
+              # Text boxes below graph
               bslib::card(
                 style = "margin-top: 1rem;",
-                bslib::card_header("Notes on the chart"),
+                bslib::card_header("Pupil numbers and teacher demand"),
                 bslib::card_body(
-                  p("Some text here")
+                  p(strong("Historic trends")),
+                  p(
+                    "Historically, teacher demand has been influenced by changes in pupil numbers. As ",
+                    "pupil numbers increase, schools respond through a combination of recruiting more ",
+                    "teachers and allowing pupil–teacher ratios (PTRs) and class sizes to grow. By contrast, ",
+                    "during periods of falling pupil numbers, teacher numbers and PTRs have generally fallen."
+                  ),
+                  p(
+                    "The relationship is slightly complicated for secondary by pupil demographics shifting ",
+                    "between key stage 3-5; KS3 has larger class sizes than KS4 and 5."
+                  ),
+                  p(strong("Pupil projections")),
+                  p(
+                    "Going forward, primary pupil numbers are projected to continue falling, whilst ",
+                    "secondary pupil numbers are projected to start falling in the mid-2020s."
+                  ),
+                  p(strong("Estimating projected teacher demand")),
+                  p(
+                    "Teacher demand is estimated using pupil projections and assumptions about future ",
+                    "PTRs. It is assumed that PTRs move in line with historic patterns: rising when pupil ",
+                    "numbers rise and falling when pupil numbers fall. There is no “optimal” PTR; instead, ",
+                    "the Teacher Workforce Model reflects how schools have historically responded to ",
+                    "demographic change. "
+                  ),
+                  p(
+                    "Using these assumed PTRs and projected pupil numbers, the number of teachers ",
+                    "required to deliver those PTRs in future years is calculated as ‘future demand’. "
+                  ),
+                  p(strong("Conclusions")),
+                  p(
+                    "These demand trajectories represent teachers needed in service, they are not ",
+                    "forecasted outcomes. Actual workforce levels will depend upon recruitment, retention, ",
+                    "and movements into and out of the state funded sector (among other factors)."
+                  )
                 )
               )
             ),
@@ -447,7 +480,22 @@ twm_tab_panel <- function() {
                 style = "margin-top: 1rem;",
                 bslib::card_header("Trends in PGITT trainee need over time"),
                 bslib::card_body(
-                  p("Some text here")
+                  p(
+                    "Overall PGITT need peaked in 2023/24 with the number of trainees needed falling to ",
+                    "lower levels for both primary and the majority of secondary subjects."
+                  ),
+                  p(
+                    "This lower PGITT need has been driven by pupil numbers falling more rapidly for primary, ",
+                    "and growing less rapidly and levelling out for secondary respectively. "
+                  ),
+                  p(
+                    "Additionally, teacher retention and PGITT recruitment have improved for most subjects ",
+                    "making supply forecasts more favourable further helping to reduce PGITT recruitment needs."
+                  ),
+                  p(
+                    "Changes in individual subjects have been driven by individual circumstances, with ",
+                    "further information available on the ‘drivers of PGITT need changes’ tab."
+                  )
                 )
               )
             ),
