@@ -547,12 +547,16 @@ server <- function(input, output, session) {
   )
 
 
+  # # Drivers of PGITT trainee need changes tab ---------------------------------------------------------------------
+
+  # Data
+  # Reactive drivers analysis data filtered by phase and/or subject selection
 
   drivers_filtered <- reactive({
     df <- drivers_data %>%
       filter(phase == input$filter_phase_drivers)
 
-    # If primary → force subject = Total
+    # If primary force subject = Total
     if (input$filter_phase_drivers == "Primary") {
       df <- df %>% filter(subject == "Total")
     } else {
@@ -563,10 +567,51 @@ server <- function(input, output, session) {
   })
 
 
+  # Plot builder for drivers analysis which adds title & larger text for downloads
+  build_drivers_waterfall_plot <- function(df, for_download = FALSE) {
+    p <- plot_drivers_waterfall(df) # your existing ggplot builder
+
+    if (for_download) {
+      # Title prefix: Primary / Secondary / Secondary subject
+      phase_selected <- unique(df$phase)
+      subject_selected <- unique(df$subject)
+      phase_val <- if (length(phase_selected) == 1) phase_selected else phase_selected[1]
+      subject_val <- if (length(subject_selected) == 1) subject_selected else subject_selected[1]
+
+      title_prefix <- dplyr::case_when(
+        phase_val == "Primary" ~ "Primary",
+        phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+        phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+        TRUE ~ subject_val
+      )
+
+      # Fixed comparison phrase as requested
+      plot_title <- paste0(title_prefix, " drivers analysis: 2026/27 compared to 2025/26")
+
+      # Apply title + bigger text for exports only
+      p <- p +
+        ggplot2::labs(title = plot_title) +
+        ggplot2::theme(
+          plot.title   = ggplot2::element_text(size = 38, face = "bold"),
+          axis.title.x = ggplot2::element_text(size = 28),
+          axis.title.y = ggplot2::element_text(size = 28),
+          axis.text.x  = ggplot2::element_text(size = 26),
+          axis.text.y  = ggplot2::element_text(size = 26)
+        )
+    }
+
+    p
+  }
+
+  # Graph: Drivers analysis waterfall plot for app (interactive via ggiraph)
+
   output$drivers_waterfall_plot <- renderGirafe({
     req(drivers_filtered())
-    girafe(
-      ggobj = plot_drivers_waterfall(drivers_filtered()),
+
+    p <- build_drivers_waterfall_plot(drivers_filtered(), for_download = FALSE)
+
+    ggiraph::girafe(
+      ggobj = p,
       width_svg = 12,
       height_svg = 7,
       options = list(
@@ -577,6 +622,8 @@ server <- function(input, output, session) {
       )
     )
   })
+
+  # Table 1: Drivers analysis with last year's PGITT need, this year's PGITT need, overall difference (interactive via reactable)
 
   output$table_pgitt_need_diff <- reactable::renderReactable({
     df_wide <- drivers_filtered() %>%
@@ -609,6 +656,8 @@ server <- function(input, output, session) {
       defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
     )
   })
+
+  # Table 2: Drivers analysis with drivers breakdown (interactive via reactable)
 
   output$table_drivers_breakdown <- reactable::renderReactable({
     df <- drivers_filtered() %>%
@@ -649,46 +698,6 @@ server <- function(input, output, session) {
         ),
         Value = reactable::colDef(
           align = "right",
-          headerStyle = list(textAlign = "right")
-        )
-      ),
-      defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
-    )
-  })
-
-  output$table_drivers <- reactable::renderReactable({
-    df <- drivers_filtered() %>%
-      dplyr::mutate(
-        Driver  = driver,
-        Value   = value,
-        Phase   = phase,
-        Subject = subject
-      ) %>%
-      dplyr::select(Phase, Subject, Driver, Value)
-
-    reactable::reactable(
-      df,
-      defaultPageSize = 10,
-      pagination = FALSE,
-      searchable = FALSE,
-      filterable = FALSE,
-      striped = TRUE,
-      highlight = TRUE,
-      columns = list(
-        Phase = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
-        ),
-        Subject = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
-        ),
-        Driver = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
-        ),
-        Value = reactable::colDef(
-          align = "right",
           headerStyle = list(textAlign = "right"),
           format = reactable::colFormat(separators = TRUE)
         )
@@ -696,6 +705,62 @@ server <- function(input, output, session) {
       defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
     )
   })
+
+  # Create download dataset (matches filtered table so all data in the two tables in the app)
+
+  download_table_drivers_data <- reactive({
+    drivers_filtered()
+  })
+
+  # Create download chart (static ggplot for export with title and larger text)
+
+  download_drivers_waterfall_plot <- reactive({
+    build_drivers_waterfall_plot(drivers_filtered(), for_download = TRUE)
+  })
+
+  # Download button UI (
+  output$download_button_ui_drivers <- renderUI({
+    shinyGovstyle::download_button(
+      "download_drivers",
+      "Download Chart Data",
+      file_type = tolower(sub(" .*", "", input$file_type_drivers)),
+      file_size = NULL
+    )
+  })
+
+  # Download handler (CSV / XLSX / JPEG) --------------------------------
+  output$download_drivers <- downloadHandler(
+    filename = function() {
+      raw_name <- paste0("twm_drivers_", Sys.Date())
+      extension <- if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
+        ".csv"
+      } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
+        ".xlsx"
+      } else {
+        ".jpeg"
+      }
+      paste0(raw_name, extension)
+    },
+    content = function(file) {
+      if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
+        utils::write.csv(download_table_drivers_data(), file, row.names = FALSE)
+      } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
+        pop_up <- showNotification("Generating download file", duration = NULL)
+        on.exit(removeNotification(pop_up), add = TRUE)
+        openxlsx::write.xlsx(download_table_drivers_data(), file, colWidths = "Auto")
+      } else {
+        # JPEG: save static ggplot (interactive tooltips are not present in static export)
+        tmp_file <- tempfile(paste0("twm_drivers_chart_", Sys.Date(), ".jpeg"))
+        ggplot2::ggsave(
+          filename = tmp_file,
+          plot = download_drivers_waterfall_plot(),
+          device = "jpeg",
+          width = 10, height = 6, dpi = 300
+        )
+        file.copy(tmp_file, file, overwrite = TRUE)
+      }
+    }
+  )
 
 
   # flow trajectories --------------------------------------------------------
