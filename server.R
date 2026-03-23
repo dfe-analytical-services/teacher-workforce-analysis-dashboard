@@ -570,6 +570,7 @@ server <- function(input, output, session) {
 
 
   # Plot builder for drivers analysis which adds title & larger text for downloads
+
   build_drivers_waterfall_plot <- function(df, for_download = FALSE) {
     p <- plot_drivers_waterfall(df) # your existing ggplot builder
 
@@ -776,9 +777,9 @@ server <- function(input, output, session) {
   )
 
 
-  # flow trajectories --------------------------------------------------------
+  # # Flow trajectories tab -----------------------------------------------------------------------------------------
 
-  # prevent subject = total being excluded from subject dropdown if secondary selected
+  # Prevent subject = total being included from subject dropdown if secondary selected
 
   observeEvent(input$filter_phase_flow, {
     if (input$filter_phase_flow == "Secondary") {
@@ -802,7 +803,8 @@ server <- function(input, output, session) {
     }
   })
 
-  # filter dataset based on input
+  # Data
+  # Reactive drivers analysis data filtered by phase and/or subject selection
 
   flow_filtered <- reactive({
     df <- flow_data %>%
@@ -820,6 +822,57 @@ server <- function(input, output, session) {
     df <- dplyr::filter(df, type == input$filter_flow_type)
   })
 
+  # Plot builder that can upscale text when graph is downloaded
+  # Keep the look on-screen exactly as is; only enlarge axis test and add title if for_download=TRUE
+
+  build_flow_trajectory_plot <- function(df, for_download = FALSE) {
+    p <- plot_flow_trajectories(df)
+
+    if (for_download) {
+      p <- p +
+        ggplot2::theme(
+          axis.title.x = ggplot2::element_text(size = 30),
+          axis.title.y = ggplot2::element_text(size = 30),
+          axis.text.x = ggplot2::element_text(size = 28),
+          axis.text.y = ggplot2::element_text(size = 28),
+          legend.text = element_text(size = 28)
+        )
+
+      # Add dynamic title only for downloaded plots
+      phase_selected <- unique(df$phase)
+      subject_selected <- unique(df$subject)
+      type_selected <- unique(df$type)
+
+      # Pick a single value if vectors have length > 1 (edge filters)
+      phase_val <- if (length(phase_selected) == 1) phase_selected else phase_selected[1]
+      subject_val <- if (length(subject_selected) == 1) subject_selected else subject_selected[1]
+
+      title_prefix <- dplyr::case_when(
+        phase_val == "Primary" ~ "Primary",
+        phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+        phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
+        TRUE ~ subject_val
+      )
+
+      plot_title <- paste0(
+        title_prefix, ": ", type_selected
+      )
+
+      p <- p + ggplot2::labs(title = plot_title)
+
+      # Increase plot title text size
+
+      p <- p + ggplot2::theme(
+        plot.title = ggplot2::element_text(
+          size = 40,
+          face = "bold"
+        )
+      )
+    }
+    p
+  }
+
+  # Graph: Flow trajectories plot for app (interactive via ggiraph)
 
   output$flow_timeseries_plot <- ggiraph::renderGirafe({
     df <- flow_filtered()
@@ -841,6 +894,8 @@ server <- function(input, output, session) {
       )
     )
   })
+
+  # Table: Flow trajectories table for app (interactive via reactable)
 
   output$table_flow_trajectories <- reactable::renderReactable({
     df <- flow_filtered() %>%
@@ -931,6 +986,86 @@ server <- function(input, output, session) {
       )
     )
   })
+
+  # Create download dataset (matches table)
+
+  download_table_flow_trajectories <- reactive({
+    df <- flow_filtered() %>%
+      dplyr::filter(version == "This year (dummy data)") %>%
+      dplyr::mutate(
+        Type = type,
+        DUMMY = value,
+        Unit = unit,
+        Phase = phase,
+        Subject = subject,
+        `Historic or trajectory` = historic_or_trajectory,
+        `Academic year` = academic_year
+      ) %>%
+      dplyr::select(Phase, Subject, `Academic year`, Type, DUMMY, Unit, `Historic or trajectory`)
+
+    # Drop column subject from dataset
+    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
+    if (is_primary_phase) {
+      df <- dplyr::select(df, -Subject)
+    }
+    df
+  })
+
+  # Create download chart (static ggplot for export)
+
+  download_chart_flow_trajectories <- reactive({
+    build_flow_trajectory_plot(flow_filtered(), for_download = TRUE)
+  })
+
+  # Download button UI
+
+  output$download_button_ui_flows <- renderUI({
+    shinyGovstyle::download_button(
+      "download_flow_data",
+      "Download Chart Data",
+      file_type = tolower(sub(" .*", "", input$file_type_flows)),
+      file_size = NULL
+    )
+  })
+
+  # Download handler(CSV/XLSX/JPEG)
+
+
+  output$download_flow_data <- downloadHandler(
+    filename = function() {
+      raw_name <- paste0("twm_flow_trajectories_", Sys.Date())
+
+      # Keep mapping identical to your earlier block for consistency
+      extension <- if (input$file_type_flows == "CSV (Up to X.XX MB)") {
+        ".csv"
+      } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
+        ".xlsx"
+      } else {
+        ".jpeg"
+      }
+      paste0(raw_name, extension)
+    },
+    content = function(file) {
+      if (input$file_type_flows == "CSV (Up to X.XX MB)") {
+        utils::write.csv(download_table_flow_trajectories(), file, row.names = FALSE)
+      } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
+        # Optional: notify because Excel can take a little while to generate
+        pop_up <- showNotification("Generating download file", duration = NULL)
+        on.exit(removeNotification(pop_up), add = TRUE)
+        openxlsx::write.xlsx(download_table_flow_trajectories(), file, colWidths = "Auto")
+      } else {
+        # JPEG: save static ggplot.
+        tmp_file <- tempfile(paste0("twm_flow_trajectories_chart_", Sys.Date(), ".jpeg"))
+        ggplot2::ggsave(
+          filename = tmp_file,
+          plot = download_chart_flow_trajectories(),
+          device = "jpeg",
+          width = 10, height = 6, dpi = 300
+        )
+        file.copy(tmp_file, file, overwrite = TRUE)
+      }
+    }
+  )
 
   # Link in the user guide panel back to the main panel -----------------------
   observeEvent(input$link_to_app_content_tab, {
