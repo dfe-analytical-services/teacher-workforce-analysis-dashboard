@@ -162,27 +162,31 @@ flow_data_last_year <- read_flows_data()
 
 # copy values for final year and make them dummy values for 2027/28 - REMOVE ONCE REAL DATA IS PUBLISHED
 
-dummy_27_flow_data <- flow_data_last_year %>%
-  filter(academic_year == "2026/27") %>%
+dummy_27_flow_data_all_bar_NQEs <- flow_data_last_year %>%
+  filter(type != "Newly qualified entrants" & academic_year == "2026/27") %>%
   mutate(academic_year = "2027/28", year = 2027)
+
+dummy_26_flow_data_NQE <- flow_data_last_year %>%
+  filter(type == "Newly qualified entrants" & academic_year == "2025/26") %>%
+  mutate(academic_year = "2026/27", year = 2026)
 
 # bind to original dataset
 
-dummy_flow_data_this_year <- bind_rows(flow_data_last_year, dummy_27_flow_data) %>%
+dummy_flow_data_this_year <- bind_rows(flow_data_last_year, dummy_27_flow_data_all_bar_NQEs, dummy_26_flow_data_NQE) %>%
   mutate(
     historic_or_trajectory = ifelse(year >= 2025, "Trajectory", "Historic"),
     value = value * 1.1,
-    #  value = ifelse(year>2023, value*1.1, value),
     version = "This year (dummy data)"
   )
 
 # final dataset
 
-flow_data <- bind_rows(flow_data_last_year, dummy_flow_data_this_year)
+flow_data <- bind_rows(flow_data_last_year, dummy_flow_data_this_year) %>%
+  filter(!is.na(value))
 
 # remove others
 
-rm(flow_data_last_year, dummy_27_flow_data, dummy_flow_data_this_year)
+rm(flow_data_last_year, dummy_27_flow_data_all_bar_NQEs, dummy_26_flow_data_NQE, dummy_flow_data_this_year)
 
 # save values of phase, subject and flow type
 
