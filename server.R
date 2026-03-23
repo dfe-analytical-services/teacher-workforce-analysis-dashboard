@@ -212,11 +212,13 @@ server <- function(input, output, session) {
       columns = list(
         `Pupil numbers` = reactable::colDef(
           align = "right", headerStyle = list(textAlign = "right"),
-          format = reactable::colFormat(separators = TRUE, digits = 0)
+          format = reactable::colFormat(separators = TRUE, digits = 0),
+          name = "Pupil numbers (FTE)"
         ),
         `Teacher numbers` = reactable::colDef(
           align = "right", headerStyle = list(textAlign = "right"),
-          format = reactable::colFormat(separators = TRUE, digits = 0)
+          format = reactable::colFormat(separators = TRUE, digits = 0),
+          name = "Teacher numbers (FTE)"
         ),
         Phase = reactable::colDef(align = "right", headerStyle = list(textAlign = "right")),
         `Academic year` = reactable::colDef(align = "right", headerStyle = list(textAlign = "right")),
