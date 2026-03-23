@@ -618,7 +618,18 @@ server <- function(input, output, session) {
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_toolbar(saveaspng = FALSE),
         ggiraph::opts_hover(css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"),
-        ggiraph::opts_hover_inv(css = "opacity:1;") # keep others unchanged on hover
+        ggiraph::opts_hover_inv(css = "opacity:1;"), # keep others unchanged on hover
+        ggiraph::opts_tooltip(css = "
+          max-width: 260px;
+          white-space: normal;
+          background-color: rgba(0,0,0,0.88);
+          color: #fff;
+          padding: 6px 10px;
+          border-radius: 6px;
+          border: 0;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+          opacity: 1 !important;
+          ")
       )
     )
   })
