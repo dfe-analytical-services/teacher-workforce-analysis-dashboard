@@ -203,7 +203,7 @@ twm_tab_panel <- function() {
                   # Reactive text box
                   bslib::value_box(
                     title = "",
-                    value = "We are expecting (number and % change in pupil and teacher numbers) in 2027/28 compared to 2024/25",
+                    value = textOutput("pt_summary_box"),
                     theme = bslib::value_box_theme(bg = "#1d70b8", fg = "white")
                   )
                 )
