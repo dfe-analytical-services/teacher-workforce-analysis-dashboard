@@ -845,14 +845,14 @@ server <- function(input, output, session) {
       filter(version == "This year (dummy data)") %>%
       dplyr::mutate(
         Type = type,
-        `DUMMY value` = value,
+        DUMMY = value,
         Unit = unit,
         Phase = phase,
         Subject = subject,
         `Historic or trajectory` = historic_or_trajectory,
         `Academic year` = academic_year
       ) %>%
-      dplyr::select(Phase, Subject, `Academic year`, Type, `DUMMY value`, Unit, `Historic or trajectory`)
+      dplyr::select(Phase, Subject, `Academic year`, Type, DUMMY, Unit, `Historic or trajectory`)
 
     # highlight if primary selected so can remove subject column from table
 
@@ -884,6 +884,12 @@ server <- function(input, output, session) {
       filterable = FALSE,
       striped = TRUE,
       highlight = TRUE,
+      wrap = FALSE,
+      defaultColDef = reactable::colDef(
+        minWidth = 50,
+        maxWidth = 800,
+        headerClass = "bar-sort-header"
+      ),
       columns = list(
         Phase = reactable::colDef(
           align = "right",
@@ -892,7 +898,8 @@ server <- function(input, output, session) {
         Subject = reactable::colDef(
           show = !is_primary_phase, # hide when phase is primary
           align = "right",
-          headerStyle = list(textAlign = "right")
+          headerStyle = list(textAlign = "right"),
+          width = 250
         ),
         `Academic year` = reactable::colDef(
           align = "right",
@@ -900,9 +907,10 @@ server <- function(input, output, session) {
         ),
         Type = reactable::colDef(
           align = "right",
-          headerStyle = list(textAlign = "right")
+          headerStyle = list(textAlign = "right"),
+          width = 400
         ),
-        `DUMMY value` = reactable::colDef(
+        DUMMY = reactable::colDef(
           align = "right",
           format = value_formatter,
           headerStyle = list(textAlign = "right")
@@ -910,15 +918,15 @@ server <- function(input, output, session) {
         Unit = reactable::colDef(
           show = !is_leaver_table,
           align = "right",
-          format = value_formatter,
           headerStyle = list(textAlign = "right")
         ),
         `Historic or trajectory` = reactable::colDef(
+          name = "Historic or<br>trajectory",
+          html = TRUE,
           align = "right",
           headerStyle = list(textAlign = "right")
         )
-      ),
-      defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
+      )
     )
   })
 
