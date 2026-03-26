@@ -371,12 +371,12 @@ plot_drivers_waterfall <- function(
     axis_text_size = 12,
     data_label_size = 4,
     base_size = 14) {
-  start_label <- "Last year's need"
-  end_label <- "This year's need"
+  start_label <- "2025/26 PGITT need"
+  end_label <- "2026/27 PGITT need"
 
   # ---- Definitions lookup ---------------------------------------------------
   defs <- c(
-    "Last year's need" = "2025/26 PGITT trainee need",
+    "2025/26 PGITT need" = "Last year's PGITT trainee need.",
     "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
     "Leavers" = "Teachers leaving the sector between years. Orange = fewer leavers; Green = more leavers.",
     "Working hour losses" = "Reduction in working hours for individual teachers between years. Orange = fewer hours lost; Green = more hours lost.",
@@ -385,7 +385,7 @@ plot_drivers_waterfall <- function(
     "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
     "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
     "Under-supply adjustment" = "Adjustment countering estimated undersupply where relevant resulting from previous two ITT cycles.  Orange = smaller adjustment. Green = larger adjustment. No bar = no adjustment needed.",
-    "This year's need" = "2026/27 PGITT trainee need."
+    "2026/27 PGITT need" = "This year's PGITT trainee need."
   )
 
   # ---- Data preparation ------------------------------------------------------

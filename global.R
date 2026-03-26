@@ -141,7 +141,14 @@ choices_pgitt_need_subject <- c("Total", sort(setdiff(unique(pgitt_need_timeseri
 
 # Add data for drivers ----------------------------------------------------------
 
-drivers_data <- read_drivers_data()
+# rename last year's/this year's need to 2025/26 PGITT need and 2026/27
+# to be consistent with final dataset - TO DELETE
+
+drivers_data <- read_drivers_data() %>%
+  mutate(driver = recode(driver,
+    "Last year's need" = "2025/26 PGITT need",
+    "This year's need" = "2026/27 PGITT need"
+  ))
 
 # phase and subject list for drivers tab
 

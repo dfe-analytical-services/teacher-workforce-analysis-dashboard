@@ -709,7 +709,7 @@ server <- function(input, output, session) {
   output$table_pgitt_need_diff <- reactable::renderReactable({
     df_wide <- drivers_filtered() %>%
       dplyr::select(driver, value) %>%
-      dplyr::filter(driver %in% (c("Last year's need", "This year's need", "Overall difference"))) %>%
+      dplyr::filter(driver %in% (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"))) %>%
       tidyr::pivot_wider(names_from = driver, values_from = value)
 
     reactable::reactable(
@@ -749,7 +749,7 @@ server <- function(input, output, session) {
         Subject = subject
       ) %>%
       dplyr::select(Phase, Subject, Driver, Value) %>%
-      dplyr::filter(!(Driver %in% (c("Last year's need", "This year's need", "Overall difference"))))
+      dplyr::filter(!(Driver %in% (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"))))
 
     # highlight if primary selected so can remove subject column from table
 
