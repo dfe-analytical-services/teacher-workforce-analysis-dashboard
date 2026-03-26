@@ -261,11 +261,17 @@ plot_pgitt_need_timeseries <- function(df) {
   df2 <- df %>%
     dplyr::mutate(
       academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
-      # Row-wise tooltip (correct year per point)
+      # Tooltip with year, phase, subject and PGITT need
+      # Only show subject if secondary is selected
+      subject_line = ifelse(
+        phase == "Secondary",
+        paste0("<p><b>Subject:</b> ", subject, "</p>"),
+        ""
+      ),
       tooltip = paste0(
         "<p>", academic_year, "</p>",
         "<p><b>Phase:</b> ", phase, "</p>",
-        "<p><b>Subject:</b> ", subject, "</p>",
+        subject_line,
         "<p><b>PGITT trainee need:</b> ", scales::comma(pgitt_trainee_need), "</p>"
       )
     ) %>%
