@@ -18,8 +18,8 @@ plot_pupil_teacher_timeseries <- function(
   # Set y axis name, projection years, legend position
   #--------------------------
 
-  pupils_axis_name <- paste(phase, "pupil numbers")
-  teachers_axis_name <- paste(phase, "teacher numbers")
+  pupils_axis_name <- paste(phase, "pupil numbers (FTE)")
+  teachers_axis_name <- paste(phase, "teacher numbers (FTE)")
 
   last_census_year <- 2024
 
@@ -284,7 +284,7 @@ plot_pgitt_need_timeseries <- function(df) {
     dplyr::arrange(start_year) %>%
     dplyr::pull(academic_year)
 
-  # If only one subject is present, we’ll suppress the end-of-line label
+  # If only one subject is present, suppress the end-of-line label
   n_subjects <- dplyr::n_distinct(df2$subject)
 
   p <- ggplot(
@@ -324,8 +324,6 @@ plot_pgitt_need_timeseries <- function(df) {
       ),
       axis.line = element_line(linewidth = 0.75),
       legend.position = "none",
-      # Optional: angle labels if you want better readability with many years
-      # axis.text.x = element_text(angle = 45, hjust = 1),
       # Add extra right margin so the last tick label isn't clipped
       plot.margin = margin(t = 5.5, r = 18, b = 5.5, l = 5.5)
     ) +
@@ -373,12 +371,12 @@ plot_drivers_waterfall <- function(
     axis_text_size = 12,
     data_label_size = 4,
     base_size = 14) {
-  start_label <- "Last year's need"
-  end_label <- "This year's need"
+  start_label <- "2025/26 PGITT need"
+  end_label <- "2026/27 PGITT need"
 
   # ---- Definitions lookup ---------------------------------------------------
   defs <- c(
-    "Last year's need" = "2025/26 PGITT trainee need",
+    "2025/26 PGITT need" = "Last year's PGITT trainee need.",
     "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
     "Leavers" = "Teachers leaving the sector between years. Orange = fewer leavers; Green = more leavers.",
     "Working hour losses" = "Reduction in working hours for individual teachers between years. Orange = fewer hours lost; Green = more hours lost.",
@@ -387,7 +385,7 @@ plot_drivers_waterfall <- function(
     "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
     "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
     "Under-supply adjustment" = "Adjustment countering estimated undersupply where relevant resulting from previous two ITT cycles.  Orange = smaller adjustment. Green = larger adjustment. No bar = no adjustment needed.",
-    "This year's need" = "2026/27 PGITT trainee need."
+    "2026/27 PGITT need" = "This year's PGITT trainee need."
   )
 
   # ---- Data preparation ------------------------------------------------------
@@ -523,13 +521,13 @@ plot_flow_trajectories <- function(df) {
       )
     )
 
-  # ---------- labels & tooltip (switch wording for trajectories) ----------
+  # ---------- labels & tooltip ----------
 
   df <- df %>%
     dplyr::mutate(
       academic_year_label = paste0(year, "/", sprintf("%02d", (year + 1) %% 100)),
-      is_trajectory = year > last_census_year_row, # <<< changed to per-row
-      type_lower = ifelse(type %in% c("NQEs", "NTSF"), type, tolower(type)),
+      is_trajectory = year > last_census_year_row,
+      type_lower = ifelse(type %in% c("Newly qualified entrants", "New to state-funded sector entrants"), type, tolower(type)),
       value_formatted = dplyr::case_when(
         type %in% leaver_types ~ scales::label_percent(accuracy = 0.1)(value),
         TRUE ~ paste0(scales::label_number(accuracy = 1, big.mark = ",")(value), " (FTE)")
@@ -570,7 +568,7 @@ plot_flow_trajectories <- function(df) {
     y_title <- paste0(unique_type, " (FTE)")
   }
 
-  # ---------- build segment data like in plot_pupil_teacher_timeseries ----------
+  # ---------- build segment data ----------
   # group by any series identifiers that exist (phase/subject/type) so joins are correct
 
   df_seg <- df %>%
@@ -580,7 +578,7 @@ plot_flow_trajectories <- function(df) {
       next_year = dplyr::lead(year),
       next_value = dplyr::lead(value),
       # IMPORTANT: compare the segment's start year against its row-specific cutover
-      segment_linetype = ifelse(year >= last_census_year_row, "Projection", "Historic"),
+      segment_linetype = ifelse(year >= last_census_year_row, "Trajectory", "Historic"),
       tooltip_seg = tooltip
     ) %>%
     dplyr::ungroup() %>%
@@ -590,7 +588,7 @@ plot_flow_trajectories <- function(df) {
   # ---------- plot ----------
   ggplot2::ggplot(df, ggplot2::aes(x = year)) +
 
-    # Lines as segments with linetype mapped to Historic/Projected (consistent with your other chart)
+    # Lines as segments with linetype mapped to Historic/Trajectory
     ggiraph::geom_segment_interactive(
       data = df_seg,
       ggplot2::aes(
@@ -618,7 +616,7 @@ plot_flow_trajectories <- function(df) {
       axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
       axis.title.y = element_text(angle = 90, vjust = 0.5, margin = margin(r = 12), family = "dejavu"),
       axis.line = element_line(linewidth = 0.75),
-      # show a small legend for Projected (dotted)
+      # show a small legend for trajectory (dotted)
       legend.position = "inside",
       legend.position.inside = c(0.95, 0.18),
       legend.justification = "right",
@@ -635,11 +633,11 @@ plot_flow_trajectories <- function(df) {
         dplyr::pull(academic_year_label)
     ) +
 
-    # Linetype scale & legend entry for Projected (matches your other function's semantics)
+    # Linetype scale & legend entry for trajectories
     scale_linetype_manual(
       name = "",
-      values = c("Historic" = "solid", "Projection" = "dotted"),
-      breaks = "Projection",
+      values = c("Historic" = "solid", "Trajectory" = "dotted"),
+      breaks = "Trajectory",
       guide = "none"
     ) +
     scale_colour_manual(
@@ -649,8 +647,8 @@ plot_flow_trajectories <- function(df) {
         "Last year" = "#28A197"
       ),
       labels = c(
-        "This year (dummy data)" = "This year's DUMMY data (dotted line = trajectory)",
-        "Last year" = "Last year's DUMMY data (dotted line = trajectory)"
+        "This year (dummy data)" = "2026 publication DUMMY data (dotted line = trajectory)",
+        "Last year" = "2025 publication DUMMY data (dotted line = trajectory)"
       )
     ) +
     guides(
