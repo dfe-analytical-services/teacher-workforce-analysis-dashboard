@@ -647,8 +647,8 @@ plot_flow_trajectories <- function(df) {
         "Last year" = "#28A197"
       ),
       labels = c(
-        "This year (dummy data)" = "This year's DUMMY data (dotted line = trajectory)",
-        "Last year" = "Last year's DUMMY data (dotted line = trajectory)"
+        "This year (dummy data)" = "2026 publication DUMMY data (dotted line = trajectory)",
+        "Last year" = "2025 publication DUMMY data (dotted line = trajectory)"
       )
     ) +
     guides(
