@@ -260,8 +260,6 @@ plot_pupil_teacher_timeseries <- function(
 plot_pgitt_need_timeseries <- function(df) {
   df2 <- df %>%
     dplyr::mutate(
-      subject = stringr::str_to_title(stringr::str_trim(subject)),
-      start_year = as.numeric(start_year),
       academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
       # Row-wise tooltip (correct year per point)
       tooltip = paste0(
@@ -269,48 +267,30 @@ plot_pgitt_need_timeseries <- function(df) {
         "<p><b>Phase:</b> ", phase, "</p>",
         "<p><b>Subject:</b> ", subject, "</p>",
         "<p><b>PGITT trainee need:</b> ", scales::comma(pgitt_trainee_need), "</p>"
-      ),
-      # Only create a label candidate at the final year (for potential multi-line charts)
-      lab = ifelse(start_year == max(start_year), stringr::str_wrap(subject, 12), "")
+      )
     ) %>%
     dplyr::arrange(subject, start_year)
 
   # Axis helpers
-  min_year <- min(df2$start_year, na.rm = TRUE)
-  max_year <- max(df2$start_year, na.rm = TRUE)
   year_breaks <- sort(unique(df2$start_year))
   year_labels <- df2 %>%
     dplyr::distinct(start_year, academic_year) %>%
     dplyr::arrange(start_year) %>%
     dplyr::pull(academic_year)
 
-  # If only one subject is present, suppress the end-of-line label
-  n_subjects <- dplyr::n_distinct(df2$subject)
-
   p <- ggplot(
     df2,
     aes(
       x = start_year,
-      y = pgitt_trainee_need,
-      group = subject
+      y = pgitt_trainee_need
     )
   ) +
-    # Keep the line interactive for hover styling/selection if needed,
-    # but do NOT attach a tooltip to the whole line (tooltip would be constant per group)
-    ggiraph::geom_line_interactive(
-      aes(data_id = subject),
-      linewidth = 1,
-      colour = "#801650"
-    ) +
-    # Attach tooltip to points so it varies by year (row-wise)
-    ggiraph::geom_point_interactive(
+    ggiraph::geom_col_interactive(
       aes(
         tooltip = tooltip,
-        # Make each point uniquely addressable so hover/select doesn't stick across years
         data_id = paste(subject, start_year, sep = "_")
       ),
-      size = 2,
-      colour = "#801650"
+      fill = "#801650"
     ) +
     afcharts::theme_af() +
     xlab("Academic year") +
@@ -321,45 +301,16 @@ plot_pgitt_need_timeseries <- function(df) {
       axis.title.y = element_text(
         angle = 90, vjust = 0.5,
         margin = margin(r = 12), family = "dejavu"
-      ),
-      axis.line = element_line(linewidth = 0.75),
-      legend.position = "none",
-      # Add extra right margin so the last tick label isn't clipped
-      plot.margin = margin(t = 5.5, r = 18, b = 5.5, l = 5.5)
+      )
     ) +
-    # 1) Ensure every academic year is labeled
-    # 2) Add a little right-side expansion so the final tick label isn't cut off
     scale_x_continuous(
-      name   = "Academic year",
-      limits = c(min_year, max_year),
       breaks = year_breaks,
-      labels = year_labels,
-      expand = expansion(add = c(0, 0.25)) # small right padding
+      labels = year_labels
     ) +
-    # Start y-axis at 0; keep nice commas in tick labels
     scale_y_continuous(
       labels = scales::comma,
       limits = c(0, NA),
-      # Optional: tiny top padding for aesthetics
-      expand = expansion(mult = c(0.05, 0.05))
-    ) +
-    # Allow tick labels / repelled end labels to overflow the panel if needed
-    coord_cartesian(clip = "off")
-
-  # Conditionally add end-of-line labels ONLY if multiple subjects exist
-  if (n_subjects > 1) {
-    p <- p +
-      ggrepel::geom_text_repel(
-        aes(label = lab),
-        xlim = c(NA, Inf),
-        nudge_x = 1,
-        direction = "y",
-        hjust = "left",
-        size = 3.2,
-        min.segment.length = Inf,
-        segment.colour = NA
-      )
-  }
+    )
   p
 }
 
