@@ -115,8 +115,8 @@ ui <- function(input, output, session) {
         value = "support_panel_ui",
         "Support and feedback",
         support_panel(
-          team_email = "explore.statistics@education.gov.uk",
-          repo_name = "https://github.com/dfe-analytical-services/shiny-template",
+          team_email = "ittstatistics.publications@education.gov.uk",
+          repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
           form_url = "https://forms.office.com"
         )
       )
