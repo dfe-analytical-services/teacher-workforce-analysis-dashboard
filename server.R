@@ -79,6 +79,29 @@ server <- function(input, output, session) {
     google_analytics_key = google_analytics_key
   )
 
+  # User guide
+  # Data sources and updates table for teacher demand and PGITT need tab
+
+  output$data_sources_updates <- reactable::renderReactable({
+    df <- tibble::tribble(
+      ~Tab, ~`Data from`, ~File, ~`Data last updated`,
+      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
+      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
+      "Drivers of PGITT trainee need changes", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
+      "Flow trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX"
+    )
+
+    reactable::reactable(
+      df,
+      pagination = FALSE,
+      searchable = FALSE,
+      sortable = FALSE,
+      highlight = TRUE,
+      striped = TRUE,
+      defaultColDef = reactable::colDef(minWidth = 140)
+    )
+  })
+
   # Dataset: pupil/teacher timeseries ----------------------------------------------
   # Reactive data filtered by phase selection
 
