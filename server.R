@@ -505,9 +505,10 @@ server <- function(input, output, session) {
         `Difference in need to previous year`, `Percentage change in need to previous year`
       )
 
-    # Highlight if primary selected so can remove subject column from table
+    # Highlight if primary or total selected so can remove subject column from table
 
-    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
+    is_primary_or_total <- nrow(df) > 0 &&
+      all(df$Phase %in% c("Primary", "Total"))
 
     reactable::reactable(
       df,
@@ -521,7 +522,7 @@ server <- function(input, output, session) {
       columns = list(
         `Academic year` = reactable::colDef(name = "Academic<br>year", html = TRUE, align = "right", width = 120),
         Phase = reactable::colDef(align = "right", width = 120),
-        Subject = reactable::colDef(show = !is_primary_phase, align = "right", width = 120),
+        Subject = reactable::colDef(show = !is_primary_or_total, align = "right", width = 120),
         `PGITT trainee need` = reactable::colDef(
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
