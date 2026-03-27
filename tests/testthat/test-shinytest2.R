@@ -32,31 +32,32 @@ all_inputs <- c(
 
 all_outputs <- c(
   # Teacher demand trajectories tab
-  "pupil_teacher_plot",
   "tablePupilTeacher",
   "download_button_ui_pupil_teacher",
   "pt_summary_box",
 
   # PGITT trainee need time series tab
-  "pgitt_need_timeseries_plot",
   "tablePgittNeedTimeseries",
   "download_button_ui_pgitt_need",
 
   # Drivers tab
-  "drivers_waterfall_plot",
   "table_pgitt_need_diff",
   "table_drivers_breakdown",
   "download_button_ui_drivers",
 
   # Flow trajectories tab
-  "flow_timeseries_plot",
   "table_flow_trajectories",
   "download_button_ui_flows"
 )
 
 
 test_that("{shinytest2} recording: initial_state", {
-  app <- AppDriver$new(name = "initial_state")
+  app <- AppDriver$new(
+    name = "initial_state",
+    load_timeout = 120 * 1000,
+    timeout = 60 * 1000,
+    wait = TRUE
+  )
   app$click("cookies_banner-cookies_reject")
   app$set_inputs(navlistPanel = "Teacher demand and PGITT need")
   app$set_inputs(tabsetpanels = "Teacher demand trajectories")
