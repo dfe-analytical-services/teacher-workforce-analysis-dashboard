@@ -27,7 +27,9 @@ test_that("read_pupil_teacher_numbers() cleans, rounds, and creates start_year",
   input <- tibble::tibble(
     academic_year = c("2020/21", "2021/22"),
     pupil_numbers = c(1234.8, 5678.2),
-    teacher_numbers = c(400.4, 999.6)
+    teacher_numbers = c(400.4, 999.6),
+    historic = c("Yes", "Yes"),
+    phase = "Primary"
   )
 
   file <- write_test_parquet(input)
