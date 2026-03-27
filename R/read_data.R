@@ -16,9 +16,31 @@
 # Pupil and teacher numbers data ----------------------------------------------
 
 read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_numbers.parquet") {
-  read_parquet(file) %>%
-    clean_names() %>% # make r friendly column names
+  df <- read_parquet(file) %>%
+    clean_names() # make r friendly column names
 
+  # required columns
+  required_cols <- c(
+    "academic_year",
+    "pupil_numbers",
+    "teacher_numbers",
+    "projection",
+    "phase"
+  )
+
+  # check required columns
+  missing <- setdiff(required_cols, names(df))
+
+  if (length(missing) > 0) {
+    stop(
+      "❌ Missing required columns in pupil/teacher numbers file: ",
+      paste(missing, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  # transformations
+  df %>%
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
       pupil_numbers = round(pupil_numbers, 0), # round pupil numbers to nearest 0
