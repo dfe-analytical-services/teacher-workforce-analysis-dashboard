@@ -296,7 +296,8 @@ plot_pgitt_need_timeseries <- function(df) {
         tooltip = tooltip,
         data_id = paste(subject, start_year, sep = "_")
       ),
-      fill = "#801650"
+      fill = "#801650",
+      width = 0.6
     ) +
     afcharts::theme_af() +
     xlab("Academic year") +
