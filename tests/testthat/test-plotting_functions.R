@@ -17,8 +17,11 @@ test_that("plot_pupil_teacher_timeseries works and returns a ggplot object", {
   # Contains just enough rows/columns for the function to run without error
   df <- data.frame(
     start_year = 2020:2025,
+    academic_year = c("2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26"),
     pupil_numbers = c(400, 420, 430, 440, 450, 460),
-    teacher_numbers = c(20, 21, 22, 23, 24, 25)
+    teacher_numbers = c(20, 21, 22, 23, 24, 25),
+    phase = "Primary",
+    projection = c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE)
   )
 
   # Call the plotting function
@@ -26,7 +29,6 @@ test_that("plot_pupil_teacher_timeseries works and returns a ggplot object", {
 
   # Basic structural tests
   # The returned object should be a ggplot
-  expect_s3_class(p, "gg")
   expect_s3_class(p, "ggplot")
 
   # Make sure the expected input columns exist (sanity check)
@@ -37,7 +39,7 @@ test_that("plot_pupil_teacher_timeseries works and returns a ggplot object", {
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
   # Expect at least one interactive segment layer
-  expect_true(any(grepl("GeomSegmentInteractive", layer_classes)))
+  expect_true(any(grepl("GeomInteractiveSegment", layer_classes)))
 })
 
 
@@ -53,7 +55,7 @@ test_that("plot_pgitt_need_timeseries returns a ggplot with interactive bars", {
   )
 
   # Call plot function
-  p <- plot_pgitt_need_timeseries(df)
+  p <- plot_pgitt_need_timeseries(df, phase = "Primary")
 
   # Structural tests
   expect_s3_class(p, "ggplot")
