@@ -85,39 +85,39 @@ user_guide_panel <- function() {
                   "2025 school returns."
                 )
               )
+            )
+          ),
+          h2("Data sources and updates"),
+          p(em("Teacher demand and PGITT need"), " tab:"),
+          reactableOutput("data_sources_updates"),
+          h2("User tips"),
+          tags$ul(
+            tags$li(
+              "This dashboard is built over multiple tabs that can be moved through using ",
+              "either the navigation buttons (up and down or left and right) or by selecting the ",
+              "tab in the list in the top left-hand side of the page. The currently selected view ",
+              "will be highlighted in blue."
             ),
-            h2("Data sources and updates"),
-            p(em("Teacher demand and PGITT need"), " tab:"),
-            reactableOutput("data_sources_updates"),
-            h2("User tips"),
-            tags$ul(
-              tags$li(
-                "This dashboard is built over multiple tabs that can be moved through using ",
-                "either the navigation buttons (up and down or left and right) or by selecting the ",
-                "tab in the list in the top left-hand side of the page. The currently selected view ",
-                "will be highlighted in blue."
-              ),
-              tags$li(
-                "The ", em("Teacher demand and PGITT need "),
-                "tab contains several charts, diagrams and tables. These are organised into tabbed ",
-                "panels, and users can move between them by clicking the chart titles displayed ",
-                "above the chart space. The active chart tab will be highlighted in yellow. "
-              ),
-              tags$li(
-                "Most charts in this dashboard are interactive. When users move their cursor ",
-                "across a chart, a hover label will appear showing additional context, underlying ",
-                "data values, or comparisons across groups."
-              ),
-              tags$li(
-                "Many pages include dropdown menus that allow users to filter results by school ",
-                "phase or secondary subject. Changing a selection will automatically update all ",
-                "charts on the page. "
-              ),
-              tags$li(
-                "Most pages also provide tabs which allow users to switch between examining ",
-                "data in chart or table form, and provides users with a tab to download the table ",
-                "or chart image."
-              )
+            tags$li(
+              "The ", em("Teacher demand and PGITT need "),
+              "tab contains several charts, diagrams and tables. These are organised into tabbed ",
+              "panels, and users can move between them by clicking the chart titles displayed ",
+              "above the chart space. The active chart tab will be highlighted in yellow. "
+            ),
+            tags$li(
+              "Most charts in this dashboard are interactive. When users move their cursor ",
+              "across a chart, a hover label will appear showing additional context, underlying ",
+              "data values, or comparisons across groups."
+            ),
+            tags$li(
+              "Many pages include dropdown menus that allow users to filter results by school ",
+              "phase or secondary subject. Changing a selection will automatically update all ",
+              "charts on the page. "
+            ),
+            tags$li(
+              "Most pages also provide tabs which allow users to switch between examining ",
+              "data in chart or table form, and provides users with a tab to download the table ",
+              "or chart image."
             )
           )
         )
