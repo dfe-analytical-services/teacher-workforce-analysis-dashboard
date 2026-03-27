@@ -141,8 +141,13 @@ server <- function(input, output, session) {
         theme(
           axis.title.x = element_text(size = 24),
           axis.title.y = element_text(size = 24),
-          axis.text.x  = element_text(size = 22),
-          axis.text.y  = element_text(size = 22)
+          axis.text.x = element_text(size = 22),
+          axis.text.y = element_text(size = 22),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
     }
     p
@@ -415,8 +420,13 @@ server <- function(input, output, session) {
         ggplot2::theme(
           axis.title.x = ggplot2::element_text(size = 30),
           axis.title.y = ggplot2::element_text(size = 30),
-          axis.text.x  = ggplot2::element_text(size = 28),
-          axis.text.y  = ggplot2::element_text(size = 28)
+          axis.text.x = ggplot2::element_text(size = 28),
+          axis.text.y = ggplot2::element_text(size = 28),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
 
       # Add dynamic title only for downloaded plots
@@ -663,11 +673,16 @@ server <- function(input, output, session) {
       p <- p +
         ggplot2::labs(title = plot_title) +
         ggplot2::theme(
-          plot.title   = ggplot2::element_text(size = 38, face = "bold"),
+          plot.title = ggplot2::element_text(size = 38, face = "bold"),
           axis.title.x = ggplot2::element_text(size = 28),
           axis.title.y = ggplot2::element_text(size = 28),
-          axis.text.x  = ggplot2::element_text(size = 26),
-          axis.text.y  = ggplot2::element_text(size = 26)
+          axis.text.x = ggplot2::element_text(size = 26),
+          axis.text.y = ggplot2::element_text(size = 26),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
     }
 
@@ -902,7 +917,12 @@ server <- function(input, output, session) {
           axis.title.y = ggplot2::element_text(size = 30),
           axis.text.x = ggplot2::element_text(size = 28),
           axis.text.y = ggplot2::element_text(size = 28),
-          legend.text = element_text(size = 28)
+          legend.text = element_text(size = 28),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
 
       # Add dynamic title only for downloaded plots
