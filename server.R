@@ -498,11 +498,11 @@ server <- function(input, output, session) {
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
         `Difference in need to previous year` = difference_to_previous_year,
-        `Percentage difference in need to previous year` = percentage_difference_to_previous_year
+        `Percentage change in need to previous year` = percentage_difference_to_previous_year
       ) %>%
       dplyr::select(
         `Academic year`, Phase, Subject, `PGITT trainee need`,
-        `Difference in need to previous year`, `Percentage difference in need to previous year`
+        `Difference in need to previous year`, `Percentage change in need to previous year`
       )
 
     # Highlight if primary selected so can remove subject column from table
@@ -532,8 +532,8 @@ server <- function(input, output, session) {
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
-        `Percentage difference in need to previous year` = reactable::colDef(
-          name = "Percentage difference<br>in need to<br>previous year",
+        `Percentage change in need to previous year` = reactable::colDef(
+          name = "Percentage change<br>in need to<br>previous year",
           html = TRUE,
           align = "right",
           format = reactable::colFormat(suffix = "%", digits = 1)
