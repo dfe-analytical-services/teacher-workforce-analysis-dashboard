@@ -130,8 +130,7 @@ server <- function(input, output, session) {
     left_title <- paste0(phase_title, " pupils")
     right_title <- paste0(phase_title, " teachers")
 
-    # -- IMPORTANT --
-    # We now let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
+    # Let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
     # including the manual lock (breaks and matching).
     p <- plot_pupil_teacher_timeseries(df, phase = phase_title, axis_lock = axis_lock)
 
@@ -153,31 +152,6 @@ server <- function(input, output, session) {
     }
     p
   }
-
-  # axis locks for dual axis primary and secondary graphs
-
-  primary_lock <- list(
-    p0           = 3600000,
-    p_max        = 4800000,
-    pup_step     = 200000,
-    t0           = 180000,
-    t_max        = 240000,
-    teach_step   = 10000,
-    force_limits = TRUE
-  )
-
-
-  secondary_lock <- list(
-    p0           = 1800000,
-    p_max        = 3800000,
-    pup_step     = 200000,
-    t0           = 180000,
-    t_max        = 380000,
-    teach_step   = 20000,
-    force_limits = TRUE
-  )
-
-
 
   # create the ggiraph plot to display on the app
 

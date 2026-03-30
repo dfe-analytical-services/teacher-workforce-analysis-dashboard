@@ -10,6 +10,30 @@
 
 # Pupil vs Teacher timeseries ---------------------------
 
+# axis locks for dual axis primary and secondary graphs
+
+primary_lock <- list(
+  p0           = 3600000,
+  p_max        = 4800000,
+  pup_step     = 200000,
+  t0           = 180000,
+  t_max        = 240000,
+  teach_step   = 10000,
+  force_limits = TRUE
+)
+
+
+secondary_lock <- list(
+  p0           = 1800000,
+  p_max        = 3800000,
+  pup_step     = 200000,
+  t0           = 180000,
+  t_max        = 380000,
+  teach_step   = 20000,
+  force_limits = TRUE
+)
+
+# pupil teacher timeseries plot
 
 plot_pupil_teacher_timeseries <- function(
     df, phase = NULL,
