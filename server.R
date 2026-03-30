@@ -139,10 +139,11 @@ server <- function(input, output, session) {
     if (for_download) {
       p <- p +
         theme(
-          axis.title.x = element_text(size = 24),
-          axis.title.y = element_text(size = 24),
-          axis.text.x = element_text(size = 22),
-          axis.text.y = element_text(size = 22),
+          axis.title.x = element_text(size = 34),
+          axis.title.y = element_text(size = 34),
+          axis.text.x = element_text(size = 32),
+          axis.text.y = element_text(size = 32),
+          legend.text = element_text(size = 28),
 
           # Set white background for downloads - prevents issue
           # with devices not rendering the transparent bg properly
@@ -279,10 +280,14 @@ server <- function(input, output, session) {
 
 
   download_chart_pupil_teacher_data <- reactive({
+    phase_in <- input$filter_phase
+    lock <- if (tolower(phase_in) == "primary") primary_lock else secondary_lock
+
     build_pupil_teacher_plot(
       pt_data_filtered(),
-      input$filter_phase,
-      for_download = TRUE
+      phase = phase_in,
+      for_download = TRUE,
+      axis_lock = lock
     )
   })
 
@@ -327,7 +332,7 @@ server <- function(input, output, session) {
           ggplot2::ggsave(
             filename = tempfile(paste0("twm_pupil_teacher_numbers_chart_", Sys.Date(), ".jpeg")),
             plot = download_chart_pupil_teacher_data(), device = "jpeg",
-            width = 10, height = 6, dpi = 300
+            width = 12, height = 6, dpi = 300
           ),
           file
         )
