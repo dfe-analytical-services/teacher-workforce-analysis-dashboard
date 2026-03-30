@@ -989,7 +989,11 @@ server <- function(input, output, session) {
     df <- flow_filtered() %>%
       filter(version == "This year (dummy data)") %>%
       dplyr::mutate(
-        Type = type,
+        Type = dplyr::case_when(
+          type == "Newly qualified entrants" ~ "NQEs",
+          type == "New to state-funded sector entrants" ~ "NTSF entrants",
+          TRUE ~ type
+        ),
         DUMMY = value,
         Unit = unit,
         Phase = phase,
@@ -1029,10 +1033,8 @@ server <- function(input, output, session) {
       filterable = FALSE,
       striped = TRUE,
       highlight = TRUE,
-      wrap = FALSE,
+      wrap = TRUE,
       defaultColDef = reactable::colDef(
-        minWidth = 50,
-        maxWidth = 800,
         headerClass = "bar-sort-header"
       ),
       columns = list(
@@ -1043,17 +1045,17 @@ server <- function(input, output, session) {
         Subject = reactable::colDef(
           show = !is_primary_phase, # hide when phase is primary
           align = "right",
-          headerStyle = list(textAlign = "right"),
-          width = 250
+          headerStyle = list(textAlign = "right")
         ),
         `Academic year` = reactable::colDef(
+          name = "Academic<br>year",
+          html = TRUE,
           align = "right",
           headerStyle = list(textAlign = "right")
         ),
         Type = reactable::colDef(
           align = "right",
-          headerStyle = list(textAlign = "right"),
-          width = 400
+          headerStyle = list(textAlign = "right")
         ),
         DUMMY = reactable::colDef(
           align = "right",
