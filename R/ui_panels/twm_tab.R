@@ -783,7 +783,7 @@ twm_tab_panel <- function() {
                       selectizeInput(
                         "filter_phase_flow", "Select a school phase:",
                         choices = choices_flow_phase,
-                        width = "60%",
+                        width = "100%",
                         multiple = FALSE,
                         selected = "Primary",
                         options = list(
@@ -795,7 +795,7 @@ twm_tab_panel <- function() {
                         selectizeInput(
                           "filter_subject_flow", "Select a secondary subject:",
                           choices = choices_flow_subject,
-                          width = "60%",
+                          width = "100%",
                           multiple = FALSE,
                           selected = "Total",
                           options = list(
@@ -806,7 +806,7 @@ twm_tab_panel <- function() {
                       selectizeInput(
                         "filter_flow_type", "Select entrant or leaver flow type:",
                         choices = choices_flow_type,
-                        width = "60%",
+                        width = "100%",
                         multiple = FALSE,
                         selected = "Total leaver rate",
                         options = list(
