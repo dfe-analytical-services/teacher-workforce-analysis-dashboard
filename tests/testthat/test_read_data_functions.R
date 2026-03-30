@@ -17,6 +17,15 @@ write_test_parquet <- function(df) {
   tmp
 }
 
+# Expect an error about missing columns
+
+expect_missing_cols_error <- function(expr) {
+  expect_error(
+    expr,
+    regexp = "Missing required columns",
+    class = "error"
+  )
+}
 
 # 1 - Tests for read_pupil_teacher_numbers() ------------------------------------------------------------------------
 
@@ -82,7 +91,9 @@ test_that("read_pgitt_need_timeseries() renames and derives subject correctly", 
   input <- tibble::tibble(
     time_period = c("2019/20", "2020/21", "2020/21"),
     subject_filter_group = c("Primary", "Secondary", "Secondary"),
-    subject = c("English", "Maths", "Biology")
+    subject = c("English", "Maths", "Biology"),
+    pgitt_trainee_need = c("6", "6", "6"),
+    percentage_difference_to_previous_year = c("6", "6", "6")
   )
 
   file <- write_test_parquet(input)
@@ -170,8 +181,13 @@ test_that("read_drivers_data throws error when required columns missing", {
 
 test_that("read_flows_data() derives units, year, and version correctly", {
   input <- tibble::tibble(
-    year = c("2024/25", "2025/26"),
-    type = c("total leaver rate", "entrant count")
+    Year = c("2024/25", "2025/26"),
+    Type = c("Total leaver rate", "Newly qualified entrants"),
+    Phase = c("Secondary", "Secondary"),
+    Subject = c("Biology", "Biology"),
+    Value = c(0.006, 6),
+    Historic_or_trajectory = c("Trajectory", "Trajectory"),
+    Publication_year = c("2026", "2026")
   )
 
   file <- write_test_parquet(input)
@@ -196,13 +212,13 @@ test_that("read_flows_data() derives units, year, and version correctly", {
 
 test_that("read_flows_data throws error when required columns missing", {
   bad_df <- tibble::tibble(
-    phase = "Secondary",
-    subject = "Physics",
-    type = "Total leaver rate",
-    academic_year = "2020/21",
-    value = 0.1,
-    unit = "%",
-    publication_year = 2025
+    Phase = "Secondary",
+    Subject = "Physics",
+    Type = "Total leaver rate",
+    Year = "2020/21",
+    Value = 0.1,
+    Unit = "%",
+    Publication_year = 2025
     # historic_or_trajectory missing
   )
 
