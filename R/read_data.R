@@ -121,6 +121,10 @@ read_drivers_data <- function(file = "data/dummy_3_drivers_analysis.parquet") {
       call. = FALSE
     )
   }
+
+  df <- df %>%
+    mutate(value = round(value, digits = 1))
+
   return(df)
 }
 
