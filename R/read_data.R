@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Script where we provide functions to read in the data file(s).
+# Script with functions to read in the data files.
 #
 # IMPORTANT: Data files pushed to GitHub repositories are immediately public.
 # You should not be pushing unpublished data to the repository prior to your
@@ -33,14 +33,16 @@ read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_number
 
   if (length(missing) > 0) {
     stop(
-      "❌ Missing required columns in pupil/teacher numbers file: ",
-      paste(missing, collapse = ", "),
+      paste0(
+        "❌ Missing required columns in pupil/teacher numbers file: ",
+        paste(missing, collapse = ", ")
+      ),
       call. = FALSE
     )
   }
 
   # transformations
-  df %>%
+  df <- df %>%
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
       pupil_numbers = round(pupil_numbers, 0), # round pupil numbers to nearest 0
@@ -48,43 +50,117 @@ read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_number
         teacher_numbers, 0 # round teachers numbers to nearest 0
       )
     )
+  return(df)
 }
 
 
 # PGITT need time series data --------------------------------------------------
 
 read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timeseries.parquet") {
-  read_parquet(file) %>%
-    clean_names() %>% # make r friendly column names
+  df <- read_parquet(file) %>%
+    clean_names() # make r friendly column names
 
+  # required columns
+  required_cols <- c(
+    "time_period",
+    "subject",
+    "subject_filter_group",
+    "pgitt_trainee_need",
+    "percentage_difference_to_previous_year"
+  )
+
+  # check required columns
+  missing <- setdiff(required_cols, names(df))
+
+  if (length(missing) > 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in pgitt need time series file: ",
+        paste(missing, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  df <- df %>%
     rename(phase = subject_filter_group, ees_subject = subject) %>% # rename columns from pub names
-
     mutate(
       start_year = as.integer(substr(time_period, 1, 4)), # create start year column
-      subject = if_else(phase == "Primary", "Total", ees_subject # if phase is primary set subject as total
+      subject = if_else(phase == "Primary",
+        "Total",
+        ees_subject # if phase is primary set subject as total
       )
     )
+  return(df)
 }
 
 
 # Drivers analysis data -----------------------------------------------------------
 
 read_drivers_data <- function(file = "data/dummy_3_drivers_analysis.parquet") {
-  read_parquet(file) %>%
+  df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
+
+  # required columns
+  required_cols <- c(
+    "driver",
+    "value",
+    "phase",
+    "subject"
+  )
+
+  # check required columns
+  missing <- setdiff(required_cols, names(df))
+
+  if (length(missing) > 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in drivers file: ",
+        paste(missing, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+  return(df)
 }
 
 
-# # Flow trajectories data ---------------------------------------------------------
+# Flow trajectories data ------------------------------------------------------------------------------------------
 
 read_flows_data <- function(file = "data/dummy_4_flow_trajectories_2025_publication.parquet") {
-  read_parquet(file) %>%
+  df <- read_parquet(file) %>%
     clean_names() %>% # make r friendly column names
-
     rename(academic_year = year) %>%
     mutate(
       unit = if_else(str_detect(type, "leaver"), "%", "FTE"), # make a column of unit which is % for leaver rates and FTE for entrants
       year = as.integer(substr(academic_year, 1, 4)), # create start year column
       version = "Last year"
     )
+
+  # required columns
+  required_cols <- c(
+    "phase",
+    "subject",
+    "type",
+    "academic_year",
+    "value",
+    "unit",
+    "historic_or_trajectory",
+    "publication_year"
+  )
+
+  # check required columns
+  missing <- setdiff(required_cols, names(df))
+
+  if (length(missing) > 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in flows file: ",
+        paste(missing, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  return(df)
 }
