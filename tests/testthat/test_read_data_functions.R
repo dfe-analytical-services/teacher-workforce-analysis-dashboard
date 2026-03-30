@@ -9,18 +9,19 @@
 #   • behaviour is stable if upstream parquet schemas change
 # =============================================================================
 
-# -----------------------------------------------------------------------------
-# Helper: write a small parquet file for testing without touching real data
-# -----------------------------------------------------------------------------
+# Write a small parquet file for testing without touching real data
+
 write_test_parquet <- function(df) {
   tmp <- tempfile(fileext = ".parquet")
   arrow::write_parquet(df, tmp)
   tmp
 }
 
-# =============================================================================
-# 1) Tests for read_pupil_teacher_numbers()
-# =============================================================================
+
+# 1 - Tests for read_pupil_teacher_numbers() ------------------------------------------------------------------------
+
+# Does the function return a dataframe with the correct number of rows,
+# 'start year' is created and values are numeric and rounded?
 
 test_that("read_pupil_teacher_numbers() cleans, rounds, and creates start_year", {
   # Dummy input parquet
@@ -28,7 +29,7 @@ test_that("read_pupil_teacher_numbers() cleans, rounds, and creates start_year",
     academic_year = c("2020/21", "2021/22"),
     pupil_numbers = c(1234.8, 5678.2),
     teacher_numbers = c(400.4, 999.6),
-    historic = c("Yes", "Yes"),
+    projection = c("Yes", "Yes"),
     phase = "Primary"
   )
 
@@ -50,9 +51,32 @@ test_that("read_pupil_teacher_numbers() cleans, rounds, and creates start_year",
   expect_equal(out$teacher_numbers, c(400, 1000))
 })
 
-# =============================================================================
-# 2) Tests for read_pgitt_need_timeseries()
-# =============================================================================
+# Does the function throw an error when required columns are missing?
+
+test_that("read_pupil_teacher_numbers throws error when required columns missing", {
+  # Minimal dummy df WITHOUT teacher_numbers
+  bad_df <- tibble::tibble(
+    academic_year = "2020/21",
+    pupil_numbers = 100,
+    projection = FALSE,
+    phase = "Primary"
+  )
+
+  # Write temp parquet file
+  tmp <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(bad_df, tmp)
+
+  expect_missing_cols_error(
+    read_pupil_teacher_numbers(tmp)
+  )
+})
+
+
+
+# 2. Tests for read_pgitt_need_timeseries() -----------------------------------------------------------------------
+
+# Does the function return a dataframe, have the column names expected, extract start year,
+# call subject = total for primary otherwise keep original subject values?
 
 test_that("read_pgitt_need_timeseries() renames and derives subject correctly", {
   input <- tibble::tibble(
@@ -66,8 +90,8 @@ test_that("read_pgitt_need_timeseries() renames and derives subject correctly", 
   out <- read_pgitt_need_timeseries(file)
 
   # Structure
-  expect_s3_class(out, "data.frame")
-  expect_true(all(c("phase", "subject") %in% names(out)))
+  expect_s3_class(out, "data.frame") # check it returns a dataframe
+  expect_true(all(c("phase", "subject") %in% names(out))) # check certain columns are present
 
   # Start year extracted from first 4 chars
   expect_equal(out$start_year, c(2019, 2020, 2020))
@@ -80,28 +104,69 @@ test_that("read_pgitt_need_timeseries() renames and derives subject correctly", 
   expect_equal(out$subject[3], "Biology")
 })
 
-# =============================================================================
-# 3) Tests for read_drivers_data()
-# =============================================================================
+# Does the function throw an error when required columns are missing?
+
+test_that("read_pgitt_need_timeseries throws error when required columns missing", {
+  bad_df <- tibble::tibble(
+    time_period = "2020/21",
+    subject = "English",
+    pgitt_trainee_need = 200,
+    percentage_difference_to_previous_year = 0.1
+    # subject_filter_group missing
+  )
+
+  tmp <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(bad_df, tmp)
+
+  expect_missing_cols_error(
+    read_pgitt_need_timeseries(tmp)
+  )
+})
+
+# 3. Tests for read_drivers_data() --------------------------------------------------------------------------------
+
+# Does the function have clean column names and are all rows returned intact?
 
 test_that("read_drivers_data() cleans names and returns all rows intact", {
   input <- tibble::tibble(
-    "Driver Name" = c("Demand", "Leavers"),
-    "Value Number" = c(100, 200)
+    "Driver" = c("Entrants", "Leavers"),
+    "Value" = c(100, 200),
+    "Phase" = c("Secondary", "Secondary"),
+    "Subject" = c("Biology", "Biology")
   )
 
   file <- write_test_parquet(input)
 
   out <- read_drivers_data(file)
 
-  expect_s3_class(out, "data.frame")
-  expect_true(all(c("driver_name", "value_number") %in% names(out)))
-  expect_equal(out$value_number, c(100, 200))
+  expect_s3_class(out, "data.frame") # check it returns a df
+  expect_true(all(c("driver", "value", "phase", "subject") %in% names(out))) # check columns are there
+  expect_equal(out$value_number, c(100, 200)) # check values are there
+})
+
+# Does the function throw an error when a column is missing?
+
+test_that("read_drivers_data throws error when required columns missing", {
+  bad_df <- tibble::tibble(
+    value = 3.5,
+    phase = "Secondary",
+    subject = "Maths"
+    # driver missing
+  )
+
+  tmp <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(bad_df, tmp)
+
+  expect_missing_cols_error(
+    read_drivers_data(tmp)
+  )
 })
 
 # =============================================================================
 # 4) Tests for read_flows_data()
 # =============================================================================
+
+# Does the function return a df and get units, years and version correctly?
 
 test_that("read_flows_data() derives units, year, and version correctly", {
   input <- tibble::tibble(
@@ -125,4 +190,26 @@ test_that("read_flows_data() derives units, year, and version correctly", {
   # Version column injected
   expect_true("version" %in% names(out))
   expect_equal(out$version, c("Last year", "Last year"))
+})
+
+# Does the function throw an error when a column is missing?
+
+test_that("read_flows_data throws error when required columns missing", {
+  bad_df <- tibble::tibble(
+    phase = "Secondary",
+    subject = "Physics",
+    type = "Total leaver rate",
+    academic_year = "2020/21",
+    value = 0.1,
+    unit = "%",
+    publication_year = 2025
+    # historic_or_trajectory missing
+  )
+
+  tmp <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(bad_df, tmp)
+
+  expect_missing_cols_error(
+    read_flows_data(tmp)
+  )
 })
