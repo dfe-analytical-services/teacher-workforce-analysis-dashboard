@@ -125,12 +125,12 @@ test_that("read_pgitt_need_timeseries throws error when required columns missing
 
 # 3. Tests for read_drivers_data() --------------------------------------------------------------------------------
 
-# Does the function have clean column names and are all rows returned intact?
+# Does the function have clean column names and round values to 1dp?
 
 test_that("read_drivers_data() cleans names and returns all rows intact", {
   input <- tibble::tibble(
     "Driver" = c("Entrants", "Leavers"),
-    "Value" = c(100, 200),
+    "Value" = c(100.123, 200.876),
     "Phase" = c("Secondary", "Secondary"),
     "Subject" = c("Biology", "Biology")
   )
@@ -141,7 +141,7 @@ test_that("read_drivers_data() cleans names and returns all rows intact", {
 
   expect_s3_class(out, "data.frame") # check it returns a df
   expect_true(all(c("driver", "value", "phase", "subject") %in% names(out))) # check columns are there
-  expect_equal(out$value_number, c(100, 200)) # check values are there
+  expect_equal(out$value, c(100.1, 200.9)) # check values are rounded to 1dp
 })
 
 # Does the function throw an error when a column is missing?
