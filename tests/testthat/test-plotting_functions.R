@@ -12,7 +12,7 @@
 
 # Tests for plot_pupil_teacher_timeseries() -----------------------------------------------------------------------
 
-test_that("plot_pupil_teacher_timeseries works and returns a ggplot object", {
+test_that("plot_pupil_teacher_timeseries works and returns an interactive ggplot object", {
   # Create minimal, valid input data
   # Contains just enough rows/columns for the function to run without error
   df <- data.frame(
@@ -38,24 +38,24 @@ test_that("plot_pupil_teacher_timeseries works and returns a ggplot object", {
   # Extract all layer classes (e.g. GeomSegmentInteractive, GeomPointInteractive)
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
-  # Expect at least one interactive segment layer
+  # Should contain interactive segments (lines)
   expect_true(any(grepl("GeomInteractiveSegment", layer_classes)))
 })
 
 
 # Tests for plot_pgitt_need_timeseries() --------------------------------------------------------------------------
 
-test_that("plot_pgitt_need_timeseries returns a ggplot with interactive bars", {
+test_that("plot_pgitt_need_timeseries works and returns an interactive ggplot", {
   # Representative minimal dataset
   df <- data.frame(
     start_year = 2020:2025,
     phase = "Secondary",
-    subject = rep("Maths", 6),
+    subject = rep("Biology", 6),
     pgitt_trainee_need = c(200, 210, 220, 230, 240, 250)
   )
 
   # Call plot function
-  p <- plot_pgitt_need_timeseries(df, phase = "Primary")
+  p <- plot_pgitt_need_timeseries(df)
 
   # Structural tests
   expect_s3_class(p, "ggplot")
@@ -63,14 +63,14 @@ test_that("plot_pgitt_need_timeseries returns a ggplot with interactive bars", {
   # Check for interactive columns
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
-  # Should contain GeomColInteractive from ggiraph
-  expect_true(any(grepl("GeomColInteractive", layer_classes)))
+  # Should contain GeomInteractiveCol
+  expect_true(any(grepl("GeomInteractiveCol", layer_classes)))
 })
 
 
 # Tests for plot_drivers_waterfall() ------------------------------------------------------------------------------
 
-test_that("plot_drivers_waterfall returns a waterfall-style ggplot", {
+test_that("plot_drivers_waterfall works and returns an interactive ggplot", {
   # Minimal but realistic waterfall input
   df <- data.frame(
     driver = c(
@@ -88,14 +88,15 @@ test_that("plot_drivers_waterfall returns a waterfall-style ggplot", {
 
   # Check for interactive rectangle layers (the waterfall bars)
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
-  # Should contain GeomRectInteractive from ggiraph
-  expect_true(any(grepl("GeomRectInteractive", layer_classes)))
+
+  # Should contain GeomRectInteractive
+  expect_true(any(grepl("GeomInteractiveRect", layer_classes)))
 })
 
 
 # Tests for plot_flow_trajectories() ------------------------------------------------------------------------------
 
-test_that("plot_flow_trajectories returns an interactive trajectory plot", {
+test_that("plot_flow_trajectories works and returns an interactive ggplot", {
   # Create minimal dataset for flow trajectories
   df <- data.frame(
     year = 2020:2025,
@@ -120,8 +121,8 @@ test_that("plot_flow_trajectories returns an interactive trajectory plot", {
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
   # Should contain interactive segments (lines)
-  expect_true(any(grepl("GeomSegmentInteractive", layer_classes)))
+  expect_true(any(grepl("GeomInteractiveSegment", layer_classes)))
 
   # Should contain interactive points
-  expect_true(any(grepl("GeomPointInteractive", layer_classes)))
+  expect_true(any(grepl("GeomInteractivePoint", layer_classes)))
 })
