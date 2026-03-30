@@ -542,6 +542,23 @@ plot_flow_trajectories <- function(df) {
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(next_year))
 
+  # Robust x axis breaks/labels based only on data
+
+  # Keep only years present in df
+  years_available <- df %>%
+    dplyr::pull(year) %>%
+    unique() %>%
+    sort()
+
+  # Apply biennial pattern relative to the actual data
+  years_for_axis <- years_available[years_available %% 2 == (min(years_available) %% 2)]
+
+  # Axis labels for those years
+  axis_labels <- df %>%
+    dplyr::distinct(year, academic_year_label) %>%
+    dplyr::filter(year %in% years_for_axis) %>%
+    dplyr::arrange(year) %>%
+    dplyr::pull(academic_year_label)
 
   # ---------- plot ----------
   ggplot2::ggplot(df, ggplot2::aes(x = year)) +
@@ -583,12 +600,8 @@ plot_flow_trajectories <- function(df) {
 
     # X axis: biennial ticks (unchanged)
     ggplot2::scale_x_continuous(
-      breaks = seq(2011, max(df$year, na.rm = TRUE), by = 2),
-      labels = df %>%
-        dplyr::distinct(year, academic_year_label) %>%
-        dplyr::arrange(year) %>%
-        dplyr::filter(year %in% seq(2011, max(df$year), 2)) %>%
-        dplyr::pull(academic_year_label)
+      breaks = years_for_axis,
+      labels = axis_labels
     ) +
 
     # Linetype scale & legend entry for trajectories
