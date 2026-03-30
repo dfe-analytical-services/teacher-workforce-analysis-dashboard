@@ -202,3 +202,13 @@ choices_flow_phase <- sort(unique(flow_data$phase))
 choices_flow_subject <- sort(unique(flow_data$subject))
 
 choices_flow_type <- c("Total leaver rate", "Under 55 leaver rate", "55+ leaver rate", "Newly qualified entrants", "New to state-funded sector entrants", "Returners")
+
+# set display labels for flow type to include abbreviations for drop down filter list
+
+flow_type_labels <- dplyr::case_when(
+  choices_flow_type == "Newly qualified entrants" ~ "Newly qualified entrants (NQEs)",
+  choices_flow_type == "New to state-funded sector entrants" ~ "New to state-funded sector (NTSF) entrants",
+  TRUE ~ choices_flow_type
+)
+
+names(choices_flow_type) <- flow_type_labels
