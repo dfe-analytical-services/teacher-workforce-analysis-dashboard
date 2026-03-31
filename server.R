@@ -784,9 +784,25 @@ server <- function(input, output, session) {
   })
 
   # Create download dataset (matches filtered table so all data in the two tables in the app)
+  # Spell out acronyms in download table
+  # Capitalise column names
+  # Reorder columns to match app
 
   download_table_drivers_data <- reactive({
-    drivers_filtered()
+    drivers_filtered() %>%
+      dplyr::mutate(
+        driver = dplyr::recode(
+          driver,
+          "2025/26 PGITT need" = "2025/26 PGITT trainee need",
+          "Demand growth YOY" = "Demand growth year-on-year",
+          "NTSF" = "New to state-funded sector entrants",
+          "NQEs from other sources" = "Newly qualified entrants from other sources",
+          "ITT-NQE conversion rate" = "Initial teacher training - newly qualified entrant conversion rate",
+          "2026/27 PGITT need" = "2026/27 PGITT trainee need"
+        )
+      ) %>%
+      dplyr::rename_with(~ tools::toTitleCase(.x)) %>%
+      dplyr::select(Phase, Subject, everything())
   })
 
   # Create download chart (static ggplot for export with title and larger text)
