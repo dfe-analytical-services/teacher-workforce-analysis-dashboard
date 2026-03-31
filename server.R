@@ -339,7 +339,7 @@ server <- function(input, output, session) {
 
     # Determine direction words
     pupil_dir <- if (df_27$pupil_diff > 0) "more" else "fewer"
-    teacher_dir <- if (df_27$teacher_diff > 0) "more" else "fewer"
+    teacher_dir <- if (df_27$teacher_diff > 0) "higher" else "lower"
 
     pupil_diff_txt <- scales::label_comma()(abs(df_27$pupil_diff))
     teacher_diff_txt <- scales::label_comma()(abs(df_27$teacher_diff))
@@ -349,8 +349,8 @@ server <- function(input, output, session) {
 
     glue::glue(
       "We project {pupil_diff_txt} {pupil_dir} pupils ({pupil_pct_txt}) ",
-      "and {teacher_diff_txt} {teacher_dir} teachers ({teacher_pct_txt}) ",
-      "in 2027/28 compared to 2024/25. DUMMY"
+      "and teacher demand to be {teacher_diff_txt} {teacher_dir} ({teacher_pct_txt}) ",
+      "in 2027/28 compared to 2024/25. (dummy)"
     )
   })
 
