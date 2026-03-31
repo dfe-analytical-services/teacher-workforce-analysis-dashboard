@@ -1094,6 +1094,24 @@ server <- function(input, output, session) {
     if (is_primary_phase) {
       df <- dplyr::select(df, -Subject)
     }
+
+    # Format entrants (FTE) to 0 dp and leaver rates (%) to 1 dp
+    leaver_types <- c("Total leaver rate", "55+ leaver rate", "Under 55 leaver rate")
+    is_leaver_table <- all(df$Type %in% leaver_types)
+
+    if (is_leaver_table) {
+      # convert 0.056 → 5.6%
+      df <- df %>%
+        dplyr::mutate(
+          DUMMY = round(DUMMY * 100, 1)
+        )
+    } else {
+      # format as whole numbers (e.g., 1234)
+      df <- df %>%
+        dplyr::mutate(
+          DUMMY = round(DUMMY, 0)
+        )
+    }
     df
   })
 
