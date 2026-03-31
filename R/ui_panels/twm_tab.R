@@ -108,9 +108,9 @@ twm_tab_panel <- function() {
               "Teacher demand trajectories",
               h2("Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories"),
               p(
-                "This section shows historic trends in pupil and qualified teacher numbers, ",
-                "alongside projections of future pupil numbers and the resulting demand for teachers as ",
-                "calculated by the Teacher Workforce Model."
+                "This section shows historic trends in pupil and teacher numbers (including ",
+                "unqualified teachers), alongside projections of both future pupil numbers and the ",
+                "resulting demand for teachers as calculated by the teacher workforce model."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -124,7 +124,8 @@ twm_tab_panel <- function() {
                     chart_output = div(
                       style = "margin-top: 1.5rem;",
                       tags$p(
-                        "Pupil and teacher numbers are shown on separate y axes because they are on very different scales. ",
+                        "Pupil and teacher numbers are shown on separate y axes ",
+                        "because they are on very different scales. ",
                         "The axes start above zero to make the trends easier to see."
                       ),
                       ggiraph::girafeOutput(
@@ -183,19 +184,21 @@ twm_tab_panel <- function() {
                     bslib::card_header("About this graph"),
                     bslib::card_body(
                       p(
-                        "Historical and projected pupil numbers are presented here alongside previous teacher numbers and future teacher demand. ",
-                        "These figures cover state-funded nursery and primary, or state-funded secondary schools in England."
+                        "Historical and projected pupil numbers are presented here alongside historic teacher ",
+                        "numbers and future teacher demand. These figures cover state funded nursery and ",
+                        "primary, or state funded secondary schools in England."
                       ),
-                      p("Select a school phase to view its data and hover over the data points to see the value:"),
+                      p("Select a school phase to view its data and hover over the data points to see the value."),
                       tags$ul(
-                        tags$li(
-                          "Pupil numbers are shown by the orange line with star markers; with projections shown as the dotted part. ",
-                          "Values correspond to the left-hand axis."
-                        ),
-                        tags$li(
-                          "Teacher numbers are shown by the blue line with dot markers, with projected demand being the dotted part. ",
-                          "Values correspond to the right-hand axis."
-                        )
+                        tags$li(HTML(
+                          'Pupil numbers are shown by the <span style="color:#F46A25; font-weight: 600;">orange</span> line
+                          with star markers; with projections shown as the dotted part.
+                          Values correspond to the left hand axis.'
+                        )),
+                        tags$li(HTML(
+                          'Teacher numbers are shown by the <span style="color:#12436D; font-weight: 600;">blue</span> line
+                          with dot markers, with projected demand being the dotted part. Values correspond to the right hand axis.'
+                        ))
                       )
                     )
                   )
@@ -204,7 +207,7 @@ twm_tab_panel <- function() {
 
               # Reactive text box
               bslib::value_box(
-                title = "",
+                title = NULL,
                 value = textOutput("pt_summary_box"),
                 theme = bslib::value_box_theme(bg = "#1d70b8", fg = "white"),
                 max_height = "115px"
@@ -224,30 +227,37 @@ twm_tab_panel <- function() {
                   ),
                   p(
                     "The relationship is slightly complicated for secondary by pupil demographics shifting ",
-                    "between key stage 3-5; KS3 has larger class sizes than KS4 and 5."
+                    "between key stage 3-5; KS3 has larger class sizes than KS4 and KS5."
                   ),
                   p(strong("Pupil projections")),
                   p(
                     "Going forward, primary pupil numbers are projected to continue falling, whilst ",
                     "secondary pupil numbers are projected to start falling in the mid-2020s."
                   ),
+                  p(
+                    em(
+                      "Please note, these pupil projections differ slightly to those published in the national ",
+                      "pupil projections due to slight coverage differences, to ensure that they are consistent ",
+                      "with the methodology of the TWM. In particular, they include post-16 pupils in ",
+                      "secondary schools. Finally, they have been adjusted slightly to account for the actual ",
+                      "number of pupils captured in October 2025 via school returns."
+                    )
+                  ),
                   p(strong("Estimating projected teacher demand")),
                   p(
                     "Teacher demand is estimated using pupil projections and assumptions about future ",
                     "PTRs. It is assumed that PTRs move in line with historic patterns: rising when pupil ",
                     "numbers rise and falling when pupil numbers fall. There is no “optimal” PTR; instead, ",
-                    "the Teacher Workforce Model reflects how schools have historically responded to ",
-                    "demographic change. "
+                    "the TWM reflects how schools have historically responded to demographic change. "
                   ),
                   p(
                     "Using these assumed PTRs and projected pupil numbers, the number of teachers ",
-                    "required to deliver those PTRs in future years is calculated as ‘future demand’. "
+                    "required to deliver those PTRs in future years is calculated as ‘future teacher demand’."
                   ),
-                  p(strong("Conclusions")),
                   p(
-                    "These demand trajectories represent teachers needed in service, they are not ",
-                    "forecasted outcomes. Actual workforce levels will depend upon recruitment, retention, ",
-                    "and movements into and out of the state funded sector (among other factors)."
+                    "These demand trajectories are not forecasted outcomes, actual workforce levels will ",
+                    "depend upon the balance of movements into and out of the state funded sector (among ",
+                    "other factors)."
                   )
                 )
               )
