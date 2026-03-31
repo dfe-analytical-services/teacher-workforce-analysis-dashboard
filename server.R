@@ -244,8 +244,8 @@ server <- function(input, output, session) {
       dplyr::select(
         Phase = phase,
         `Academic year`,
-        `Pupil numbers` = pupil_numbers,
-        `Teacher numbers` = teacher_numbers,
+        `Pupil numbers (FTE)` = pupil_numbers,
+        `Teacher numbers (FTE)` = teacher_numbers,
         Projection
       )
   })
@@ -282,7 +282,8 @@ server <- function(input, output, session) {
 
   output$download_pupil_teacher <- downloadHandler(
     filename = function() {
-      raw_name <- paste0("twm_pupil_teacher_numbers_", Sys.Date())
+      phase_clean <- tolower(input$filter_phase)
+      raw_name <- paste0("twm_pupil_teacher_numbers_", phase_clean, "_", Sys.Date())
       extension <- if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
         ".csv"
       } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
