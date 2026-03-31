@@ -650,21 +650,36 @@ server <- function(input, output, session) {
       # Fixed comparison phrase as requested
       plot_title <- paste0(title_prefix, " drivers analysis: 2026/27 compared to 2025/26")
 
-      # Apply title + bigger text for exports only
+      # Apply title + bigger text for download graph only
       p <- p +
-        ggplot2::labs(title = plot_title) +
-        ggplot2::theme(
-          plot.title = ggplot2::element_text(size = 38, face = "bold"),
-          axis.title.x = ggplot2::element_text(size = 28),
-          axis.title.y = ggplot2::element_text(size = 28),
-          axis.text.x = ggplot2::element_text(size = 26),
-          axis.text.y = ggplot2::element_text(size = 26),
+        ggplot2::labs(title = plot_title)
 
-          # Set white background for downloads - prevents issue
-          # with devices not rendering the transparent bg properly
-          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
-          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
-        )
+      # Increase size of existing data labels
+      p$layers <- lapply(p$layers, function(layer) {
+        if (inherits(layer$geom, "GeomText")) {
+          layer$aes_params$size <- 8
+        }
+        layer
+      })
+
+      # Increase text size
+      p <- p + ggplot2::theme(
+        plot.title = ggplot2::element_text(size = 38, face = "bold"),
+        axis.title.y = ggplot2::element_text(size = 30),
+        axis.text.y = ggplot2::element_text(size = 26),
+
+        # Tighten spacing between wrapped lines and reduce top margin
+        axis.text.x = ggplot2::element_text(
+          size = 28,
+          lineheight = 0.35,
+          margin = ggplot2::margin(t = 5)
+        ),
+
+        # Set white background for downloads - prevents issue
+        # with devices not rendering the transparent bg properly
+        plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+        panel.background = ggplot2::element_rect(fill = "white", colour = NA)
+      )
     }
 
     p
