@@ -214,18 +214,18 @@ server <- function(input, output, session) {
       highlight = TRUE,
       columns = list(
         `Pupil numbers` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0),
           name = "Pupil numbers (FTE)"
         ),
         `Teacher numbers` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0),
           name = "Teacher numbers (FTE)"
         ),
-        Phase = reactable::colDef(align = "right", headerStyle = list(textAlign = "right")),
-        `Academic year` = reactable::colDef(align = "right", headerStyle = list(textAlign = "right")),
-        Projection = reactable::colDef(align = "right", headerStyle = list(textAlign = "right"))
+        Phase = reactable::colDef(align = "left"),
+        `Academic year` = reactable::colDef(align = "left"),
+        Projection = reactable::colDef(align = "left")
       ),
       defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
     )
@@ -500,21 +500,21 @@ server <- function(input, output, session) {
       highlight = TRUE,
       resizable = TRUE,
       columns = list(
-        `Academic year` = reactable::colDef(name = "Academic<br>year", html = TRUE, align = "right", width = 120),
-        Phase = reactable::colDef(align = "right", width = 120),
-        Subject = reactable::colDef(show = !is_primary_or_total, align = "right", width = 120),
+        `Academic year` = reactable::colDef(name = "Academic<br>year", html = TRUE, align = "left", width = 120),
+        Phase = reactable::colDef(align = "left", width = 120),
+        Subject = reactable::colDef(show = !is_primary_or_total, align = "left", width = 120),
         `PGITT trainee need` = reactable::colDef(
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
         `Difference in need to previous year` = reactable::colDef(
-          name = "Difference in<br>need to<br>previous year",
+          name = "Difference in need<br>to previous year",
           html = TRUE,
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
         `Percentage change in need to previous year` = reactable::colDef(
-          name = "Percentage change<br>in need to<br>previous year",
+          name = "Percentage change in<br>need to previous year",
           html = TRUE,
           align = "right",
           format = reactable::colFormat(suffix = "%", digits = 1)
@@ -718,15 +718,15 @@ server <- function(input, output, session) {
       highlight = TRUE,
       columns = list(
         `Last year's need` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE)
         ),
         `This year's need` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE)
         ),
         `Overall difference` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE)
         )
       ),
@@ -761,21 +761,17 @@ server <- function(input, output, session) {
       highlight = TRUE,
       columns = list(
         Phase = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Subject = reactable::colDef(
           show = !is_primary_phase,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Driver = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Value = reactable::colDef(
           align = "right",
-          headerStyle = list(textAlign = "right"),
           format = reactable::colFormat(separators = TRUE)
         )
       ),
@@ -1035,39 +1031,32 @@ server <- function(input, output, session) {
       ),
       columns = list(
         Phase = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Subject = reactable::colDef(
           show = !is_primary_phase, # hide when phase is primary
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         `Academic year` = reactable::colDef(
           name = "Academic<br>year",
           html = TRUE,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Type = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         DUMMY = reactable::colDef(
           align = "right",
-          format = value_formatter,
-          headerStyle = list(textAlign = "right")
+          format = value_formatter
         ),
         Unit = reactable::colDef(
           show = !is_leaver_table,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         `Historic or trajectory` = reactable::colDef(
           name = "Historic or<br>trajectory",
           html = TRUE,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         )
       )
     )
