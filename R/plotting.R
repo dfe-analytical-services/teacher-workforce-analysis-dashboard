@@ -345,18 +345,15 @@ plot_pgitt_need_timeseries <- function(df) {
   p
 }
 
-# drivers analysis waterfall graph
+# Drivers analysis waterfall graph --------------------------------------------------------------------------------
 
-plot_drivers_waterfall <- function(
-    df_raw,
-    axis_title_size = 16,
-    axis_text_size = 12,
-    data_label_size = 4,
-    base_size = 14) {
+
+plot_drivers_waterfall <- function(df_raw) {
+  # Labels used to identify the first and last bars in the waterfall chart
   start_label <- "2025/26 PGITT need"
   end_label <- "2026/27 PGITT need"
 
-  # ---- Definitions lookup ---------------------------------------------------
+  # Definitions for each driver (shown inside tooltip)
   defs <- c(
     "2025/26 PGITT need" = "Last year's PGITT trainee need.",
     "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
@@ -370,25 +367,29 @@ plot_drivers_waterfall <- function(
     "2026/27 PGITT need" = "This year's PGITT trainee need."
   )
 
-  # ---- Data preparation ------------------------------------------------------
+  # Data preparation
   df <- df_raw %>%
-    dplyr::filter(driver != "Overall difference") %>%
+    dplyr::filter(driver != "Overall difference") %>% # Remove summary row
     dplyr::mutate(
       type = dplyr::case_when(
-        driver == start_label ~ "start",
-        driver == end_label ~ "end",
-        TRUE ~ "delta"
+        driver == start_label ~ "start", # First bar
+        driver == end_label ~ "end", # Last bar
+        TRUE ~ "delta" # All middle 'change' bars
       ),
       order_id = dplyr::row_number()
     )
 
+  # Extract starting value (used to calculate cumulative changes)
   start_val <- df$value[df$type == "start"][1]
 
+  # Calculate bottom/top of each bar for the waterfall
   df <- df %>%
     dplyr::mutate(
       delta_val = ifelse(type == "delta", value, 0),
       cum_delta_before = dplyr::lag(cumsum(delta_val), default = 0),
       level_before = start_val + cum_delta_before,
+
+      # ymin/ymax define the vertical extent of each bar
       ymin = dplyr::case_when(
         type == "start" ~ 0,
         type == "delta" ~ level_before,
@@ -399,34 +400,33 @@ plot_drivers_waterfall <- function(
         type == "delta" ~ level_before + value,
         type == "end" ~ value
       ),
+
+      # Colour by whether the driver increases or decreases need
       fill_col = dplyr::case_when(
         type != "delta" ~ "total",
         value >= 0 ~ "increase",
         TRUE ~ "decrease"
       ),
 
-      # factor for x axis
+      # Keep drivers in original order on x-axis
       driver = factor(driver, levels = driver),
 
-      # ---- Tooltip (escape both ' and ’) ------------------------------------
-      definition = dplyr::coalesce(defs[as.character(driver)], "Definition coming soon."),
+      # Tooltip text shown when hovering on each bar
       tooltip = paste0(
-        "<b>",
-        gsub("['’]", "&#39;", as.character(driver)),
-        ":</b><br/>",
-        gsub("['’]", "&#39;", definition)
+        "<b>", as.character(driver), ":</b><br/>", defs[as.character(driver)]
       ),
 
-      # ---- data_id must NOT contain quotes or unsafe chars -------------------
+      # Required by ggiraph for hover behaviour.
+      # Converts driver text into a “safe” ID with only letters/numbers/d
       data_id = paste0(
         "bar-",
-        # make a safe slug from driver
-        tolower(gsub("[^A-Za-z0-9_-]+", "-", as.character(driver)))
+        tolower(gsub("[^A-Za-z0-9_-]", "-", as.character(driver)))
       )
     )
 
-  # ---- Plot -----------------------------------------------------------------
+  # Build the interactive waterfall chart
   ggplot(df, aes(x = driver)) +
+    # Rectangle for each bar
     ggiraph::geom_rect_interactive(
       aes(
         xmin = as.numeric(driver) - 0.45,
@@ -441,47 +441,53 @@ plot_drivers_waterfall <- function(
       linewidth = 0.3
     ) +
 
-    # large invisible hover targets to make tooltips reliable
+    # Large invisible hover points improve tooltip reliability
     ggiraph::geom_point_interactive(
       data = df,
       inherit.aes = FALSE,
       aes(
         x = as.numeric(driver),
-        y = (ymin + ymax) / 2,
+        y = (ymin + ymax) / 2, # Middle of the bar
         tooltip = tooltip,
         data_id = data_id
       ),
       size = 30,
       alpha = 0
     ) +
+    # Numeric label above each bar
     geom_text(
       aes(
         x = as.numeric(driver),
+        # Place label on top of each bar
         y = ifelse(type == "delta", pmax(ymin, ymax), ymax),
-        label = scales::comma(ymax - ymin)
+        label = scales::comma(value) # Value data label
       ),
       vjust = -0.25,
-      size = data_label_size
+      size = 4
     ) +
+    # Colour palette
     scale_fill_manual(
       values = c(increase = "#28A197", decrease = "#F46A25", total = "#12436D"),
       guide = "none"
     ) +
+    # Y axis formatting
     scale_y_continuous(
       labels = scales::comma,
       expand = expansion(mult = c(0.02, 0.08))
     ) +
+    # Wrap long x-axis labels
     scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 12)) +
+    # Axis titles
     labs(x = NULL, y = "PGITT trainees") +
-    theme_minimal(base_size = base_size) +
+    theme_minimal() +
     theme(
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
-      axis.title.y = element_text(size = axis_title_size),
-      axis.title.x = element_text(size = axis_title_size),
-      axis.text.y = element_text(size = axis_text_size),
+      axis.title.y = element_text(size = 16),
+      axis.title.x = element_text(size = 16),
+      axis.text.y = element_text(size = 12),
       axis.text.x = element_text(
-        size = axis_text_size,
+        size = 12,
         margin = margin(t = 6),
         lineheight = 0.95
       )
