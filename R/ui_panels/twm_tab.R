@@ -527,11 +527,11 @@ twm_tab_panel <- function() {
             #####################################################################
 
             tabPanel(
-              "Drivers of PGITT trainee need changes",
-              h2("Drivers analysis of changes in PGITT trainee need this year"),
+              "Drivers of change in PGITT trainee need",
+              h2("Drivers of changes in PGITT trainee need this year"),
               p(
-                "Comparison of the 2025/26 and 2026/27 PGITT trainee need with ",
-                "estimated driver impacts behind these changes."
+                "Comparison of the 2025/26 and 2026/27 PGITT trainee need and the ",
+                "estimated drivers behind these changes."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -616,15 +616,23 @@ twm_tab_panel <- function() {
                       p(
                         "This graph shows last year’s PGITT need (left, dark blue bar) and this year’s PGITT need ",
                         "(right, dark blue bar) for the selected school phase and/or secondary subject. In ",
-                        "between these two bars are the estimated respective impacts upon the change in PGITT ",
-                        "need this year of different drivers."
+                        "between these two bars are the estimated respective drivers behind the change in PGITT ",
+                        "need between the two years."
                       ),
-                      p("Orange bars show drivers that reduced PGITT need this year, and green bars show drivers that acted to increased it. "),
                       p(
-                        "The figures are the respective impacts upon PGITT need in isolation of other drivers, and ",
-                        "not the amount that the driver itself changed. For example, returners did not change by ",
-                        "‘x’ this year, rather returners acted in isolation to increase/decrease PGITT need this ",
-                        "year by ‘x’ trainees."
+                        "All numbers are unrounded as they relate to figures used to calculate the PGITT need ",
+                        "before rounding is applied. For this reason, the PGITT need figures quoted may differ ",
+                        "slightly to those published elsewhere."
+                      ),
+                      p(
+                        "Orange bars show drivers that acted to reduce PGITT need this year, and green bars ",
+                        "show drivers that acted to increase it."
+                      ),
+                      p(
+                        "The scale of each driver is it’s estimated impact upon PGITT need, and not the amount ",
+                        "that the driver itself changed. For example, returners did not increase/fall by ‘x’ returners ",
+                        "this year, rather returners acted to increase/decrease PGITT need this year by ‘x’ PGITT ",
+                        "trainees this year."
                       ),
                       p("As the graph shows, not all drivers have acted upon PGITT need this year in the same direction.")
                     )
@@ -642,17 +650,17 @@ twm_tab_panel <- function() {
                       "State-funded primary or secondary schools in England."
                     ),
                     tags$li(
-                      strong("Last year’s PGITT need: "),
-                      "The 2025/26 PGITT trainee need as estimated by the Teacher Workforce Model."
+                      strong("2025/26 PGITT need: "),
+                      "Last year’s PGITT trainee need as estimated by the teacher workforce model."
                     ),
                     tags$li(
                       strong("Demand growth YOY: "),
                       "Change in teacher demand relating to pupil number change rates based on national pupil projections data. ",
                       em(
-                        "Negative values suggest year-on-year (YOY) changes in teacher demand is lower due to projected pupil numbers ",
-                        "falling more rapidly or growing less rapidly, acting to reduce PGITT need. ",
-                        "By contrast, positive values suggest teacher demand is growing more rapidly ",
-                        "YOY due to projected pupil numbers falling less rapidly or growing more rapidly."
+                        "Negative values suggest teacher demand is ",
+                        "falling year-on-year (YOY) due to projected pupil numbers falling more rapidly or growing ",
+                        "less rapidly, acting to reduce PGITT need. By contrast, positive values suggest teacher ",
+                        "demand is growing YOY due to projected pupil numbers falling less rapidly or growing more rapidly."
                       )
                     ),
                     tags$li(
@@ -667,13 +675,13 @@ twm_tab_panel <- function() {
                       strong("Working hour losses: "),
                       "Losses of teachers through individual teachers reducing their  working hours between years. ",
                       em(
-                        "Negative numbers suggest fewer forecasted working hour losses reducing PGITT need, ",
-                        "whilst positive numbers suggest more forecasted working hour losses."
+                        "Negative numbers suggest fewer forecasted working hour losses that will require replacement ",
+                        "leading to lower PGITT need, whilst positive numbers suggest more forecasted working hour losses."
                       )
                     ),
                     tags$li(
                       strong("Returners: "),
-                      "Teachers who enter service having been employed as a regular teacher in the sector previously. ",
+                      "Teachers who enter service having been employed as a regular teacher in the state-funded sector previously. ",
                       em(
                         "Negative numbers suggest more returners are expected acting to reduce PGITT need, ",
                         "whilst positive numbers suggest fewer expected returners."
@@ -681,13 +689,12 @@ twm_tab_panel <- function() {
                     ),
                     tags$li(
                       strong("NTSF: new to state-funded sector entrants. "),
-                      "Teachers who enter service having not been employed as a regular teacher ",
-                      "in the sector previously and are not newly qualified ",
-                      "entrants (NQEs). This  includes newly qualified teachers that defer entry into service by ",
-                      "4 to 16 months. ",
+                      "Teachers who enter service having not been employed as a regular teacher in the sector ",
+                      "previously and are not newly qualified entrants (NQEs). This includes newly qualified teachers ",
+                      "that defer entry into service by 4 to 16 months. ",
                       em(
                         "Negative numbers suggest more NTSF entrants are expected leading to ",
-                        "lower PGITT need, whilst positive numbers suggest fewer expected NTSFs."
+                        "lower PGITT need, whilst positive numbers suggest fewer expected NTSFs. "
                       )
                     ),
                     tags$li(
@@ -696,39 +703,39 @@ twm_tab_panel <- function() {
                       "than PGITT courses, including undergraduate ITT, assessment only, Scotland/Wales, ",
                       "and recognition of overseas qualified status. ",
                       em(
-                        "Negative numbers suggest more NQEs ",
-                        "from other sources are expected acting to reduce PGITT need, whilst positive numbers suggests fewer."
+                        "Negative numbers suggest more NQEs from other sources are expected, ",
+                        "acting to reduce PGITT need, whilst positive numbers suggest fewer are expected."
                       )
                     ),
                     tags$li(
                       strong("ITT–NQE conversion rate: "),
-                      "this rate is applied to reflect that not all NQEs start in full-time ",
-                      "roles, trainees that do not complete ITT, and those that do not immediately enter ",
-                      "employment after ITT (i.e. ITT completion and post ITT employment rates). ",
+                      "this rate is applied to reflect that not all NQEs start in full-time roles, ",
+                      "there are some trainees that do not complete ITT, ",
+                      "and there are those that do not immediately enter employment after ITT ",
+                      "(i.e. ITT completion and post ITT employment rates).",
                       em(
-                        "Negative numbers suggest a higher conversion rate between trainees and NQEs, acting to reduce ",
-                        "PGITT need, the opposite is true for positive numbers. "
+                        "Negative numbers suggest a higher conversion rate between trainees and NQEs, ",
+                        "acting to reduce PGITT need, the opposite is true for positive numbers."
                       )
                     ),
                     tags$li(
                       strong("Under-supply adjustment: "),
-                      "this accounts for potential supply shortfalls resulting from ",
-                      "the two ITT cycles prior to the year for which we are setting PGITT need. These are ITT ",
-                      "cycles that have already occurred but are yet to be reflected in the School Workforce ",
-                      "Census. If a shortfall is estimated, the model assumes additional teachers will need to ",
-                      "be recruited via PGITT to correct it. The model accounts for ITT recruitment, teacher ",
-                      "retention, and other recruitment routes (e.g., returners). This holistic assessment ",
-                      "means the impact of missing historical PGITT trainee need may be offset by wider ",
-                      "recruitment or retention being better than expected. ",
+                      "this accounts for potential supply shortfalls between 2024/25 (the most recent SWC) and 2026/27, ",
+                      "reflecting recruitment impacts from the two ITT cycles prior to 2026/27. ",
+                      "These are ITT cycles that have already occurred but are yet to be reflected in the school workforce census. ",
+                      "If a shortfall is estimated, the model assumes additional teachers will need to be recruited via PGITT to correct it. ",
+                      "The model accounts for ITT recruitment, teacher retention, and other recruitment routes ",
+                      "(e.g., returners). This holistic assessment means the impact of missing historical PGITT ",
+                      "trainee need may be offset by wider recruitment or retention being better than expected ",
                       em(
-                        "Negative numbers reflects that the ",
-                        "adjustment is smaller than last year resulting in reduced PGITT need. No bar means no ",
-                        "adjustment was needed because there is no supply shortfall expected from the two prior ITT cycles",
+                        "Negative numbers reflects that the adjustment is smaller than last year ",
+                        "resulting in reduced PGITT need. No bar means no adjustment was needed because ",
+                        "there is no supply shortfall expected from the two prior ITT cycles. ",
                       )
                     ),
                     tags$li(
-                      strong("This year’s PGITT need: "),
-                      "The 2026/27 PGITT trainee need as estimated by the Teacher Workforce Model."
+                      strong("2026/27 PGITT need: "),
+                      "This year’s PGITT trainee need as estimated by the teacher workforce model."
                     )
                   )
                 )
