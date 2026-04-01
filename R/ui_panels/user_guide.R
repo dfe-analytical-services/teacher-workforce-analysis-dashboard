@@ -8,14 +8,15 @@ user_guide_panel <- function() {
           h1("Teacher workforce supply dashboard user guide"),
           h2("Introduction"),
           p(
-            "The Department for Education (DfE) has developed the Teacher Workforce Supply ",
-            "Dashboard to provide clear, accessible insight into how Postgraduate Initial Teacher ",
-            "Training (PGITT) trainee need is estimated using the teacher workforce model."
+            "The Department for Education (DfE) has developed the ",
+            em("Teacher Workforce Supply Dashboard "),
+            "to provide clear, accessible insight into how postgraduate initial teacher ",
+            "training (PGITT) trainee need is estimated using the teacher workforce model."
           ),
           p(
-            "The teacher workforce model (TWM) is a national stocks and flows model covering all ",
+            "The teacher workforce model (TWM) is a national stocks-and-flows model covering all ",
             "state-funded primary schools (including maintained nursery classes attached to ",
-            "schools) and secondary schools in England, including post 16 provision, academies, ",
+            "schools) and secondary schools in England, including post-16 provision, academies, ",
             "and free schools"
           ),
           p(
@@ -27,13 +28,13 @@ user_guide_panel <- function() {
           ),
           p(
             "This interactive dashboard accompanies the ",
-            em("Teacher demand and postgraduate trainee need"),
+            strong("Teacher demand and postgraduate trainee need"),
             "publication, available here: [link]."
           ),
           h2("Context and purpose"),
           p(
-            "The ‘Teacher demand and PGITT need’ section of the dashboard supports analysis of ",
-            "teacher supply and trainee demand by visualising several components of the teacher ",
+            "The ", em("‘Teacher demand and PGITT need’"), " section of the dashboard supports analysis of ",
+            "teacher demand and supply and trainee demand by visualising several components of the teacher ",
             "workforce model. It enables users to:"
           ),
           tags$ul(
@@ -51,20 +52,44 @@ user_guide_panel <- function() {
           h2("Disclaimers and caveats"),
           tags$ul(
             tags$li(
-              "Figures used within the TWM may differ to the School Workforce in England ",
-              "publication (SWC) which includes special schools and PRUs within the state-funded ",
-              "schools sector."
+              "The inputs to the teacher workforce model are the most timely data available as ",
+              "of February 2026. It has been presented within the ",
+              em("'Teacher demand and PGITT need'"),
+              " part of the dashboard as it was the data used to estimate 2026/27 PGITT need.",
+              tags$ul(
+                tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
+                tags$li(
+                  "As a consequence, the ",
+                  em("'Teacher demand and PGITT need'"),
+                  " part of the dashboard will not be updated after publication."
+                ),
+                tags$li(
+                  "Therefore, these data may differ slightly to that in subsequent updates to ",
+                  "the school workforce census (SWC), ITT census and ITT performance ",
+                  "profiles data etc."
+                )
+              )
             ),
             tags$li(
-              "Leavers are counted in different academic years in the TWM and SWC. In the ",
-              "TWM, teachers that are recorded as being in service in the November 2023 SWC, ",
-              "but not within the November 2024 SWC are assumed to be leavers in the ",
-              "2024/25 academic year. Whereas, in the SWC, these leavers would be counted ",
-              "as leavers in the 2023/24 academic year. ",
+              "Note – in future years, PGITT need will be calculated for future ITT recruitment ",
+              "cohorts, and will reflect any data updates."
+            ),
+            tags$li(
+              "Figures used within the TWM may differ to the SWC which includes special ",
+              "schools and PRUs within the state-funded schools sector."
+            ),
+            tags$li(
+              "This publication uses a different naming convention to the SWC for teachers leavers. ",
               tags$ul(
                 tags$li(
+                  "A teacher that leaves service between the November 2023 and November ",
+                  "2024 SWC is classified as being a 2023/24 leaver in the School Workforce ",
+                  "publication. By contrast, in the TWM, such leavers are classified as being ",
+                  "leavers in the 2024/25 academic year."
+                ),
+                tags$li(
                   "This approach is taken within the TWM for modelling purposes to ensure ",
-                  "these teachers align with entrant numbers coming in."
+                  "leavers align with entrants coming in to replace them."
                 ),
                 tags$li(
                   "I.e. teachers leaving at the very end of the 2023/24 academic year would ",
@@ -77,8 +102,8 @@ user_guide_panel <- function() {
               "national pupil projections release due to:",
               tags$ul(
                 tags$li(
-                  "Coverage differences needed to align with TWM methodology (e.g.post-16 ",
-                  "pupils in secondary schools are included within the TWM), and"
+                  "Coverage differences which are needed to align with the TWM methodology ",
+                  "(e.g. post-16 pupils in secondary schools are included within the TWM), and"
                 ),
                 tags$li(
                   "Adjustments reflecting the actual number of pupils captured in October ",
@@ -99,7 +124,7 @@ user_guide_panel <- function() {
               "will be highlighted in blue."
             ),
             tags$li(
-              "The ", em("Teacher demand and PGITT need "),
+              "The ", em("'Teacher demand and PGITT need' "),
               "tab contains several charts, diagrams and tables. These are organised into tabbed ",
               "panels, and users can move between them by clicking the chart titles displayed ",
               "above the chart space. The active chart tab will be highlighted in yellow. "
@@ -107,7 +132,7 @@ user_guide_panel <- function() {
             tags$li(
               "Most charts in this dashboard are interactive. When users move their cursor ",
               "across a chart, a hover label will appear showing additional context, underlying ",
-              "data values, or comparisons across groups."
+              "data values, or comparisons between groups."
             ),
             tags$li(
               "Many pages include dropdown menus that allow users to filter results by school ",
