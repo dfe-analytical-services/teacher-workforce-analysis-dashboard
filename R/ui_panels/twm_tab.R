@@ -271,21 +271,23 @@ twm_tab_panel <- function() {
 
             tabPanel(
               "PGITT trainee need calculation",
-              h2("Calculation of Postgraduate Initial Teacher Training (PGITT) trainee need"),
+              h2("Calculation of postgraduate initial teacher training (PGITT) trainee need"),
               p(
-                "This year, the Teacher Workforce Model has estimated PGITT trainee need for 2026/27 courses. ",
-                "This refers to trainees that will be recruited during 2025/26, to start training in September 2026. ",
-                "They’ll be newly qualified teachers in 2027/28, entering the teaching workforce in September 2027."
+                "This year, the teacher workforce model has estimated PGITT trainee need ",
+                "for 2026/27 courses. This refers to trainees that will be recruited during 2025/26, to start ",
+                "training in September 2026, to become newly qualified teachers in 2027/28, entering ",
+                "the teaching workforce in September 2027."
               ),
 
               # Top box: flow chart
 
               bslib::card(
-                bslib::card_header("PGITT trainee need 2026/27 calculation"),
+                bslib::card_header("Estimating PGITT trainee need for 2026/27"),
                 bslib::card_body(
                   tags$img(
                     src   = "pgitt_trainee_need_26_27_calculation_flow_chart.svg",
-                    alt   = "Schematic of how Postgraduate Initial Teacher Training trainee need for 2026/27 is estimated by the Teacher Workforce Model",
+                    alt   = "Schematic of how teacher demand trajectories and postgraduate
+                    initial teacher training trainee need for 2026/27 is estimated by the teacher workforce model",
                     style = "max-width:80%; height:auto; display:block;"
                   )
                 )
@@ -297,7 +299,7 @@ twm_tab_panel <- function() {
                 bslib::card_header("Estimating PGITT trainee need for 2026/27"),
                 bslib::card_body(
                   p(
-                    "This diagram shows how the Teacher Workforce Model (TWM) estimates the number of ",
+                    "This diagram shows how the teacher workforce model (TWM) estimates the number of ",
                     "postgraduate initial teacher training (PGITT) trainees needed for 2026/27 for state-funded primary schools ",
                     "and for state-funded secondary schools for each secondary subject. ",
                     "The process happens in two main steps:"
@@ -306,7 +308,7 @@ twm_tab_panel <- function() {
                     tags$li("Calculating future teacher demand, and"),
                     tags$li(
                       "Estimating how many postgraduate initial trainees are needed to meet that demand ",
-                      "once expected workforce changes are taken into account."
+                      "once other expected workforce changes are taken into account."
                     )
                   ),
                   p(strong("Step 1: Calculate teacher demand trajectory to 2027/28")),
@@ -314,11 +316,11 @@ twm_tab_panel <- function() {
                   tags$ul(
                     tags$li(
                       "The model assumes that the current numbers of teacher numbers from the latest school workforce census (2024/25) ",
-                      "are sufficient to meet current demand."
+                      "are sufficient to meet current pupil demand."
                     ),
                     tags$li(
                       "Using projected pupil numbers, the model makes an assumption that rising pupil numbers increase teacher demand, ",
-                      "with part of the demand being met by growth in pupil-to-teacher ratios. ",
+                      "with part of the demand being met by growth in pupil to teacher ratios. ",
                       "The opposite is true when pupil numbers are projected to fall. ",
                       "This reflects historical relationships between these factors."
                     )
@@ -340,37 +342,42 @@ twm_tab_panel <- function() {
                         type = "a",
                         # a.
                         tags$li(
-                          "The difference between teacher demand for 2027/28 and the size of the workforce in 2026/27. ",
-                          "For subjects for which it is estimated there will be a supply deficit, an estimate of 2026/27 ",
+                          "The difference between teacher demand for 2027/28 and the size of the ",
+                          "teacher workforce in 2026/27. For subjects for which it is estimated there ",
+                          "will be a 2026/27 teacher supply deficit, an estimate of ",
                           strong("SUPPLY"),
-                          " is used. This ensures that PGITT need is inflated to correct that deficit. ",
-                          "For subjects for which a supply surplus is estimated, ",
+                          " is used as the basis for the 2026/27 teacher workforce for that subject. This ",
+                          "ensures that PGITT need is inflated to correct that deficit. For subjects for ",
+                          "which a 2026/27 teacher supply surplus is estimated, 2026/27 ",
                           strong("DEMAND"),
-                          " is used. To do otherwise would mean PGITT need would be deflated due to the surplus."
+                          " is used as the basis for the 2026/27 teacher workforce for that subject. To",
+                          "do otherwise would mean PGITT need would be deflated due to the surplus."
                         ),
                         # b.
                         tags$li(
                           "Estimated losses from the workforce in 2027/28 that require replacement. ",
-                          "These include both leavers (teachers leaving the sector) and losses due to teachers reducing ",
-                          "their individual working hours between years."
+                          "These include both leavers (teachers leaving the state funded sector) and ",
+                          "losses due to teachers reducing their individual working hours between years."
                         )
                       )
                     ),
 
                     # 2.
                     tags$li(
-                      "From the teacher entrant need in 2027/28, the model subtracts the teachers expected to enter in 2027/28 ",
-                      "through routes other than PGITT. These include returners, teachers new to the state-funded sector, ",
-                      "and newly qualified entrants from undergraduate ITT or assessment-only routes. ",
-                      "The remainder is the PGITT NQE entrant need for 2027/28 in FTE."
+                      "From the teacher entrant need in 2027/28, the model subtracts the teachers ",
+                      "expected to enter in 2027/28 through routes other than PGITT. These include ",
+                      "returners, teachers new to the state-funded sector, and newly qualified entrants ",
+                      "from undergraduate ITT or assessment-only routes. The remainder is the PGITT ",
+                      "newly qualified entrant (NQE) need for 2027/28 in FTE."
                     ),
 
                     # 3.
                     tags$li(
-                      "Finally, this is converted into the PGITT trainee need for 2026/27 (headcount) by applying an NQE-specific ",
-                      "FTE-to-headcount conversion rate (not all NQEs will start in full-time roles) and applying ITT completion and ",
-                      "post-training employment rates (to account for trainees who will not complete ITT and those who will not enter ",
-                      "service in state-funded schools within four to six months)."
+                      "Finally, this is converted into the PGITT trainee need for 2026/27 (headcount) by ",
+                      "applying an NQE-specific FTE-to-headcount conversion rate (not all NQEs will ",
+                      "start in full-time roles) and applying ITT completion and post-training ",
+                      "employment rates (to account for trainees who will not complete ITT and those ",
+                      "who will not enter service in state-funded schools within four to six months)."
                     )
                   )
                 )
