@@ -919,6 +919,13 @@ twm_tab_panel <- function() {
                     "entrants (NQEs) may be needed to replace teacher leavers which will lead to higher ",
                     "PGITT trainee need (all else being equal)."
                   ),
+                  p(
+                    "Historical leaver rates were retrospectively revised downward in the SWC last year. This ",
+                    "related to a data issue within the Teacher Pension Scheme extracts that inflated leavers ",
+                    "and returners for <1,000 teachers per year that has since been resolved by the ",
+                    "publication team. This revision has been a key driver in there being a lower leaver rate ",
+                    "trajectory in this year’s calculations of 2026/27 PGITT trainee need compared to those for 2025/26."
+                  ),
                   p(strong("Entrant types")),
                   p(
                     "Newly qualified entrants (NQEs) are teachers who gain qualified teacher status and will ",
