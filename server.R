@@ -695,8 +695,9 @@ server <- function(input, output, session) {
     ggiraph::girafe(
       ggobj = p,
       width_svg = 12,
-      height_svg = 7,
+      height_svg = 6,
       options = list(
+        ggiraph::opts_sizing(rescale = TRUE),
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_toolbar(saveaspng = FALSE),
         ggiraph::opts_hover(css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"),
