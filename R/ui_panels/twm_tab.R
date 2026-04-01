@@ -753,7 +753,7 @@ twm_tab_panel <- function() {
               h2("Flow trajectories"),
               p(
                 "Trajectories of inflows and outflows to the teacher workforce as estimated ",
-                "by the Teacher Workforce Model."
+                "by the teacher workforce model."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -776,7 +776,7 @@ twm_tab_panel <- function() {
                     # Mini tab 2 - table
                     table_output = div(
                       tags$p("This table shows the latest data which relates to the [Month] 2026 publication.
-                             This was the latest data availability at this point in time but this data may differ to the latest School Workforce Census data."),
+                             This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."),
                       reactableOutput("table_flow_trajectories")
                     ),
 
@@ -847,13 +847,13 @@ twm_tab_panel <- function() {
                     bslib::card_header("About this graph"),
                     bslib::card_body(
                       p(
-                        "The Teacher Workforce Model uses trajectories of inflows into and outflows from the ",
-                        "teacher workforce to estimate the future PGITT trainee need by phase and secondary subject. ",
-                        "These trajectories are in part based on historical data."
+                        "The teacher workforce model uses trajectories of inflows into and outflows from the ",
+                        "teacher workforce to estimate future PGITT trainee need by phase and secondary ",
+                        "subject. These trajectories are in part based on historical data. "
                       ),
                       p(
-                        "Use the filter list to scroll through our trajectories for entrants and leavers ",
-                        "to state-funded nursery & primary, and secondary schools."
+                        "Use the filter list to scroll through trajectories for teacher entrants and leavers to state-",
+                        "funded primary and secondary schools."
                       )
                     )
                   )
@@ -867,7 +867,7 @@ twm_tab_panel <- function() {
                   p(strong("Leaver rates")),
                   p(
                     "Under 55 leaver rates reflect the proportion of the total teacher workforce who will leave ",
-                    "service between years and are under 55 years of age."
+                    "service each year and are under 55 years of age."
                   ),
                   p(
                     "55+ leaver rates do the same but for those that are aged 55 or over, many of whom will ",
@@ -878,25 +878,27 @@ twm_tab_panel <- function() {
                     "service (regardless of age). This is the sum of both under 55 leaver and 55+ leaver rates."
                   ),
                   p(
-                    "The higher leaver rates are expected to be, the more PGITT newly qualified entrants ",
-                    "(NQEs) may be needed to replace leavers, and the higher PGITT trainee need will be (all else being equal)."
+                    "The higher the teacher leaver rates are expected to be, the more PGITT newly qualified ",
+                    "entrants (NQEs) may be needed to replace teacher leavers which will lead to higher ",
+                    "PGITT trainee need (all else being equal)."
                   ),
                   p(strong("Entrant types")),
                   p(
                     "Newly qualified entrants (NQEs) are teachers who gain qualified teacher status and will ",
                     "be recorded as entering service in the English state-funded schools sector (primary and ",
-                    "secondary schools only) in the following November school workforce census. "
+                    "secondary schools only). "
                   ),
                   p(
-                    "New to state funded sector entrants (NTSF) are also teachers who will enter service in ",
-                    "the English state-funded schools sector for the first time as recorded within the school ",
-                    "workforce census excluding NQEs. This group includes newly qualified teachers that ",
-                    "defer entry into the workforce by 4 to 16 months, and those that have only taught in ",
-                    "other sectors, e.g. independent schools, Wales, and Scotland."
+                    "New to state funded sector entrants (NTSF) are teachers who enter service having not ",
+                    "been employed as a regular teacher in the sector previously and are not newly qualified ",
+                    "entrants (NQEs). This group includes newly qualified teachers that defer entry into the ",
+                    "workforce by 4 to 16 months, and those that have only taught in other sectors, e.g. ",
+                    "independent schools, Wales, and Scotland."
                   ),
                   p(
                     "Returners are teachers who enter service in the English state-funded schools sector, ",
-                    "and are recorded within the school workforce census as having worked in the sector before."
+                    "and are recorded within the school workforce census as having worked in the state ",
+                    "funded sector before."
                   ),
                   p(
                     "The more NQEs, deferrers, or returners expected, the lower the PGITT trainee need will ",
