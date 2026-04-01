@@ -359,7 +359,7 @@ plot_drivers_waterfall <- function(df_raw) {
     "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
     "Leavers" = "Teachers leaving the sector between years. Orange = fewer leavers; Green = more leavers.",
     "Working hour losses" = "Reduction in working hours for individual teachers between years. Orange = fewer hours lost; Green = more hours lost.",
-    "Returners" = "Teachers re entering service after previously working in the state funded sector. Orange = more returners expected; Green = fewer returners expected.",
+    "Returners" = "Teachers re-entering service after previously working in the state-funded sector. Orange = more returners expected; Green = fewer returners expected.",
     "NTSF" = "Teachers new to the state-funded sector (including deferrer NQEs). Orange = more NTSF expected; Green = fewer NTSF expected.",
     "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
     "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
