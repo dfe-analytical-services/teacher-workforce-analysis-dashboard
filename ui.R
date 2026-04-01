@@ -63,17 +63,14 @@ ui <- function(input, output, session) {
 
     # Google analytics --------------------------------------------------------
     tags$head(includeHTML(("google-analytics.html"))),
-    tags$head(
-      tags$link(
-        rel = "stylesheet",
-        type = "text/css",
-        href = "dfe_shiny_gov_style.css"
-      )
-    ),
 
     # Header ------------------------------------------------------------------
-    dfeshiny::header(
-      header = "Teacher Workforce Supply Dashboard (England)"
+    shinyGovstyle::full_width_overrides(), # TODO: remove when built in
+
+    shinyGovstyle::skip_to_main(),
+    shinyGovstyle::header(
+      main_text = "Department for Education",
+      secondary_text = "Teacher Workforce Supply Dashboard"
     ),
 
     # Beta banner -------------------------------------------------------------

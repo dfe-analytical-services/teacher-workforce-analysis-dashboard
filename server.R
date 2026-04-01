@@ -185,7 +185,6 @@ server <- function(input, output, session) {
   })
 
 
-
   # Table: pupil/teacher numbers ----------------------------------------------------------
 
   output$tablePupilTeacher <- renderReactable({

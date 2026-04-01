@@ -19,7 +19,6 @@ twm_tab_panel <- function() {
     ),
     gov_main_layout(
       gov_row(
-
         # Header --------------------------------------------------------------
         column(
           width = 12,

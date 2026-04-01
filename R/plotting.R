@@ -36,8 +36,9 @@ secondary_lock <- list(
 # pupil teacher timeseries plot
 
 plot_pupil_teacher_timeseries <- function(
-    df, phase = NULL,
-    axis_lock = NULL) {
+  df, phase = NULL,
+  axis_lock = NULL
+) {
   #--------------------------
   # Set y axis name, projection years, legend position
   #--------------------------
@@ -274,9 +275,6 @@ plot_pupil_teacher_timeseries <- function(
 
   return(p)
 }
-
-
-
 
 
 # pgitt trainee need timeseries
