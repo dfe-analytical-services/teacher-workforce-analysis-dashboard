@@ -52,50 +52,87 @@ twm_tab_panel <- function() {
                     "publication, available here: [link]"
                   ), # TO ADD: PUB LINK
                   p(
-                    "It is designed to help users understand how PGITT trainee need is estimated using the ",
-                    "Department for Education’s Teacher Workforce Model (TWM). The dashboard also highlights ",
-                    "the key factors driving changes in PGITT trainee need over time and provides greater ",
-                    "transparency around the model’s forecasted inflows and outflows."
+                    "It is designed to help users understand how teacher demand trajectories and PGITT ",
+                    "trainee need is estimated using the Department for Education’s teacher workforce ",
+                    "model (TWM). The dashboard also highlights the key factors driving changes in PGITT ",
+                    "trainee need and provides greater transparency around the model’s forecasted inflows and outflows."
                   ),
                   p(
-                    "Data is available for state-funded nursery & primary, and secondary schools in England. ",
-                    "Where possible, secondary data is also broken down by individual subject."
+                    "Data is available for state-funded primary (including maintained nursery classes ",
+                    "attached to schools), and secondary schools in England. Where possible, secondary ",
+                    "data is also broken down by individual subject.",
+                    "Please see the user guide for details of data sources."
                   ),
-                  p(strong("Last updated:"), "XX/XX/XXXX"), # TO ADD: PUB DATE
-                  p(
-                    strong("Data sources:"), "Underlying data can be found in XX, XX, and XX tables of the ", # TO ADD TABLE NAMES
-                    "latest publication, and for the ", em("Flow trajectories "), "tab, in last year’s publication."
-                  )
+                  p(strong("Last updated:"), "XX/XX/XXXX") # TO ADD: PUB DATE
                 )
               ),
 
               # Disclaimers text box
+              # Disclaimers text box
               bslib::card(
                 bslib::card_header("Disclaimers"),
                 bslib::card_body(
-                  p(
-                    "Figures used within the TWM may differ to the School workforce in England publication ",
-                    "which includes special schools and PRUs within the state-funded schools sector."
-                  ),
-                  p(
-                    "Leavers are counted in different academic years in the TWM and School workforce publication. ",
-                    "In the TWM, teachers that are recorded as being in service in the November 2023 School Workforce Census (SWC), ",
-                    "but not within the November 2024 SWC are assumed to be leavers in the 2024/25 academic year. Whereas, ",
-                    "in the SWC, these leavers would be counted as leavers in the 2023/24 academic year."
-                  ),
-                  p(
-                    "The TWM includes post-16 pupils in state-funded secondary school settings. ",
-                    "Other publications may exclude these pupils, so figures may differ slightly."
-                  ),
-                  p(
-                    "Pupil projections displayed in this dashboard differ slightly to those published in ",
-                    "the National pupil projections publication due to slight coverage differences, to ensure that ",
-                    "they are consistent with the methodology of the TWM. Finally, they have been adjusted ",
-                    "slightly to account for the actual number of pupils captured in October 2025 via school returns."
+                  tags$ul(
+                    tags$li(
+                      "The inputs to the teacher workforce model are the most timely data available as ",
+                      "of February 2026. It has been presented within this part of the dashboard as it ",
+                      "was the data used to estimate 2026/27 PGITT need.",
+                      tags$ul(
+                        tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
+                        tags$li("As a consequence, this part of the dashboard will not be updated after publication."),
+                        tags$li(
+                          "Therefore, these data may differ slightly to that in subsequent updates to ",
+                          "the school workforce census (SWC), ITT census and ITT performance ",
+                          "profiles data etc."
+                        )
+                      )
+                    ),
+                    tags$li(
+                      "Note – in future years, PGITT need will be calculated for future ITT recruitment ",
+                      "cohorts, and will reflect any data updates."
+                    ),
+                    tags$li(
+                      "Figures used within the TWM may differ to the SWC which includes special ",
+                      "schools and PRUs within the state-funded schools sector."
+                    ),
+                    tags$li(
+                      "This publication uses a different naming convention to the SWC for teachers leavers. ",
+                      tags$ul(
+                        tags$li(
+                          "A teacher that leaves service between the November 2023 and November ",
+                          "2024 SWC is classified as being a 2023/24 leaver in the School Workforce ",
+                          "publication. By contrast, in the TWM, such leavers are classified as being ",
+                          "leavers in the 2024/25 academic year."
+                        ),
+                        tags$li(
+                          "This approach is taken within the TWM for modelling purposes to ensure ",
+                          "leavers align with entrants coming in to replace them."
+                        ),
+                        tags$li(
+                          "I.e. teachers leaving at the very end of the 2023/24 academic year would ",
+                          "largely be replaced by entrants entering service in September 2024."
+                        )
+                      )
+                    ),
+                    tags$li(
+                      "Finally, pupil projections in the dashboard differ slightly from those in the ",
+                      "national pupil projections release due to:",
+                      tags$ul(
+                        tags$li(
+                          "Coverage differences which are needed to align with the TWM methodology ",
+                          "(e.g.post-16 pupils in secondary schools are included within the TWM), and"
+                        ),
+                        tags$li(
+                          "Adjustments reflecting the actual number of pupils captured in October ",
+                          "2025 school returns."
+                        )
+                      )
+                    )
                   )
                 )
               )
             ),
+
 
 
             #####################################################################
@@ -185,8 +222,8 @@ twm_tab_panel <- function() {
                     bslib::card_body(
                       p(
                         "Historical and projected pupil numbers are presented here alongside historic teacher ",
-                        "numbers and future teacher demand. These figures cover state funded nursery and ",
-                        "primary, or state funded secondary schools in England."
+                        "numbers and future teacher demand. These figures cover state-funded primary and ",
+                        "state-funded secondary schools in England."
                       ),
                       p("Select a school phase to view its data and hover over the data points to see the value."),
                       tags$ul(
