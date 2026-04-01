@@ -395,7 +395,7 @@ twm_tab_panel <- function() {
               h2("Postgraduate initial teacher training (PGITT) trainee need time series"),
               p(
                 "PGITT trainee need by phase and subject, and how it has changed over ",
-                "time from 2021/22 to 2026/27, as estimated by the Teacher Workforce Model."
+                "time from 2021/22 to 2026/27, as estimated by the teacher workforce model."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -474,17 +474,17 @@ twm_tab_panel <- function() {
                     bslib::card_header("About this graph"),
                     bslib::card_body(
                       p(
-                        "This page shows PGITT trainee need for both primary and secondary ",
-                        "and each secondary subject for the 2021/22 to 2026/27 academic years. "
+                        "This page shows PGITT trainee need for both primary and secondary and each ",
+                        "secondary subject for the 2021/22 to 2026/27 academic years."
                       ),
                       p(
-                        "Select a school phase or secondary subject to view its data ",
-                        "and hover over the data points to see the value. "
+                        "Select a school phase or secondary subject to view its data and hover over the columns ",
+                        "to see the value."
                       ),
                       p("Footnotes:"),
                       tags$ul(
                         tags$li("PGITT trainee need has been rounded to the nearest 5."),
-                        tags$li("‘Others’ includes Child development, Citizenship, Law, Media Studies,
+                        tags$li("‘Others’ includes Child Development, Citizenship, Law, Media Studies,
                                 Other Social Studies, Other Technology, Politics, Psychology, Sociology,
                                 and Social Sciences among others.")
                       )
@@ -499,20 +499,22 @@ twm_tab_panel <- function() {
                 bslib::card_header("Trends in PGITT trainee need over time"),
                 bslib::card_body(
                   p(
-                    "Overall PGITT need peaked in 2023/24 with the number of trainees needed falling to ",
-                    "lower levels for both primary and the majority of secondary subjects."
+                    "Overall PGITT trainee need (primary and secondary combined) peaked in 2023/24 with ",
+                    "the number of trainees needed falling to lower levels for both primary and the majority ",
+                    "of secondary subjects in subsequent years."
                   ),
                   p(
                     "This lower PGITT need has been driven by pupil numbers falling more rapidly for primary, ",
-                    "and growing less rapidly and levelling out for secondary respectively. "
+                    "and growing less rapidly and levelling out for secondary respectively."
                   ),
                   p(
-                    "Additionally, teacher retention and PGITT recruitment have improved for most subjects ",
-                    "making supply forecasts more favourable further helping to reduce PGITT recruitment needs."
+                    "Additionally, both teacher retention forecasts and PGITT recruitment have become ",
+                    "more favourable for most subjects making supply forecasts more favourable further ",
+                    "helping to reduce PGITT recruitment needs."
                   ),
                   p(
                     "Changes in individual subjects have been driven by individual circumstances, with ",
-                    "further information available on the ‘drivers of PGITT need changes’ tab."
+                    "further information available on the ", em("'Drivers of change in PGITT trainee need'"), " tab."
                   )
                 )
               )
