@@ -85,10 +85,16 @@ server <- function(input, output, session) {
   output$data_sources_updates <- reactable::renderReactable({
     df <- tibble::tribble(
       ~Tab, ~`Data from`, ~File, ~`Data last updated`,
-      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "Drivers of PGITT trainee need changes", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "Flow trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX"
+      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link",
+      "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’",
+      "XX/XX/XXXX",
+      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link",
+      "Featured table ‘PGITT trainee need time series by phase and subject’", "XX/XX/XXXX",
+      "Drivers of change in PGITT trainee need", "Teacher demand and PGITT need publication - link",
+      "Supporting information data file ‘Calculation of drivers of 2026 to 2027 postgraduate ITT trainee need’", "XX/XX/XXXX",
+      "Flow trajectories", "Teacher demand and PGITT need publication - link",
+      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
+      and related data’ from this year’s publication (includes data from last year’s publication).", "XX/XX/XXXX"
     )
 
     reactable::reactable(
@@ -97,8 +103,7 @@ server <- function(input, output, session) {
       searchable = FALSE,
       sortable = FALSE,
       highlight = TRUE,
-      striped = TRUE,
-      defaultColDef = reactable::colDef(minWidth = 140)
+      striped = TRUE
     )
   })
 
