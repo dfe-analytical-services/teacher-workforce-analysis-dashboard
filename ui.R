@@ -56,17 +56,14 @@ ui <- function(input, output, session) {
       name = "Teacher Workforce Supply Dashboard (England)"
     ),
 
-    # Skip_to_main -------------------------------------------------------------
-    # Add a 'Skip to main content' link for keyboard users to bypass navigation.
-    # It stays hidden unless focussed via tabbing.
-    shinyGovstyle::skip_to_main(),
-
     # Google analytics --------------------------------------------------------
     tags$head(includeHTML(("google-analytics.html"))),
 
     # Header ------------------------------------------------------------------
     shinyGovstyle::full_width_overrides(), # TODO: remove when built in
 
+    # Add a 'Skip to main content' link for keyboard users to bypass navigation.
+    # It stays hidden unless focussed via tabbing.
     shinyGovstyle::skip_to_main(),
     shinyGovstyle::header(
       main_text = "Department for Education",
