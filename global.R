@@ -81,13 +81,13 @@ lapply(list.files("R/ui_panels/", full.names = TRUE), source)
 
 # Set global variables --------------------------------------------------------
 
-site_title <- "Teacher Workforce Supply Dashboard (England)" # name of app # UPDATED
-parent_pub_name <- "Statistical publication" # name of source publication # TBC
+site_title <- "Teacher workforce analysis dashboard (England)" # name of app
+parent_pub_name <- "Teacher demand and postgraduate trainee need" # name of source publication
 parent_publication <- # link to source publication
-  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TBC
+  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TO ADD
 
 # Set the URLs that the site will be published to
-site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # ??
+site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # TO ADD
 
 # Combine URLs into list for disconnect function
 # We can add further mirrors where necessary. Each one can generally handle

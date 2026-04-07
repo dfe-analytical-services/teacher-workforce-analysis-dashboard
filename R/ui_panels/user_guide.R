@@ -5,11 +5,11 @@ user_guide_panel <- function() {
       gov_row(
         column(
           12,
-          h1("Teacher workforce supply dashboard user guide"),
+          h1("Teacher workforce analysis dashboard user guide"),
           h2("Introduction"),
           p(
             "The Department for Education (DfE) has developed the ",
-            em("Teacher Workforce Supply Dashboard "),
+            em("Teacher workforce analysis dashboard "),
             "to provide clear, accessible insight into how postgraduate initial teacher ",
             "training (PGITT) trainee need is estimated using the teacher workforce model."
           ),
