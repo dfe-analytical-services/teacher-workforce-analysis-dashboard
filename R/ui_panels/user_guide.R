@@ -1,3 +1,10 @@
+# # ---------------------------------------------------------------------------------------------------------------
+#
+# USER INTERFACE COMPONENTS FOR: *User guide* tab
+# Includes layout, text and table output
+#
+# # ---------------------------------------------------------------------------------------------------------------
+
 user_guide_panel <- function() {
   tabPanel(
     "User guide",
@@ -15,9 +22,9 @@ user_guide_panel <- function() {
           ),
           p(
             "The teacher workforce model (TWM) is a national stocks-and-flows model covering all ",
-            "state-funded primary schools (including maintained nursery classes attached to ",
-            "schools) and secondary schools in England, including post-16 provision, academies, ",
-            "and free schools"
+            "state-funded primary schools (including maintained nurseries attached to schools) ",
+            "and secondary schools in England, including post-16 provision, academies, ",
+            "and free schools."
           ),
           p(
             "The model estimates the future number of qualified and unqualified teachers required ",
@@ -71,15 +78,15 @@ user_guide_panel <- function() {
               )
             ),
             tags$li(
-              "Note – in future years, PGITT need will be calculated for future ITT recruitment ",
-              "cohorts, and will reflect any data updates."
+              "Note – next year PGITT need will be calculated for 2027/28 and will reflect any ",
+              "data updates."
             ),
             tags$li(
               "Figures used within the TWM may differ to the SWC which includes special ",
               "schools and PRUs within the state-funded schools sector."
             ),
             tags$li(
-              "This publication uses a different naming convention to the SWC for teachers leavers. ",
+              "This publication uses a different naming convention to the SWC for teachers leaving service.",
               tags$ul(
                 tags$li(
                   "A teacher that leaves service between the November 2023 and November ",
@@ -113,7 +120,7 @@ user_guide_panel <- function() {
             )
           ),
           h2("Data sources and updates"),
-          p(em("Teacher demand and PGITT need"), " tab:"),
+          p(em("'Teacher demand and PGITT need'"), " tab:"),
           reactableOutput("data_sources_updates"),
           h2("User tips"),
           tags$ul(
