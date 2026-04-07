@@ -153,51 +153,49 @@ twm_tab_panel <- function() {
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
 
                 # Left column with chart/table/download
-                div(
-                  create_output_tabs(
-                    "pupil_teacher", # base id (kept consistent with output IDs below)
+                create_output_tabs(
+                  "pupil_teacher", # base id (kept consistent with output IDs below)
 
-                    # Mini tab 1 - chart
-                    chart_output = div(
-                      style = "margin-top: 1.5rem;",
-                      tags$p(
-                        "Pupil and teacher numbers are shown on separate y axes ",
-                        "because they are on very different scales. ",
-                        "The axes start above zero to make the trends easier to see."
-                      ),
-                      ggiraph::girafeOutput(
-                        "pupil_teacher_plot",
-                        width  = "100%",
-                        height = "600px"
-                      )
+                  # Mini tab 1 - chart
+                  chart_output = div(
+                    style = "margin-top: 1.5rem;",
+                    tags$p(
+                      "Pupil and teacher numbers are shown on separate y axes ",
+                      "because they are on very different scales. ",
+                      "The axes start above zero to make the trends easier to see."
                     ),
-
-                    # Mini tab 2 - table
-                    table_output = reactableOutput("tablePupilTeacher"),
-
-                    # Mini tab 3 - download
-
-                    download_output = tagList(
-                      radioButtons(
-                        inputId = "file_type_pupil_teacher",
-                        label = "Choose download file format",
-                        choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
-                        ),
-                        selected = "CSV (Up to X.XX MB)"
-                      ),
-                      uiOutput("download_button_ui_pupil_teacher")
+                    ggiraph::girafeOutput(
+                      "pupil_teacher_plot",
+                      width  = "100%",
+                      height = "600px"
                     )
+                  ),
+
+                  # Mini tab 2 - table
+                  table_output = reactableOutput("tablePupilTeacher"),
+
+                  # Mini tab 3 - download
+
+                  download_output = tagList(
+                    radioButtons(
+                      inputId = "file_type_pupil_teacher",
+                      label = "Choose download file format",
+                      choices = c(
+                        "CSV (Up to X.XX MB)",
+                        "XLSX (Up to X.XX MB)",
+                        "JPEG (Up to XXX KB)"
+                      ),
+                      selected = "CSV (Up to X.XX MB)"
+                    ),
+                    uiOutput("download_button_ui_pupil_teacher")
                   )
                 ),
 
-                # Right column: sticky sidebar with filter, about this graph text box and reactive text box
+                # Right column: sidebar with filter, about this graph text box and reactive text box
 
                 div(
-                  class = "sticky-sidebar",
-                  style = "position: sticky; top: 12px;",
+                  class = "sidebar",
+                  style = "top: 12px;",
 
                   # Filter
                   bslib::card(
@@ -438,45 +436,44 @@ twm_tab_panel <- function() {
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
 
                 # Left column with chart/table/download
-                div(
-                  create_output_tabs(
-                    "pgitt_trainee_need",
+                create_output_tabs(
+                  "pgitt_trainee_need",
 
-                    # Mini tab 1 - chart
-                    chart_output = div(
-                      style = "margin-top: 3rem;",
-                      ggiraph::girafeOutput(
-                        "pgitt_need_timeseries_plot",
-                        width  = "100%",
-                        height = "600px"
-                      )
-                    ),
-
-                    # Mini tab 2 - table
-                    table_output = reactableOutput("tablePgittNeedTimeseries"),
-
-                    # Mini tab 3 - download
-                    download_output = tagList(
-                      radioButtons(
-                        inputId = "file_type_pgitt_need",
-                        label = "Choose download file format",
-                        choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
-                        ),
-                        selected = "CSV (Up to X.XX MB)"
-                      ),
-                      uiOutput("download_button_ui_pgitt_need")
+                  # Mini tab 1 - chart
+                  chart_output = div(
+                    style = "margin-top: 3rem;",
+                    ggiraph::girafeOutput(
+                      "pgitt_need_timeseries_plot",
+                      width  = "100%",
+                      height = "600px"
                     )
+                  ),
+
+                  # Mini tab 2 - table
+                  table_output = reactableOutput("tablePgittNeedTimeseries"),
+
+                  # Mini tab 3 - download
+                  download_output = tagList(
+                    radioButtons(
+                      inputId = "file_type_pgitt_need",
+                      label = "Choose download file format",
+                      choices = c(
+                        "CSV (Up to X.XX MB)",
+                        "XLSX (Up to X.XX MB)",
+                        "JPEG (Up to XXX KB)"
+                      ),
+                      selected = "CSV (Up to X.XX MB)"
+                    ),
+                    uiOutput("download_button_ui_pgitt_need")
                   )
                 ),
 
-                # Right column: sticky sidebar with filters and about this graph text box
+
+                # Right column: sidebar with filters and about this graph text box
 
                 div(
-                  class = "sticky-sidebar",
-                  style = "position: sticky; top: 12px; overflow: visible;",
+                  class = "sidebar",
+                  style = "top: 12px; overflow: visible;",
 
                   # Filters
                   bslib::card(
@@ -574,49 +571,47 @@ twm_tab_panel <- function() {
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
 
                 # Left column with chart/table/download
-                div(
-                  create_output_tabs(
-                    "drivers_analysis",
+                create_output_tabs(
+                  "drivers_analysis",
 
-                    # Mini tab 1 - chart
-                    chart_output = div(
-                      style = "margin-top: 3rem;",
-                      ggiraph::girafeOutput("drivers_waterfall_plot",
-                        width  = "100%",
-                        height = "600px"
-                      )
-                    ),
-
-                    # Mini tab 2 - table
-                    table_output = div(
-                      h4("PGITT trainee need for 2025/26 and 2026/27"),
-                      reactable::reactableOutput("table_pgitt_need_diff"),
-                      tags$hr(),
-                      h4("Drivers of the change"),
-                      reactable::reactableOutput("table_drivers_breakdown")
-                    ),
-
-                    # Mini tab 3 - download
-                    download_output = tagList(
-                      radioButtons(
-                        inputId = "file_type_drivers",
-                        label = "Choose download file format",
-                        choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
-                        ),
-                        selected = "CSV (Up to X.XX MB)"
-                      ),
-                      uiOutput("download_button_ui_drivers")
+                  # Mini tab 1 - chart
+                  chart_output = div(
+                    style = "margin-top: 3rem;",
+                    ggiraph::girafeOutput("drivers_waterfall_plot",
+                      width  = NULL,
+                      height = NULL
                     )
+                  ),
+
+                  # Mini tab 2 - table
+                  table_output = div(
+                    h4("PGITT trainee need for 2025/26 and 2026/27"),
+                    reactable::reactableOutput("table_pgitt_need_diff"),
+                    tags$hr(),
+                    h4("Drivers of the change"),
+                    reactable::reactableOutput("table_drivers_breakdown")
+                  ),
+
+                  # Mini tab 3 - download
+                  download_output = tagList(
+                    radioButtons(
+                      inputId = "file_type_drivers",
+                      label = "Choose download file format",
+                      choices = c(
+                        "CSV (Up to X.XX MB)",
+                        "XLSX (Up to X.XX MB)",
+                        "JPEG (Up to XXX KB)"
+                      ),
+                      selected = "CSV (Up to X.XX MB)"
+                    ),
+                    uiOutput("download_button_ui_drivers")
                   )
                 ),
 
-                # Right column: sticky sidebar with filters and about this graph text box
+                # Right column: sidebar with filters and about this graph text box
                 div(
-                  class = "sticky-sidebar",
-                  style = "position: sticky; top: 12px; overflow: visible;",
+                  class = "sidebar",
+                  style = "top: 12px; overflow: visible;",
 
                   # Filters
                   bslib::card(
@@ -796,48 +791,47 @@ twm_tab_panel <- function() {
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
 
                 # Left column with chart/table/download
-                div(
-                  create_output_tabs(
-                    "flow_trajectories",
+                create_output_tabs(
+                  "flow_trajectories",
 
-                    # Mini tab 1 - chart
-                    chart_output = div(
-                      style = "margin-top: 3rem;",
-                      ggiraph::girafeOutput(
-                        outputId = "flow_timeseries_plot",
-                        width = "100%",
-                        height = "600px"
-                      )
-                    ),
-
-                    # Mini tab 2 - table
-                    table_output = div(
-                      tags$p("This table shows the latest data which relates to the [Month] 2026 publication.
-                             This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."),
-                      reactableOutput("table_flow_trajectories")
-                    ),
-
-                    # Mini tab 3 - download
-                    download_output = tagList(
-                      radioButtons(
-                        inputId = "file_type_flows",
-                        label = "Choose download file format",
-                        choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
-                        ),
-                        selected = "CSV (Up to X.XX MB)"
-                      ),
-                      uiOutput("download_button_ui_flows")
+                  # Mini tab 1 - chart
+                  chart_output = div(
+                    style = "margin-top: 3rem;",
+                    ggiraph::girafeOutput(
+                      outputId = "flow_timeseries_plot",
+                      width = "100%",
+                      height = "600px"
                     )
+                  ),
+
+                  # Mini tab 2 - table
+                  table_output = div(
+                    tags$p("This table shows the latest data which relates to the [Month] 2026 publication.
+                           This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."),
+                    reactableOutput("table_flow_trajectories")
+                  ),
+
+                  # Mini tab 3 - download
+                  download_output = tagList(
+                    radioButtons(
+                      inputId = "file_type_flows",
+                      label = "Choose download file format",
+                      choices = c(
+                        "CSV (Up to X.XX MB)",
+                        "XLSX (Up to X.XX MB)",
+                        "JPEG (Up to XXX KB)"
+                      ),
+                      selected = "CSV (Up to X.XX MB)"
+                    ),
+                    uiOutput("download_button_ui_flows")
                   )
                 ),
 
-                # Right column: sticky sidebar with filters and about this graph
+
+                # Right column:  sidebar with filters and about this graph
                 div(
-                  class = "sticky-sidebar",
-                  style = "position: sticky; top: 12px; overflow: visible;",
+                  class = "sidebar",
+                  style = "top: 12px; overflow: visible;",
 
                   # Filters
                   bslib::card(
