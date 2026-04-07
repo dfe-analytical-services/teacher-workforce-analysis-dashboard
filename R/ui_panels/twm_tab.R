@@ -484,7 +484,7 @@ twm_tab_panel <- function() {
                         "filter_phase_pgitt_need", "Select a school phase:",
                         choices = choices_pgitt_need_phase,
                         multiple = FALSE,
-                        selected = "Primary",
+                        selected = "Total",
                         options = list(
                           dropdownParent = "body"
                         )
