@@ -38,7 +38,7 @@
         }
       ]
     },
-    "pt_summary_box": "We project 3 more pupils (0.0%) and 3,538 fewer teachers (-1.7%) in 2027/28 compared to 2024/25. DUMMY",
+    "pt_summary_box": "We project 3 more pupils (0.0%) and teacher demand to be 3,538 lower (-1.7%) in 2027/28 compared to 2024/25. (dummy)",
     "tablePgittNeedTimeseries": {
       "x": {
         "tag": {
@@ -96,7 +96,7 @@
                 "headerClassName": "bar-sort-header",
                 "html": true,
                 "width": 120,
-                "align": "right"
+                "align": "left"
               },
               {
                 "id": "Phase",
@@ -104,7 +104,7 @@
                 "type": "character",
                 "headerClassName": "bar-sort-header",
                 "width": 120,
-                "align": "right"
+                "align": "left"
               },
               {
                 "id": "Subject",
@@ -113,7 +113,7 @@
                 "headerClassName": "bar-sort-header",
                 "show": false,
                 "width": 120,
-                "align": "right"
+                "align": "left"
               },
               {
                 "id": "PGITT trainee need",
@@ -134,7 +134,7 @@
               },
               {
                 "id": "Difference in need to previous year",
-                "name": "Difference in<br>need to<br>previous year",
+                "name": "Difference in need<br>to previous year",
                 "type": "numeric",
                 "headerClassName": "bar-sort-header",
                 "format": {
@@ -152,7 +152,7 @@
               },
               {
                 "id": "Percentage change in need to previous year",
-                "name": "Percentage change<br>in need to<br>previous year",
+                "name": "Percentage change in<br>need to previous year",
                 "type": "numeric",
                 "headerClassName": "bar-sort-header",
                 "format": {
@@ -174,7 +174,7 @@
             "defaultPageSize": 10,
             "highlight": true,
             "striped": true,
-            "dataKey": "25a79f05cc0395992382a3cb53f073b6",
+            "dataKey": "7f1d01d2f934e732f5005690bf161324",
             "static": false
           },
           "children": [
@@ -306,20 +306,14 @@
                 "name": "Phase",
                 "type": "character",
                 "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "left"
               },
               {
                 "id": "Academic year",
                 "name": "Academic year",
                 "type": "character",
                 "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "left"
               },
               {
                 "id": "Pupil numbers",
@@ -336,10 +330,7 @@
                     "separators": true
                   }
                 },
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "right"
               },
               {
                 "id": "Teacher numbers",
@@ -356,27 +347,21 @@
                     "separators": true
                   }
                 },
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "right"
               },
               {
                 "id": "Projection",
                 "name": "Projection",
                 "type": "character",
                 "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "left"
               }
             ],
             "pagination": false,
             "defaultPageSize": 10,
             "highlight": true,
             "striped": true,
-            "dataKey": "1cc81bea975f38e72ecb03dcc8ab1e32",
+            "dataKey": "c3d8ad3c1a8b639144672bf97d7da58f",
             "static": false
           },
           "children": [

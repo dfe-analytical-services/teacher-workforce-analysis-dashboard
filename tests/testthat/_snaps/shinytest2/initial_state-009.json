@@ -19,25 +19,6 @@
     "tabsetpanels": "Flow trajectories"
   },
   "output": {
-    "download_button_ui_drivers": {
-      "html": "<a id=\"download_drivers\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
-      "deps": [
-        {
-          "name": "sr-only",
-          "version": "0.1.0.9000",
-          "src": {
-            "href": "shinyGovstyle/css"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "sr-only.css",
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
     "download_button_ui_pgitt_need": {
       "html": "<a id=\"download_pgitt_need\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
       "deps": [
@@ -76,7 +57,7 @@
         }
       ]
     },
-    "pt_summary_box": "We project 3 more pupils (0.0%) and 3,538 fewer teachers (-1.7%) in 2027/28 compared to 2024/25. DUMMY",
+    "pt_summary_box": "We project 3 more pupils (0.0%) and teacher demand to be 3,538 lower (-1.7%) in 2027/28 compared to 2024/25. (dummy)",
     "tablePgittNeedTimeseries": {
       "x": {
         "tag": {
@@ -134,7 +115,7 @@
                 "headerClassName": "bar-sort-header",
                 "html": true,
                 "width": 120,
-                "align": "right"
+                "align": "left"
               },
               {
                 "id": "Phase",
@@ -142,7 +123,7 @@
                 "type": "character",
                 "headerClassName": "bar-sort-header",
                 "width": 120,
-                "align": "right"
+                "align": "left"
               },
               {
                 "id": "Subject",
@@ -151,7 +132,7 @@
                 "headerClassName": "bar-sort-header",
                 "show": false,
                 "width": 120,
-                "align": "right"
+                "align": "left"
               },
               {
                 "id": "PGITT trainee need",
@@ -172,7 +153,7 @@
               },
               {
                 "id": "Difference in need to previous year",
-                "name": "Difference in<br>need to<br>previous year",
+                "name": "Difference in need<br>to previous year",
                 "type": "numeric",
                 "headerClassName": "bar-sort-header",
                 "format": {
@@ -190,7 +171,7 @@
               },
               {
                 "id": "Percentage change in need to previous year",
-                "name": "Percentage change<br>in need to<br>previous year",
+                "name": "Percentage change in<br>need to previous year",
                 "type": "numeric",
                 "headerClassName": "bar-sort-header",
                 "format": {
@@ -212,7 +193,7 @@
             "defaultPageSize": 10,
             "highlight": true,
             "striped": true,
-            "dataKey": "25a79f05cc0395992382a3cb53f073b6",
+            "dataKey": "7f1d01d2f934e732f5005690bf161324",
             "static": false
           },
           "children": [
@@ -344,20 +325,14 @@
                 "name": "Phase",
                 "type": "character",
                 "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "left"
               },
               {
                 "id": "Academic year",
                 "name": "Academic year",
                 "type": "character",
                 "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "left"
               },
               {
                 "id": "Pupil numbers",
@@ -374,10 +349,7 @@
                     "separators": true
                   }
                 },
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "right"
               },
               {
                 "id": "Teacher numbers",
@@ -394,218 +366,21 @@
                     "separators": true
                   }
                 },
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "right"
               },
               {
                 "id": "Projection",
                 "name": "Projection",
                 "type": "character",
                 "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
+                "align": "left"
               }
             ],
             "pagination": false,
             "defaultPageSize": 10,
             "highlight": true,
             "striped": true,
-            "dataKey": "1cc81bea975f38e72ecb03dcc8ab1e32",
-            "static": false
-          },
-          "children": [
-
-          ]
-        },
-        "class": "reactR_markup"
-      },
-      "evals": [
-
-      ],
-      "jsHooks": [
-
-      ],
-      "deps": [
-
-      ]
-    },
-    "table_drivers_breakdown": {
-      "x": {
-        "tag": {
-          "name": "Reactable",
-          "attribs": {
-            "data": {
-              "Phase": [
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary"
-              ],
-              "Subject": [
-                "Religious Education",
-                "Religious Education",
-                "Religious Education",
-                "Religious Education",
-                "Religious Education",
-                "Religious Education",
-                "Religious Education",
-                "Religious Education"
-              ],
-              "Driver": [
-                "Demand growth YOY",
-                "Leavers",
-                "Working hour losses",
-                "Returners",
-                "NTSF",
-                "NQEs from other sources",
-                "ITT-NQE conversion rate",
-                "Under-supply adjustment"
-              ],
-              "Value": [
-                -900,
-                -720,
-                -540,
-                -180,
-                450,
-                990,
-                1080,
-                1620
-              ]
-            },
-            "columns": [
-              {
-                "id": "Phase",
-                "name": "Phase",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
-              },
-              {
-                "id": "Subject",
-                "name": "Subject",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "show": true,
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
-              },
-              {
-                "id": "Driver",
-                "name": "Driver",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
-              },
-              {
-                "id": "Value",
-                "name": "Value",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header",
-                "format": {
-                  "cell": {
-                    "separators": true
-                  },
-                  "aggregated": {
-                    "separators": true
-                  }
-                },
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
-              }
-            ],
-            "pagination": false,
-            "defaultPageSize": 10,
-            "highlight": true,
-            "striped": true,
-            "dataKey": "87573b938df88fe301f6269578562c21",
-            "static": false
-          },
-          "children": [
-
-          ]
-        },
-        "class": "reactR_markup"
-      },
-      "evals": [
-
-      ],
-      "jsHooks": [
-
-      ],
-      "deps": [
-
-      ]
-    },
-    "table_pgitt_need_diff": {
-      "x": {
-        "tag": {
-          "name": "Reactable",
-          "attribs": {
-            "data": {
-              "2025/26 PGITT need": [
-                1800
-              ],
-              "2026/27 PGITT need": [
-                3600
-              ],
-              "Overall difference": [
-                1800
-              ]
-            },
-            "columns": [
-              {
-                "id": "2025/26 PGITT need",
-                "name": "2025/26 PGITT need",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header"
-              },
-              {
-                "id": "2026/27 PGITT need",
-                "name": "2026/27 PGITT need",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header"
-              },
-              {
-                "id": "Overall difference",
-                "name": "Overall difference",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header",
-                "format": {
-                  "cell": {
-                    "separators": true
-                  },
-                  "aggregated": {
-                    "separators": true
-                  }
-                },
-                "align": "right",
-                "headerStyle": {
-                  "textAlign": "right"
-                }
-              }
-            ],
-            "pagination": false,
-            "defaultPageSize": 10,
-            "highlight": true,
-            "dataKey": "c1dfaae1165946f7ac231e0ab2e59a60",
+            "dataKey": "c3d8ad3c1a8b639144672bf97d7da58f",
             "static": false
           },
           "children": [
