@@ -58,7 +58,7 @@ twm_tab_panel <- function() {
                     "trainee need and provides greater transparency around the model’s forecasted inflows and outflows."
                   ),
                   p(
-                    "Data is available for state-funded primary (including maintained nursery classes ",
+                    "Data is available for state-funded primary (including maintained nurseries ",
                     "attached to schools), and secondary schools in England. Where possible, secondary ",
                     "data is also broken down by individual subject.",
                     "Please see the user guide for details of data sources."
@@ -147,7 +147,8 @@ twm_tab_panel <- function() {
               p(
                 "This section shows historic trends in pupil and teacher numbers (including ",
                 "unqualified teachers), alongside projections of both future pupil numbers and the ",
-                "resulting demand for teachers as calculated by the teacher workforce model."
+                "resulting demand for teachers as calculated by the teacher workforce model. ",
+                "All numbers are in full time equivalent (FTE)."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -363,7 +364,7 @@ twm_tab_panel <- function() {
                   p("This produces a teacher demand trajectory of the number of teachers needed up to and including 2027/28."),
                   p(strong("Step 2: Calculate the number of PGITT trainees needed for 2026/27")),
                   p(
-                    "Once teacher demand for 2027/28 is known, the model estimates the number of trainees ",
+                    "Using estimated teacher demand for 2027/28, the model estimates the number of trainees ",
                     "needed in 2026/27 to meet it."
                   ),
 
@@ -539,11 +540,11 @@ twm_tab_panel <- function() {
                   ),
                   p(
                     "This lower PGITT need has been driven by pupil numbers falling more rapidly for primary, ",
-                    "and growing less rapidly and levelling out for secondary respectively."
+                    "and growing less rapidly and levelling out for secondary."
                   ),
                   p(
                     "Additionally, both teacher retention forecasts and PGITT recruitment have become ",
-                    "more favourable for most subjects making supply forecasts more favourable further ",
+                    "more favourable for most subjects, making supply forecasts more favourable and further ",
                     "helping to reduce PGITT recruitment needs."
                   ),
                   p(
@@ -661,7 +662,7 @@ twm_tab_panel <- function() {
                         "show drivers that acted to increase it."
                       ),
                       p(
-                        "The scale of each driver is it’s estimated impact upon PGITT need, and not the amount ",
+                        "The scale of each driver is its estimated impact upon PGITT need, and not the amount ",
                         "that the driver itself changed. For example, returners did not increase/fall by ‘x’ returners ",
                         "this year, rather returners acted to increase/decrease PGITT need this year by ‘x’ PGITT ",
                         "trainees this year."
@@ -760,7 +761,7 @@ twm_tab_panel <- function() {
                       "(e.g., returners). This holistic assessment means the impact of missing historical PGITT ",
                       "trainee need may be offset by wider recruitment or retention being better than expected ",
                       em(
-                        "Negative numbers reflects that the adjustment is smaller than last year ",
+                        "Negative numbers reflect that the adjustment is smaller than last year ",
                         "resulting in reduced PGITT need. No bar means no adjustment was needed because ",
                         "there is no supply shortfall expected from the two prior ITT cycles. ",
                       )
