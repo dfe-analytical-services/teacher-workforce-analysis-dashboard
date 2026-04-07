@@ -21,7 +21,7 @@
 ui <- function(input, output, session) {
   bslib::page_fluid(
     # Set application metadata ------------------------------------------------
-    tags$head(HTML("<title>Teacher Workforce Supply Dashboard (England)</title>")),
+    tags$head(HTML("<title>Teacher workforce analysis dashboard (England)</title>")),
     tags$head(tags$link(rel = "shortcut icon", href = "dfefavicon.png")),
     use_shiny_title(),
     useShinyjs(),
@@ -29,8 +29,8 @@ ui <- function(input, output, session) {
     # Add meta description for search engines
     meta() %>%
       meta_general(
-        application_name = "Teacher Workforce Supply Dashboard (England)",
-        description = "Teacher Workforce Supply Dashboard (England)",
+        application_name = "Teacher workforce analysis dashboard (England)",
+        description = "Teacher workforce analysis dashboard (England)",
         robots = "index,follow",
         generator = "R-Shiny",
         subject = "stats development",
@@ -53,7 +53,7 @@ ui <- function(input, output, session) {
     # Setting up cookie consent based on a cookie recording the consent:
     dfeshiny::dfe_cookies_script(),
     dfeshiny::cookies_banner_ui(
-      name = "Teacher Workforce Supply Dashboard (England)"
+      name = "Teacher workforce analysis dashboard (England)"
     ),
 
     # Skip_to_main -------------------------------------------------------------
@@ -73,7 +73,7 @@ ui <- function(input, output, session) {
 
     # Header ------------------------------------------------------------------
     dfeshiny::header(
-      header = "Teacher Workforce Supply Dashboard (England)"
+      header = "Teacher workforce analysis dashboard (England)"
     ),
 
     # Beta banner -------------------------------------------------------------

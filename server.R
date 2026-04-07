@@ -85,10 +85,16 @@ server <- function(input, output, session) {
   output$data_sources_updates <- reactable::renderReactable({
     df <- tibble::tribble(
       ~Tab, ~`Data from`, ~File, ~`Data last updated`,
-      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "Drivers of PGITT trainee need changes", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "Flow trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX"
+      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link",
+      "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’",
+      "XX/XX/XXXX",
+      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link",
+      "Featured table ‘PGITT trainee need time series by phase and subject’", "XX/XX/XXXX",
+      "Drivers of change in PGITT trainee need", "Teacher demand and PGITT need publication - link",
+      "Supporting information data file ‘Calculation of drivers of 2026 to 2027 postgraduate ITT trainee need’", "XX/XX/XXXX",
+      "Flow trajectories", "Teacher demand and PGITT need publication - link",
+      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
+      and related data’ from this year’s publication (includes data from last year’s publication).", "XX/XX/XXXX"
     )
 
     reactable::reactable(
@@ -97,8 +103,7 @@ server <- function(input, output, session) {
       searchable = FALSE,
       sortable = FALSE,
       highlight = TRUE,
-      striped = TRUE,
-      defaultColDef = reactable::colDef(minWidth = 140)
+      striped = TRUE
     )
   })
 
@@ -130,8 +135,7 @@ server <- function(input, output, session) {
     left_title <- paste0(phase_title, " pupils")
     right_title <- paste0(phase_title, " teachers")
 
-    # -- IMPORTANT --
-    # We now let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
+    # Let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
     # including the manual lock (breaks and matching).
     p <- plot_pupil_teacher_timeseries(df, phase = phase_title, axis_lock = axis_lock)
 
@@ -139,39 +143,20 @@ server <- function(input, output, session) {
     if (for_download) {
       p <- p +
         theme(
-          axis.title.x = element_text(size = 24),
-          axis.title.y = element_text(size = 24),
-          axis.text.x  = element_text(size = 22),
-          axis.text.y  = element_text(size = 22)
+          axis.title.x = element_text(size = 34),
+          axis.title.y = element_text(size = 34),
+          axis.text.x = element_text(size = 32),
+          axis.text.y = element_text(size = 32),
+          legend.text = element_text(size = 28),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
     }
     p
   }
-
-  # axis locks for dual axis primary and secondary graphs
-
-  primary_lock <- list(
-    p0           = 3600000,
-    p_max        = 4800000,
-    pup_step     = 200000,
-    t0           = 180000,
-    t_max        = 240000,
-    teach_step   = 10000,
-    force_limits = TRUE
-  )
-
-
-  secondary_lock <- list(
-    p0           = 1800000,
-    p_max        = 3800000,
-    pup_step     = 200000,
-    t0           = 180000,
-    t_max        = 380000,
-    teach_step   = 20000,
-    force_limits = TRUE
-  )
-
-
 
   # create the ggiraph plot to display on the app
 
@@ -234,18 +219,18 @@ server <- function(input, output, session) {
       highlight = TRUE,
       columns = list(
         `Pupil numbers` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0),
           name = "Pupil numbers (FTE)"
         ),
         `Teacher numbers` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0),
           name = "Teacher numbers (FTE)"
         ),
-        Phase = reactable::colDef(align = "right", headerStyle = list(textAlign = "right")),
-        `Academic year` = reactable::colDef(align = "right", headerStyle = list(textAlign = "right")),
-        Projection = reactable::colDef(align = "right", headerStyle = list(textAlign = "right"))
+        Phase = reactable::colDef(align = "left"),
+        `Academic year` = reactable::colDef(align = "left"),
+        Projection = reactable::colDef(align = "left")
       ),
       defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
     )
@@ -264,8 +249,8 @@ server <- function(input, output, session) {
       dplyr::select(
         Phase = phase,
         `Academic year`,
-        `Pupil numbers` = pupil_numbers,
-        `Teacher numbers` = teacher_numbers,
+        `Pupil numbers (FTE)` = pupil_numbers,
+        `Teacher numbers (FTE)` = teacher_numbers,
         Projection
       )
   })
@@ -274,10 +259,14 @@ server <- function(input, output, session) {
 
 
   download_chart_pupil_teacher_data <- reactive({
+    phase_in <- input$filter_phase
+    lock <- if (tolower(phase_in) == "primary") primary_lock else secondary_lock
+
     build_pupil_teacher_plot(
       pt_data_filtered(),
-      input$filter_phase,
-      for_download = TRUE
+      phase = phase_in,
+      for_download = TRUE,
+      axis_lock = lock
     )
   })
 
@@ -298,7 +287,8 @@ server <- function(input, output, session) {
 
   output$download_pupil_teacher <- downloadHandler(
     filename = function() {
-      raw_name <- paste0("twm_pupil_teacher_numbers_", Sys.Date())
+      phase_clean <- tolower(input$filter_phase)
+      raw_name <- paste0("twm_pupil_teacher_numbers_", phase_clean, "_", Sys.Date())
       extension <- if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
         ".csv"
       } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
@@ -322,7 +312,7 @@ server <- function(input, output, session) {
           ggplot2::ggsave(
             filename = tempfile(paste0("twm_pupil_teacher_numbers_chart_", Sys.Date(), ".jpeg")),
             plot = download_chart_pupil_teacher_data(), device = "jpeg",
-            width = 10, height = 6, dpi = 300
+            width = 12, height = 6, dpi = 300
           ),
           file
         )
@@ -330,50 +320,34 @@ server <- function(input, output, session) {
     }
   )
 
-  # Create dataframe of pupil and teacher number changes between 24/25 and 27/28
+  ## Section for pupil/teacher number blue summary box
+  ## See helper functions script for calc_pt_change_24_to_27() + build_pupil_teacher_summary() functions
+
+  # Reactive: Calculate pupil and teacher changes between 2024/25 and 2027/28
 
   pt_change_24_to_27 <- reactive({
+    # Ensure filtered pupil/teacher data is available before proceeding
     req(pt_data_filtered())
 
-    pt_data_filtered() %>%
-      filter(start_year %in% c(2024, 2027)) %>%
-      arrange(start_year) %>%
-      mutate(
-        pupil_diff   = pupil_numbers - lag(pupil_numbers),
-        pupil_pct    = (pupil_diff / lag(pupil_numbers)) * 100,
-        teacher_diff = teacher_numbers - lag(teacher_numbers),
-        teacher_pct  = (teacher_diff / lag(teacher_numbers)) * 100
-      )
+    # Apply helper function to calculate absolute and percentage changes
+    # between 2023/24 and 2027/28
+    calc_pt_change_24_to_27(pt_data_filtered())
   })
 
-  # Create summary dataframe
+  # Reactive: Build summary text describing projected changes
 
   pupil_teacher_summary <- reactive({
-    df <- pt_change_24_to_27()
-    df_27 <- df[df$start_year == 2027, ]
-
-    # Determine direction words
-    pupil_dir <- if (df_27$pupil_diff > 0) "more" else "fewer"
-    teacher_dir <- if (df_27$teacher_diff > 0) "more" else "fewer"
-
-    pupil_diff_txt <- scales::label_comma()(abs(df_27$pupil_diff))
-    teacher_diff_txt <- scales::label_comma()(abs(df_27$teacher_diff))
-
-    pupil_pct_txt <- scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct)
-    teacher_pct_txt <- scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct)
-
-    glue::glue(
-      "We project {pupil_diff_txt} {pupil_dir} pupils ({pupil_pct_txt}) ",
-      "and {teacher_diff_txt} {teacher_dir} teachers ({teacher_pct_txt}) ",
-      "in 2027/28 compared to 2024/25. DUMMY"
-    )
+    # Generate a human-readable summary sentence based on the calculated changes
+    build_pupil_teacher_summary(pt_change_24_to_27())
   })
 
-  # Pupil teacher summary box
+  # Output: Render pupil and teacher summary text in the UI
 
   output$pt_summary_box <- renderText({
+    # Display the summary sentence in the summary box
     pupil_teacher_summary()
   })
+
 
 
   # # PGITT trainee need time series tab ----------------------------------------------------------------------------
@@ -415,8 +389,13 @@ server <- function(input, output, session) {
         ggplot2::theme(
           axis.title.x = ggplot2::element_text(size = 30),
           axis.title.y = ggplot2::element_text(size = 30),
-          axis.text.x  = ggplot2::element_text(size = 28),
-          axis.text.y  = ggplot2::element_text(size = 28)
+          axis.text.x = ggplot2::element_text(size = 28),
+          axis.text.y = ggplot2::element_text(size = 28),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
 
       # Add dynamic title only for downloaded plots
@@ -488,16 +467,17 @@ server <- function(input, output, session) {
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
         `Difference in need to previous year` = difference_to_previous_year,
-        `Percentage difference in need to previous year` = percentage_difference_to_previous_year
+        `Percentage change in need to previous year` = percentage_difference_to_previous_year
       ) %>%
       dplyr::select(
         `Academic year`, Phase, Subject, `PGITT trainee need`,
-        `Difference in need to previous year`, `Percentage difference in need to previous year`
+        `Difference in need to previous year`, `Percentage change in need to previous year`
       )
 
-    # Highlight if primary selected so can remove subject column from table
+    # Highlight if primary or total selected so can remove subject column from table
 
-    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
+    is_primary_or_total <- nrow(df) > 0 &&
+      all(df$Phase %in% c("Primary", "Total"))
 
     reactable::reactable(
       df,
@@ -509,21 +489,21 @@ server <- function(input, output, session) {
       highlight = TRUE,
       resizable = TRUE,
       columns = list(
-        `Academic year` = reactable::colDef(name = "Academic<br>year", html = TRUE, align = "right", width = 120),
-        Phase = reactable::colDef(align = "right", width = 120),
-        Subject = reactable::colDef(show = !is_primary_phase, align = "right", width = 120),
+        `Academic year` = reactable::colDef(name = "Academic<br>year", html = TRUE, align = "left", width = 120),
+        Phase = reactable::colDef(align = "left", width = 120),
+        Subject = reactable::colDef(show = !is_primary_or_total, align = "left", width = 120),
         `PGITT trainee need` = reactable::colDef(
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
         `Difference in need to previous year` = reactable::colDef(
-          name = "Difference in<br>need to<br>previous year",
+          name = "Difference in need<br>to previous year",
           html = TRUE,
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
-        `Percentage difference in need to previous year` = reactable::colDef(
-          name = "Percentage difference<br>in need to<br>previous year",
+        `Percentage change in need to previous year` = reactable::colDef(
+          name = "Percentage change in<br>need to previous year",
           html = TRUE,
           align = "right",
           format = reactable::colFormat(suffix = "%", digits = 1)
@@ -659,16 +639,36 @@ server <- function(input, output, session) {
       # Fixed comparison phrase as requested
       plot_title <- paste0(title_prefix, " drivers analysis: 2026/27 compared to 2025/26")
 
-      # Apply title + bigger text for exports only
+      # Apply title + bigger text for download graph only
       p <- p +
-        ggplot2::labs(title = plot_title) +
-        ggplot2::theme(
-          plot.title   = ggplot2::element_text(size = 38, face = "bold"),
-          axis.title.x = ggplot2::element_text(size = 28),
-          axis.title.y = ggplot2::element_text(size = 28),
-          axis.text.x  = ggplot2::element_text(size = 26),
-          axis.text.y  = ggplot2::element_text(size = 26)
-        )
+        ggplot2::labs(title = plot_title)
+
+      # Increase size of existing data labels
+      p$layers <- lapply(p$layers, function(layer) {
+        if (inherits(layer$geom, "GeomText")) {
+          layer$aes_params$size <- 8
+        }
+        layer
+      })
+
+      # Increase text size
+      p <- p + ggplot2::theme(
+        plot.title = ggplot2::element_text(size = 38, face = "bold"),
+        axis.title.y = ggplot2::element_text(size = 30),
+        axis.text.y = ggplot2::element_text(size = 26),
+
+        # Tighten spacing between wrapped lines and reduce top margin
+        axis.text.x = ggplot2::element_text(
+          size = 28,
+          lineheight = 0.35,
+          margin = ggplot2::margin(t = 5)
+        ),
+
+        # Set white background for downloads - prevents issue
+        # with devices not rendering the transparent bg properly
+        plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+        panel.background = ggplot2::element_rect(fill = "white", colour = NA)
+      )
     }
 
     p
@@ -684,8 +684,9 @@ server <- function(input, output, session) {
     ggiraph::girafe(
       ggobj = p,
       width_svg = 12,
-      height_svg = 7,
+      height_svg = 6,
       options = list(
+        ggiraph::opts_sizing(rescale = TRUE),
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_toolbar(saveaspng = FALSE),
         ggiraph::opts_hover(css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"),
@@ -722,15 +723,15 @@ server <- function(input, output, session) {
       highlight = TRUE,
       columns = list(
         `Last year's need` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE)
         ),
         `This year's need` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE)
         ),
         `Overall difference` = reactable::colDef(
-          align = "right", headerStyle = list(textAlign = "right"),
+          align = "right",
           format = reactable::colFormat(separators = TRUE)
         )
       ),
@@ -765,21 +766,17 @@ server <- function(input, output, session) {
       highlight = TRUE,
       columns = list(
         Phase = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Subject = reactable::colDef(
           show = !is_primary_phase,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Driver = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Value = reactable::colDef(
           align = "right",
-          headerStyle = list(textAlign = "right"),
           format = reactable::colFormat(separators = TRUE)
         )
       ),
@@ -788,9 +785,25 @@ server <- function(input, output, session) {
   })
 
   # Create download dataset (matches filtered table so all data in the two tables in the app)
+  # Spell out acronyms in download table
+  # Capitalise column names
+  # Reorder columns to match app
 
   download_table_drivers_data <- reactive({
-    drivers_filtered()
+    drivers_filtered() %>%
+      dplyr::mutate(
+        driver = dplyr::recode(
+          driver,
+          "2025/26 PGITT need" = "2025/26 PGITT trainee need",
+          "Demand growth YOY" = "Demand growth year-on-year",
+          "NTSF" = "New to state-funded sector entrants",
+          "NQEs from other sources" = "Newly qualified entrants from other sources",
+          "ITT-NQE conversion rate" = "Initial teacher training - newly qualified entrant conversion rate",
+          "2026/27 PGITT need" = "2026/27 PGITT trainee need"
+        )
+      ) %>%
+      dplyr::rename_with(~ tools::toTitleCase(.x)) %>%
+      dplyr::select(Phase, Subject, everything())
   })
 
   # Create download chart (static ggplot for export with title and larger text)
@@ -902,7 +915,12 @@ server <- function(input, output, session) {
           axis.title.y = ggplot2::element_text(size = 30),
           axis.text.x = ggplot2::element_text(size = 28),
           axis.text.y = ggplot2::element_text(size = 28),
-          legend.text = element_text(size = 28)
+          legend.text = element_text(size = 28),
+
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
 
       # Add dynamic title only for downloaded plots
@@ -968,7 +986,11 @@ server <- function(input, output, session) {
     df <- flow_filtered() %>%
       filter(version == "This year (dummy data)") %>%
       dplyr::mutate(
-        Type = type,
+        Type = dplyr::case_when(
+          type == "Newly qualified entrants" ~ "NQEs",
+          type == "New to state-funded sector entrants" ~ "NTSF entrants",
+          TRUE ~ type
+        ),
         DUMMY = value,
         Unit = unit,
         Phase = phase,
@@ -1008,47 +1030,38 @@ server <- function(input, output, session) {
       filterable = FALSE,
       striped = TRUE,
       highlight = TRUE,
-      wrap = FALSE,
+      wrap = TRUE,
       defaultColDef = reactable::colDef(
-        minWidth = 50,
-        maxWidth = 800,
         headerClass = "bar-sort-header"
       ),
       columns = list(
         Phase = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         Subject = reactable::colDef(
           show = !is_primary_phase, # hide when phase is primary
-          align = "right",
-          headerStyle = list(textAlign = "right"),
-          width = 250
+          align = "left"
         ),
         `Academic year` = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          name = "Academic<br>year",
+          html = TRUE,
+          align = "left"
         ),
         Type = reactable::colDef(
-          align = "right",
-          headerStyle = list(textAlign = "right"),
-          width = 400
+          align = "left"
         ),
         DUMMY = reactable::colDef(
           align = "right",
-          format = value_formatter,
-          headerStyle = list(textAlign = "right")
+          format = value_formatter
         ),
         Unit = reactable::colDef(
           show = !is_leaver_table,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         ),
         `Historic or trajectory` = reactable::colDef(
           name = "Historic or<br>trajectory",
           html = TRUE,
-          align = "right",
-          headerStyle = list(textAlign = "right")
+          align = "left"
         )
       )
     )
@@ -1074,6 +1087,24 @@ server <- function(input, output, session) {
     is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
     if (is_primary_phase) {
       df <- dplyr::select(df, -Subject)
+    }
+
+    # Format entrants (FTE) to 0 dp and leaver rates (%) to 1 dp
+    leaver_types <- c("Total leaver rate", "55+ leaver rate", "Under 55 leaver rate")
+    is_leaver_table <- all(df$Type %in% leaver_types)
+
+    if (is_leaver_table) {
+      # convert 0.056 → 5.6%
+      df <- df %>%
+        dplyr::mutate(
+          DUMMY = round(DUMMY * 100, 1)
+        )
+    } else {
+      # format as whole numbers (e.g., 1234)
+      df <- df %>%
+        dplyr::mutate(
+          DUMMY = round(DUMMY, 0)
+        )
     }
     df
   })

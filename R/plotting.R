@@ -10,6 +10,30 @@
 
 # Pupil vs Teacher timeseries ---------------------------
 
+# axis locks for dual axis primary and secondary graphs
+
+primary_lock <- list(
+  p0           = 3600000,
+  p_max        = 4800000,
+  pup_step     = 200000,
+  t0           = 180000,
+  t_max        = 240000,
+  teach_step   = 10000,
+  force_limits = TRUE
+)
+
+
+secondary_lock <- list(
+  p0           = 1800000,
+  p_max        = 3800000,
+  pup_step     = 200000,
+  t0           = 180000,
+  t_max        = 380000,
+  teach_step   = 20000,
+  force_limits = TRUE
+)
+
+# pupil teacher timeseries plot
 
 plot_pupil_teacher_timeseries <- function(
     df, phase = NULL,
@@ -260,57 +284,44 @@ plot_pupil_teacher_timeseries <- function(
 plot_pgitt_need_timeseries <- function(df) {
   df2 <- df %>%
     dplyr::mutate(
-      subject = stringr::str_to_title(stringr::str_trim(subject)),
-      start_year = as.numeric(start_year),
       academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
-      # Row-wise tooltip (correct year per point)
+      # Tooltip with year, phase, subject and PGITT need
+      # Only show subject if secondary is selected
+      subject_line = ifelse(
+        phase == "Secondary",
+        paste0("<p><b>Subject:</b> ", subject, "</p>"),
+        ""
+      ),
       tooltip = paste0(
         "<p>", academic_year, "</p>",
         "<p><b>Phase:</b> ", phase, "</p>",
-        "<p><b>Subject:</b> ", subject, "</p>",
+        subject_line,
         "<p><b>PGITT trainee need:</b> ", scales::comma(pgitt_trainee_need), "</p>"
-      ),
-      # Only create a label candidate at the final year (for potential multi-line charts)
-      lab = ifelse(start_year == max(start_year), stringr::str_wrap(subject, 12), "")
+      )
     ) %>%
     dplyr::arrange(subject, start_year)
 
   # Axis helpers
-  min_year <- min(df2$start_year, na.rm = TRUE)
-  max_year <- max(df2$start_year, na.rm = TRUE)
   year_breaks <- sort(unique(df2$start_year))
   year_labels <- df2 %>%
     dplyr::distinct(start_year, academic_year) %>%
     dplyr::arrange(start_year) %>%
     dplyr::pull(academic_year)
 
-  # If only one subject is present, suppress the end-of-line label
-  n_subjects <- dplyr::n_distinct(df2$subject)
-
   p <- ggplot(
     df2,
     aes(
       x = start_year,
-      y = pgitt_trainee_need,
-      group = subject
+      y = pgitt_trainee_need
     )
   ) +
-    # Keep the line interactive for hover styling/selection if needed,
-    # but do NOT attach a tooltip to the whole line (tooltip would be constant per group)
-    ggiraph::geom_line_interactive(
-      aes(data_id = subject),
-      linewidth = 1,
-      colour = "#801650"
-    ) +
-    # Attach tooltip to points so it varies by year (row-wise)
-    ggiraph::geom_point_interactive(
+    ggiraph::geom_col_interactive(
       aes(
         tooltip = tooltip,
-        # Make each point uniquely addressable so hover/select doesn't stick across years
         data_id = paste(subject, start_year, sep = "_")
       ),
-      size = 2,
-      colour = "#801650"
+      fill = "#801650",
+      width = 0.6
     ) +
     afcharts::theme_af() +
     xlab("Academic year") +
@@ -321,66 +332,34 @@ plot_pgitt_need_timeseries <- function(df) {
       axis.title.y = element_text(
         angle = 90, vjust = 0.5,
         margin = margin(r = 12), family = "dejavu"
-      ),
-      axis.line = element_line(linewidth = 0.75),
-      legend.position = "none",
-      # Add extra right margin so the last tick label isn't clipped
-      plot.margin = margin(t = 5.5, r = 18, b = 5.5, l = 5.5)
+      )
     ) +
-    # 1) Ensure every academic year is labeled
-    # 2) Add a little right-side expansion so the final tick label isn't cut off
     scale_x_continuous(
-      name   = "Academic year",
-      limits = c(min_year, max_year),
       breaks = year_breaks,
-      labels = year_labels,
-      expand = expansion(add = c(0, 0.25)) # small right padding
+      labels = year_labels
     ) +
-    # Start y-axis at 0; keep nice commas in tick labels
     scale_y_continuous(
       labels = scales::comma,
       limits = c(0, NA),
-      # Optional: tiny top padding for aesthetics
-      expand = expansion(mult = c(0.05, 0.05))
-    ) +
-    # Allow tick labels / repelled end labels to overflow the panel if needed
-    coord_cartesian(clip = "off")
-
-  # Conditionally add end-of-line labels ONLY if multiple subjects exist
-  if (n_subjects > 1) {
-    p <- p +
-      ggrepel::geom_text_repel(
-        aes(label = lab),
-        xlim = c(NA, Inf),
-        nudge_x = 1,
-        direction = "y",
-        hjust = "left",
-        size = 3.2,
-        min.segment.length = Inf,
-        segment.colour = NA
-      )
-  }
+    )
   p
 }
 
-# drivers analysis waterfall graph
+# Drivers analysis waterfall graph --------------------------------------------------------------------------------
 
-plot_drivers_waterfall <- function(
-    df_raw,
-    axis_title_size = 16,
-    axis_text_size = 12,
-    data_label_size = 4,
-    base_size = 14) {
+
+plot_drivers_waterfall <- function(df_raw) {
+  # Labels used to identify the first and last bars in the waterfall chart
   start_label <- "2025/26 PGITT need"
   end_label <- "2026/27 PGITT need"
 
-  # ---- Definitions lookup ---------------------------------------------------
+  # Definitions for each driver (shown inside tooltip)
   defs <- c(
     "2025/26 PGITT need" = "Last year's PGITT trainee need.",
     "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
     "Leavers" = "Teachers leaving the sector between years. Orange = fewer leavers; Green = more leavers.",
     "Working hour losses" = "Reduction in working hours for individual teachers between years. Orange = fewer hours lost; Green = more hours lost.",
-    "Returners" = "Teachers re entering service after previously working in the state funded sector. Orange = more returners expected; Green = fewer returners expected.",
+    "Returners" = "Teachers re-entering service after previously working in the state-funded sector. Orange = more returners expected; Green = fewer returners expected.",
     "NTSF" = "Teachers new to the state-funded sector (including deferrer NQEs). Orange = more NTSF expected; Green = fewer NTSF expected.",
     "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
     "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
@@ -388,25 +367,29 @@ plot_drivers_waterfall <- function(
     "2026/27 PGITT need" = "This year's PGITT trainee need."
   )
 
-  # ---- Data preparation ------------------------------------------------------
+  # Data preparation
   df <- df_raw %>%
-    dplyr::filter(driver != "Overall difference") %>%
+    dplyr::filter(driver != "Overall difference") %>% # Remove summary row
     dplyr::mutate(
       type = dplyr::case_when(
-        driver == start_label ~ "start",
-        driver == end_label ~ "end",
-        TRUE ~ "delta"
+        driver == start_label ~ "start", # First bar
+        driver == end_label ~ "end", # Last bar
+        TRUE ~ "delta" # All middle 'change' bars
       ),
       order_id = dplyr::row_number()
     )
 
+  # Extract starting value (used to calculate cumulative changes)
   start_val <- df$value[df$type == "start"][1]
 
+  # Calculate bottom/top of each bar for the waterfall
   df <- df %>%
     dplyr::mutate(
       delta_val = ifelse(type == "delta", value, 0),
       cum_delta_before = dplyr::lag(cumsum(delta_val), default = 0),
       level_before = start_val + cum_delta_before,
+
+      # ymin/ymax define the vertical extent of each bar
       ymin = dplyr::case_when(
         type == "start" ~ 0,
         type == "delta" ~ level_before,
@@ -417,34 +400,33 @@ plot_drivers_waterfall <- function(
         type == "delta" ~ level_before + value,
         type == "end" ~ value
       ),
+
+      # Colour by whether the driver increases or decreases need
       fill_col = dplyr::case_when(
         type != "delta" ~ "total",
         value >= 0 ~ "increase",
         TRUE ~ "decrease"
       ),
 
-      # factor for x axis
+      # Keep drivers in original order on x-axis
       driver = factor(driver, levels = driver),
 
-      # ---- Tooltip (escape both ' and ’) ------------------------------------
-      definition = dplyr::coalesce(defs[as.character(driver)], "Definition coming soon."),
+      # Tooltip text shown when hovering on each bar
       tooltip = paste0(
-        "<b>",
-        gsub("['’]", "&#39;", as.character(driver)),
-        ":</b><br/>",
-        gsub("['’]", "&#39;", definition)
+        "<b>", as.character(driver), ":</b><br/>", defs[as.character(driver)]
       ),
 
-      # ---- data_id must NOT contain quotes or unsafe chars -------------------
+      # Required by ggiraph for hover behaviour.
+      # Converts driver text into a “safe” ID with only letters/numbers/d
       data_id = paste0(
         "bar-",
-        # make a safe slug from driver
-        tolower(gsub("[^A-Za-z0-9_-]+", "-", as.character(driver)))
+        tolower(gsub("[^A-Za-z0-9_-]", "-", as.character(driver)))
       )
     )
 
-  # ---- Plot -----------------------------------------------------------------
+  # Build the interactive waterfall chart
   ggplot(df, aes(x = driver)) +
+    # Rectangle for each bar
     ggiraph::geom_rect_interactive(
       aes(
         xmin = as.numeric(driver) - 0.45,
@@ -459,47 +441,53 @@ plot_drivers_waterfall <- function(
       linewidth = 0.3
     ) +
 
-    # large invisible hover targets to make tooltips reliable
+    # Large invisible hover points improve tooltip reliability
     ggiraph::geom_point_interactive(
       data = df,
       inherit.aes = FALSE,
       aes(
         x = as.numeric(driver),
-        y = (ymin + ymax) / 2,
+        y = (ymin + ymax) / 2, # Middle of the bar
         tooltip = tooltip,
         data_id = data_id
       ),
       size = 30,
       alpha = 0
     ) +
+    # Numeric label above each bar
     geom_text(
       aes(
         x = as.numeric(driver),
+        # Place label on top of each bar
         y = ifelse(type == "delta", pmax(ymin, ymax), ymax),
-        label = scales::comma(ymax - ymin)
+        label = scales::comma(value) # Value data label
       ),
       vjust = -0.25,
-      size = data_label_size
+      size = 4
     ) +
+    # Colour palette
     scale_fill_manual(
       values = c(increase = "#28A197", decrease = "#F46A25", total = "#12436D"),
       guide = "none"
     ) +
+    # Y axis formatting
     scale_y_continuous(
       labels = scales::comma,
       expand = expansion(mult = c(0.02, 0.08))
     ) +
+    # Wrap long x-axis labels
     scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 12)) +
+    # Axis titles
     labs(x = NULL, y = "PGITT trainees") +
-    theme_minimal(base_size = base_size) +
+    theme_minimal() +
     theme(
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
-      axis.title.y = element_text(size = axis_title_size),
-      axis.title.x = element_text(size = axis_title_size),
-      axis.text.y = element_text(size = axis_text_size),
+      axis.title.y = element_text(size = 16),
+      axis.title.x = element_text(size = 16),
+      axis.text.y = element_text(size = 12),
       axis.text.x = element_text(
-        size = axis_text_size,
+        size = 12,
         margin = margin(t = 6),
         lineheight = 0.95
       )
@@ -584,6 +572,23 @@ plot_flow_trajectories <- function(df) {
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(next_year))
 
+  # Robust x axis breaks/labels based only on data
+
+  # Keep only years present in df
+  years_available <- df %>%
+    dplyr::pull(year) %>%
+    unique() %>%
+    sort()
+
+  # Apply biennial pattern relative to the actual data
+  years_for_axis <- years_available[years_available %% 2 == (min(years_available) %% 2)]
+
+  # Axis labels for those years
+  axis_labels <- df %>%
+    dplyr::distinct(year, academic_year_label) %>%
+    dplyr::filter(year %in% years_for_axis) %>%
+    dplyr::arrange(year) %>%
+    dplyr::pull(academic_year_label)
 
   # ---------- plot ----------
   ggplot2::ggplot(df, ggplot2::aes(x = year)) +
@@ -625,12 +630,8 @@ plot_flow_trajectories <- function(df) {
 
     # X axis: biennial ticks (unchanged)
     ggplot2::scale_x_continuous(
-      breaks = seq(2011, max(df$year, na.rm = TRUE), by = 2),
-      labels = df %>%
-        dplyr::distinct(year, academic_year_label) %>%
-        dplyr::arrange(year) %>%
-        dplyr::filter(year %in% seq(2011, max(df$year), 2)) %>%
-        dplyr::pull(academic_year_label)
+      breaks = years_for_axis,
+      labels = axis_labels
     ) +
 
     # Linetype scale & legend entry for trajectories

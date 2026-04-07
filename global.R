@@ -81,13 +81,13 @@ lapply(list.files("R/ui_panels/", full.names = TRUE), source)
 
 # Set global variables --------------------------------------------------------
 
-site_title <- "Teacher Workforce Supply Dashboard (England)" # name of app # UPDATED
-parent_pub_name <- "Statistical publication" # name of source publication # TBC
+site_title <- "Teacher workforce analysis dashboard (England)" # name of app
+parent_pub_name <- "Teacher demand and postgraduate trainee need" # name of source publication
 parent_publication <- # link to source publication
-  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TBC
+  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TO ADD
 
 # Set the URLs that the site will be published to
-site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # ??
+site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # TO ADD
 
 # Combine URLs into list for disconnect function
 # We can add further mirrors where necessary. Each one can generally handle
@@ -130,9 +130,9 @@ choices_pupil_teacher_phase <- sort(unique(pupil_teacher_numbers$phase))
 pgitt_need_timeseries <- read_pgitt_need_timeseries()
 
 # phase and subject list for pgitt trainee need tab filter
-# sort phase so primary first
+# sort phase so total first
 
-choices_pgitt_need_phase <- sort(unique(pgitt_need_timeseries$phase))
+choices_pgitt_need_phase <- c("Total", sort(setdiff(unique(pgitt_need_timeseries$phase), "Total")))
 
 # make a unique subject list but it starts with total
 
@@ -202,3 +202,13 @@ choices_flow_phase <- sort(unique(flow_data$phase))
 choices_flow_subject <- sort(unique(flow_data$subject))
 
 choices_flow_type <- c("Total leaver rate", "Under 55 leaver rate", "55+ leaver rate", "Newly qualified entrants", "New to state-funded sector entrants", "Returners")
+
+# set display labels for flow type to include abbreviations for drop down filter list
+
+flow_type_labels <- dplyr::case_when(
+  choices_flow_type == "Newly qualified entrants" ~ "Newly qualified entrants (NQEs)",
+  choices_flow_type == "New to state-funded sector entrants" ~ "New to state-funded sector (NTSF) entrants",
+  TRUE ~ choices_flow_type
+)
+
+names(choices_flow_type) <- flow_type_labels
