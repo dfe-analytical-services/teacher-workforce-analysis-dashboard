@@ -73,7 +73,7 @@ user_guide_panel <- function() {
                 tags$li(
                   "Therefore, these data may differ slightly to that in subsequent updates to ",
                   "the school workforce census (SWC), ITT census and ITT performance ",
-                  "profiles data etc."
+                  "profiles data."
                 )
               )
             ),
