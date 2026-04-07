@@ -348,7 +348,7 @@ twm_tab_panel <- function() {
                     )
                   ),
                   p(strong("Step 1: Calculate teacher demand trajectory to 2027/28")),
-                  p("Firstly, the model estimates how many teachers we need in future."),
+                  p("Firstly, the model estimates how many teachers are needed in future."),
                   tags$ul(
                     tags$li(
                       "The model assumes that the current numbers of teacher numbers from the latest school workforce census (2024/25) ",
