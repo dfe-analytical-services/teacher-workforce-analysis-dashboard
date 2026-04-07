@@ -130,9 +130,9 @@ choices_pupil_teacher_phase <- sort(unique(pupil_teacher_numbers$phase))
 pgitt_need_timeseries <- read_pgitt_need_timeseries()
 
 # phase and subject list for pgitt trainee need tab filter
-# sort phase so primary first
+# sort phase so total first
 
-choices_pgitt_need_phase <- sort(unique(pgitt_need_timeseries$phase))
+choices_pgitt_need_phase <- c("Total", sort(setdiff(unique(pgitt_need_timeseries$phase), "Total")))
 
 # make a unique subject list but it starts with total
 
