@@ -88,15 +88,14 @@ twm_tab_panel <- function() {
                       )
                     ),
                     tags$li(
-                      "Note – in future years, PGITT need will be calculated for future ITT recruitment ",
-                      "cohorts, and will reflect any data updates."
+                      "Note – next year PGITT need will be calculated for 2027/28 and will reflect any data updates."
                     ),
                     tags$li(
                       "Figures used within the TWM may differ to the SWC which includes special ",
                       "schools and PRUs within the state-funded schools sector."
                     ),
                     tags$li(
-                      "This publication uses a different naming convention to the SWC for teachers leavers. ",
+                      "This publication uses a different naming convention to the SWC for teachers leaving service.",
                       tags$ul(
                         tags$li(
                           "A teacher that leaves service between the November 2023 and November ",
@@ -120,7 +119,7 @@ twm_tab_panel <- function() {
                       tags$ul(
                         tags$li(
                           "Coverage differences which are needed to align with the TWM methodology ",
-                          "(e.g.post-16 pupils in secondary schools are included within the TWM), and"
+                          "(e.g. post-16 pupils in secondary schools are included within the TWM), and"
                         ),
                         tags$li(
                           "Adjustments reflecting the actual number of pupils captured in October ",
