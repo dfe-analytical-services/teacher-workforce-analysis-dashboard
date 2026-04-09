@@ -35,12 +35,14 @@ user_guide_panel <- function() {
           ),
           p(
             "This interactive dashboard accompanies the ",
-            strong("Teacher demand and postgraduate trainee need"),
-            "publication, available here: [link]."
+            a("Teacher demand and postgraduate trainee need publication.",
+              href = "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27",
+              target = "_blank"
+            )
           ),
           h2("Context and purpose"),
           p(
-            "The ", em("‘Teacher demand and PGITT need’"), " section of the dashboard supports analysis of ",
+            "The ", em("‘teacher demand and PGITT need’"), " section of the dashboard supports analysis of ",
             "teacher demand and supply and trainee demand by visualising several components of the teacher ",
             "workforce model. It enables users to:"
           ),
@@ -61,18 +63,18 @@ user_guide_panel <- function() {
             tags$li(
               "The inputs to the teacher workforce model are the most timely data available as ",
               "of February 2026. It has been presented within the ",
-              em("'Teacher demand and PGITT need'"),
-              " part of the dashboard as it was the data used to estimate 2026/27 PGITT need.",
+              em("'teacher demand and PGITT need'"),
+              " part of the dashboard as it was data used to estimate 2026/27 PGITT need.",
               tags$ul(
                 tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
                 tags$li(
                   "As a consequence, the ",
-                  em("'Teacher demand and PGITT need'"),
+                  em("'teacher demand and PGITT need'"),
                   " part of the dashboard will not be updated after publication."
                 ),
                 tags$li(
                   "Therefore, these data may differ slightly to that in subsequent updates to ",
-                  "the school workforce census (SWC), ITT census and ITT performance ",
+                  "the school workforce census (SWC), ITT census, and ITT performance ",
                   "profiles data."
                 )
               )
@@ -82,8 +84,8 @@ user_guide_panel <- function() {
               "data updates."
             ),
             tags$li(
-              "Figures used within the TWM may differ to the SWC which includes special ",
-              "schools and PRUs within the state-funded schools sector."
+              "Figures used within the TWM may differ to the SWC publication (school workforce in England) ",
+              "which includes special schools and PRUs within the state-funded schools sector."
             ),
             tags$li(
               "This publication uses a different naming convention to the SWC for teachers leaving service.",

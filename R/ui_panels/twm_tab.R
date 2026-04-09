@@ -48,9 +48,11 @@ twm_tab_panel <- function() {
                 bslib::card_body(
                   p(
                     "This interactive dashboard accompanies the ",
-                    strong("Teacher demand and postgraduate trainee need "),
-                    "publication, available here: [link]"
-                  ), # TO ADD: PUB LINK
+                    a("Teacher demand and postgraduate trainee need publication.",
+                      href = "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27",
+                      target = "_blank"
+                    )
+                  ),
                   p(
                     "It is designed to help users understand how teacher demand trajectories and PGITT ",
                     "trainee need is estimated using the Department for Education’s teacher workforce ",
@@ -63,26 +65,25 @@ twm_tab_panel <- function() {
                     "data is also broken down by individual subject.",
                     "Please see the user guide for details of data sources."
                   ),
-                  p(strong("Last updated:"), "XX/XX/XXXX") # TO ADD: PUB DATE
+                  p(strong("Data last updated:"), "XX/XX/XXXX") # TO ADD: PUB DATE
                 )
               ),
 
               # Disclaimers text box
-              # Disclaimers text box
               bslib::card(
-                bslib::card_header("Disclaimers"),
+                bslib::card_header("Disclaimers and caveats"),
                 bslib::card_body(
                   tags$ul(
                     tags$li(
                       "The inputs to the teacher workforce model are the most timely data available as ",
                       "of February 2026. It has been presented within this part of the dashboard as it ",
-                      "was the data used to estimate 2026/27 PGITT need.",
+                      "was data used to estimate 2026/27 PGITT need.",
                       tags$ul(
                         tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
                         tags$li("As a consequence, this part of the dashboard will not be updated after publication."),
                         tags$li(
                           "Therefore, these data may differ slightly to that in subsequent updates to ",
-                          "the school workforce census (SWC), ITT census and ITT performance ",
+                          "the school workforce census (SWC), ITT census, and ITT performance ",
                           "profiles data."
                         )
                       )
@@ -91,8 +92,8 @@ twm_tab_panel <- function() {
                       "Note – next year PGITT need will be calculated for 2027/28 and will reflect any data updates."
                     ),
                     tags$li(
-                      "Figures used within the TWM may differ to the SWC which includes special ",
-                      "schools and PRUs within the state-funded schools sector."
+                      "Figures used within the TWM may differ to the SWC publication (school workforce in England) ",
+                      "which includes special schools and PRUs within the state-funded schools sector."
                     ),
                     tags$li(
                       "This publication uses a different naming convention to the SWC for teachers leaving service.",
@@ -291,7 +292,7 @@ twm_tab_panel <- function() {
                   ),
                   p(
                     "These demand trajectories are not forecasted outcomes, actual workforce levels will ",
-                    "depend upon the balance of movements into and out of the state funded sector (among ",
+                    "depend upon the balance of movements into and out of the state-funded sector (among ",
                     "other factors)."
                   )
                 )
@@ -391,7 +392,7 @@ twm_tab_panel <- function() {
                         # b.
                         tags$li(
                           "Estimated losses from the workforce in 2027/28 that require replacement. ",
-                          "These include both leavers (teachers leaving the state funded sector) and ",
+                          "These include both leavers (teachers leaving the state-funded sector) and ",
                           "losses due to teachers reducing their individual working hours between years."
                         )
                       )
@@ -687,12 +688,10 @@ twm_tab_panel <- function() {
                     ),
                     tags$li(
                       strong("Demand growth YOY: "),
-                      "Change in teacher demand relating to pupil number change rates based on national pupil projections data. ",
+                      "Change in teacher demand YOY relating to pupil number change rates based on national pupil projections. ",
                       em(
-                        "Negative values suggest teacher demand is ",
-                        "falling year-on-year (YOY) due to projected pupil numbers falling more rapidly or growing ",
-                        "less rapidly, acting to reduce PGITT need. By contrast, positive values suggest teacher ",
-                        "demand is growing YOY due to projected pupil numbers falling less rapidly or growing more rapidly."
+                        "This year, negative values suggest teacher demand is falling more rapidly year-on-year (YOY) reducing PGITT need. ",
+                        "This is a consequence of projected pupil numbers falling more rapidly than they were in last year’s projections."
                       )
                     ),
                     tags$li(
@@ -705,7 +704,7 @@ twm_tab_panel <- function() {
                     ),
                     tags$li(
                       strong("Working hour losses: "),
-                      "Losses of teachers through individual teachers reducing their  working hours between years. ",
+                      "Losses of teachers through individual teachers reducing their working hours between years. ",
                       em(
                         "Negative numbers suggest fewer forecasted working hour losses that will require replacement ",
                         "leading to lower PGITT need, whilst positive numbers suggest more forecasted working hour losses."
@@ -756,13 +755,13 @@ twm_tab_panel <- function() {
                       "reflecting recruitment impacts from the two ITT cycles prior to 2026/27. ",
                       "These are ITT cycles that have already occurred but are yet to be reflected in the school workforce census. ",
                       "If a shortfall is estimated, the model assumes additional teachers will need to be recruited via PGITT to correct it. ",
-                      "The model accounts for ITT recruitment, teacher retention, and other recruitment routes ",
-                      "(e.g., returners). This holistic assessment means the impact of missing historical PGITT ",
-                      "trainee need may be offset by wider recruitment or retention being better than expected ",
+                      "The model accounts for ITT recruitment, teacher retention, and other recruitment routes (e.g., returners). ",
+                      "This holistic assessment means the impact of missing historical PGITT trainee need may be offset ",
+                      "by wider recruitment or retention being better than expected. ",
                       em(
                         "Negative numbers reflect that the adjustment is smaller than last year ",
-                        "resulting in reduced PGITT need. No bar means no adjustment was needed because ",
-                        "there is no supply shortfall expected from the two prior ITT cycles. ",
+                        "resulting in reduced PGITT need. No bar means no adjustment was needed this year or ",
+                        "last because there was no supply shortfall expected from the two prior ITT cycles.",
                       )
                     ),
                     tags$li(
@@ -806,7 +805,7 @@ twm_tab_panel <- function() {
 
                   # Mini tab 2 - table
                   table_output = div(
-                    tags$p("This table shows the latest data which relates to the [Month] 2026 publication.
+                    tags$p("This table shows the latest data which relates to the April 2026 publication.
                            This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."),
                     reactableOutput("table_flow_trajectories")
                   ),
@@ -883,8 +882,8 @@ twm_tab_panel <- function() {
                         "subject. These trajectories are in part based on historical data. "
                       ),
                       p(
-                        "Use the filter list to scroll through trajectories for teacher entrants and leavers to state-",
-                        "funded primary and secondary schools."
+                        "Use the filter list to scroll through trajectories for teacher entrants and leavers to ",
+                        "state-funded primary and secondary schools."
                       )
                     )
                   )
@@ -927,7 +926,7 @@ twm_tab_panel <- function() {
                     "secondary schools only). "
                   ),
                   p(
-                    "New to state funded sector entrants (NTSF) are teachers who enter service having not ",
+                    "New to state-funded sector entrants (NTSF) are teachers who enter service having not ",
                     "been employed as a regular teacher in the sector previously and are not newly qualified ",
                     "entrants (NQEs). This group includes newly qualified teachers that defer entry into the ",
                     "workforce by 4 to 16 months, and those that have only taught in other sectors, e.g. ",
@@ -935,8 +934,8 @@ twm_tab_panel <- function() {
                   ),
                   p(
                     "Returners are teachers who enter service in the English state-funded schools sector, ",
-                    "and are recorded within the school workforce census as having worked in the state ",
-                    "funded sector before."
+                    "and are recorded within the school workforce census as having worked in the ",
+                    "state-funded sector before."
                   ),
                   p(
                     "The more NQEs, deferrers, or returners expected, the lower the PGITT trainee need will ",
