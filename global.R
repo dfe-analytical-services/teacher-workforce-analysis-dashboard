@@ -84,7 +84,7 @@ lapply(list.files("R/ui_panels/", full.names = TRUE), source)
 site_title <- "Teacher workforce analysis dashboard (England)" # name of app
 parent_pub_name <- "Teacher demand and postgraduate trainee need" # name of source publication
 parent_publication <- # link to source publication
-  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TO ADD
+  "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27"
 
 # Set the URLs that the site will be published to
 site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # TO ADD
@@ -183,7 +183,8 @@ dummy_flow_data_this_year <- bind_rows(flow_data_last_year, dummy_27_flow_data_a
   mutate(
     historic_or_trajectory = ifelse(year >= 2025, "Trajectory", "Historic"),
     value = value * 1.1,
-    version = "This year (dummy data)"
+    version = "This year (dummy data)",
+    publication_year = 2026
   )
 
 # final dataset

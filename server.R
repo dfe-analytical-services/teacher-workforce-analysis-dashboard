@@ -83,16 +83,23 @@ server <- function(input, output, session) {
   # Data sources and updates table for teacher demand and PGITT need tab
 
   output$data_sources_updates <- reactable::renderReactable({
+    parent_pub_link <- htmltools::tags$a(
+      href = parent_publication,
+      parent_pub_name,
+      target = "_blank",
+      rel = "noopener noreferrer"
+    )
+
     df <- tibble::tribble(
       ~Tab, ~`Data from`, ~File, ~`Data last updated`,
-      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link",
+      "Teacher demand trajectories", parent_pub_link,
       "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’",
       "XX/XX/XXXX",
-      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link",
+      "PGITT trainee need time series", parent_pub_link,
       "Featured table ‘PGITT trainee need time series by phase and subject’", "XX/XX/XXXX",
-      "Drivers of change in PGITT trainee need", "Teacher demand and PGITT need publication - link",
-      "Supporting information data file ‘Calculation of drivers of 2026 to 2027 postgraduate ITT trainee need’", "XX/XX/XXXX",
-      "Flow trajectories", "Teacher demand and PGITT need publication - link",
+      "Drivers of change in PGITT trainee need", parent_pub_link,
+      "Supporting information data file ‘Calculation of drivers of 2026-27 postgraduate ITT trainee need’", "XX/XX/XXXX",
+      "Flow trajectories", parent_pub_link,
       "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
       and related data’ from this year’s publication (includes data from last year’s publication).", "XX/XX/XXXX"
     )
@@ -103,7 +110,13 @@ server <- function(input, output, session) {
       searchable = FALSE,
       sortable = FALSE,
       highlight = TRUE,
-      striped = TRUE
+      striped = TRUE,
+      columns = list(
+        "Data from" = reactable::colDef(
+          html = TRUE,
+          cell = function(value) value
+        )
+      )
     )
   })
 
