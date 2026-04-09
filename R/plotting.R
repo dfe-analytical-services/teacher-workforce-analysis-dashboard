@@ -526,14 +526,14 @@ plot_flow_trajectories <- function(df) {
           "<p>", academic_year_label, "</p>",
           "<p><b>Phase:</b> ", phase, "</p>",
           "<p><b>Subject:</b> ", subject, "</p>",
-          "<p><b>Version:</b> ", version, "</p>",
+          "<p><b>Publication year:</b> ", publication_year, "</p>",
           "<p><b>", type, " trajectory:</b> ", value_formatted, "</p>"
         ),
         paste0(
           "<p>", academic_year_label, "</p>",
           "<p><b>Phase:</b> ", phase, "</p>",
           "<p><b>Subject:</b> ", subject, "</p>",
-          "<p><b>Version:</b> ", version, "</p>",
+          "<p><b>Publication year:</b> ", publication_year, "</p>",
           "<p><b>", type, ":</b> ", value_formatted, "</p>"
         )
       )
