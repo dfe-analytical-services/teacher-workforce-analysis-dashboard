@@ -584,8 +584,8 @@ plot_flow_trajectories <- function(df) {
   df <- df %>%
     dplyr::mutate(
       last_census_year_row = dplyr::case_when(
-        version == "Last year" ~ 2023L,
-        version == "This year (dummy data)" ~ 2024L,
+        publication_year == 2025 ~ 2023L,
+        publication_year == 2026 ~ 2024L,
         TRUE ~ 2023L # fallback/default; adjust if you have other versions
       )
     )
@@ -682,7 +682,7 @@ plot_flow_trajectories <- function(df) {
       "phase",
       "subject",
       "type",
-      "version"
+      "publication_year"
     )))) %>%
     dplyr::mutate(
       next_year = dplyr::lead(year),
@@ -730,7 +730,7 @@ plot_flow_trajectories <- function(df) {
         y = value,
         yend = next_value,
         linetype = segment_linetype,
-        colour = version,
+        colour = factor(publication_year),
         tooltip = tooltip_seg
       ),
       linewidth = 1
@@ -738,7 +738,7 @@ plot_flow_trajectories <- function(df) {
 
     # Points remain interactive
     ggiraph::geom_point_interactive(
-      ggplot2::aes(y = value, colour = version, tooltip = tooltip),
+      ggplot2::aes(y = value, colour = factor(publication_year), tooltip = tooltip),
       shape = 16,
       size = 2.5,
       na.rm = TRUE
@@ -781,12 +781,12 @@ plot_flow_trajectories <- function(df) {
     scale_colour_manual(
       name = "",
       values = c(
-        "This year (dummy data)" = "#801650",
-        "Last year" = "#28A197"
+        "2026" = "#801650",
+        "2025" = "#28A197"
       ),
       labels = c(
-        "This year (dummy data)" = "2026 publication DUMMY data (dotted line = trajectory)",
-        "Last year" = "2025 publication DUMMY data (dotted line = trajectory)"
+        "2026" = "2026 publication DUMMY data (dotted line = trajectory)",
+        "2025" = "2025 publication DUMMY data (dotted line = trajectory)"
       )
     ) +
     guides(
