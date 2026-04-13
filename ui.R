@@ -117,7 +117,7 @@ ui <- function(input, output, session) {
         support_panel(
           team_email = "ittstatistics.publications@education.gov.uk",
           repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
-          form_url = "https://forms.office.com"
+          form_url = "https://forms.cloud.microsoft/e/NZ5fLvCyBX"
         )
       )
     ),
