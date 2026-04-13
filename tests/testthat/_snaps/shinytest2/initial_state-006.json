@@ -1,43 +1,24 @@
 {
   "input": {
-    "file_type_drivers": "JPEG (Up to XXX KB)",
+    "file_type_drivers": "CSV (Up to X.XX MB)",
     "file_type_flows": "CSV (Up to X.XX MB)",
-    "file_type_pgitt_need": "JPEG (Up to XXX KB)",
+    "file_type_pgitt_need": "CSV (Up to X.XX MB)",
     "file_type_pupil_teacher": "JPEG (Up to XXX KB)",
     "filter_flow_type": "Total leaver rate",
     "filter_phase": "Primary",
-    "filter_phase_drivers": "Secondary",
+    "filter_phase_drivers": "Primary",
     "filter_phase_flow": "Primary",
     "filter_phase_pgitt_need": "Primary",
-    "filter_subject_drivers": "Religious Education",
+    "filter_subject_drivers": "Total",
     "filter_subject_flow": "Total",
     "filter_subject_pgitt_need": "Computing",
     "main_tabs_drivers_analysis": "Chart",
     "main_tabs_flow_trajectories": "Chart",
-    "main_tabs_pgitt_trainee_need": "Download",
+    "main_tabs_pgitt_trainee_need": "Table",
     "main_tabs_pupil_teacher": "Download",
     "tabsetpanels": "PGITT trainee need time series"
   },
   "output": {
-    "download_button_ui_pgitt_need": {
-      "html": "<a id=\"download_pgitt_need\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
-      "deps": [
-        {
-          "name": "sr-only",
-          "version": "0.1.0.9000",
-          "src": {
-            "href": "shinyGovstyle/css"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "sr-only.css",
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
     "download_button_ui_pupil_teacher": {
       "html": "<a id=\"download_pupil_teacher\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
       "deps": [

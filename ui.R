@@ -21,7 +21,9 @@
 ui <- function(input, output, session) {
   bslib::page_fluid(
     # Set application metadata ------------------------------------------------
-    tags$head(HTML("<title>Teacher workforce analysis dashboard (England)</title>")),
+    tags$head(HTML(
+      "<title>Teacher workforce analysis dashboard (England)</title>"
+    )),
     tags$head(tags$link(rel = "shortcut icon", href = "dfefavicon.png")),
     use_shiny_title(),
     useShinyjs(),
@@ -56,25 +58,22 @@ ui <- function(input, output, session) {
       name = "Teacher workforce analysis dashboard (England)"
     ),
 
-    # Skip_to_main -------------------------------------------------------------
+    # Google analytics --------------------------------------------------------
+    tags$head(includeHTML(("google-analytics.html"))),
+
+    # Header ------------------------------------------------------------------
+    shinyGovstyle::full_width_overrides(), # TODO: remove when built in
+
     # Add a 'Skip to main content' link for keyboard users to bypass navigation.
     # It stays hidden unless focussed via tabbing.
     shinyGovstyle::skip_to_main(),
+    shinyGovstyle::header(
+      main_text = "Department for Education",
+      secondary_text = "Teacher Workforce Supply Dashboard"
+    ),
 
     # Google analytics --------------------------------------------------------
     tags$head(includeHTML(("google-analytics.html"))),
-    tags$head(
-      tags$link(
-        rel = "stylesheet",
-        type = "text/css",
-        href = "dfe_shiny_gov_style.css"
-      )
-    ),
-
-    # Header ------------------------------------------------------------------
-    dfeshiny::header(
-      header = "Teacher workforce analysis dashboard (England)"
-    ),
 
     # Beta banner -------------------------------------------------------------
     shinyGovstyle::banner(

@@ -15,9 +15,9 @@
 
 # Dummy data with increases in both pupils and teachers
 test_df_increase <- tibble::tibble(
-  start_year       = c(2024, 2027),
-  pupil_numbers    = c(100000, 105000),
-  teacher_numbers  = c(5000, 5200)
+  start_year = c(2024, 2027),
+  pupil_numbers = c(100000, 105000),
+  teacher_numbers = c(5000, 5200)
 )
 
 # Test: calculation of absolute and percentage changes ------------------------------------------------------------
@@ -63,9 +63,9 @@ test_that("build_pupil_teacher_summary creates correct text for increases", {
 test_that("build_pupil_teacher_summary handles decreases correctly", {
   # Input data with decreases in pupils and teachers
   test_df_decrease <- tibble::tibble(
-    start_year       = c(2024, 2027),
-    pupil_numbers    = c(100000, 95000),
-    teacher_numbers  = c(5000, 4800)
+    start_year = c(2024, 2027),
+    pupil_numbers = c(100000, 95000),
+    teacher_numbers = c(5000, 4800)
   )
 
   # Create summary text for decreasing scenario
@@ -88,9 +88,9 @@ test_that("build_pupil_teacher_summary handles decreases correctly", {
 test_that("build_pupil_teacher_summary errors if 2027 data is missing", {
   # Input data missing the 2027 comparison year
   df_missing <- tibble::tibble(
-    start_year       = 2024,
-    pupil_numbers    = 100000,
-    teacher_numbers  = 5000
+    start_year = 2024,
+    pupil_numbers = 100000,
+    teacher_numbers = 5000
   )
 
   # Summary generation should fail due to missing comparison row

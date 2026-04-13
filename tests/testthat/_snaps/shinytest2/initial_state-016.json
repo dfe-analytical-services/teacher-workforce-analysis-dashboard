@@ -1,10 +1,10 @@
 {
   "input": {
     "file_type_drivers": "JPEG (Up to XXX KB)",
-    "file_type_flows": "CSV (Up to X.XX MB)",
+    "file_type_flows": "JPEG (Up to XXX KB)",
     "file_type_pgitt_need": "XLSX (Up to X.XX MB)",
     "file_type_pupil_teacher": "JPEG (Up to XXX KB)",
-    "filter_flow_type": "Total leaver rate",
+    "filter_flow_type": "Returners",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Secondary",
     "filter_phase_flow": "Primary",
@@ -13,12 +13,31 @@
     "filter_subject_flow": "Total",
     "filter_subject_pgitt_need": "Computing",
     "main_tabs_drivers_analysis": "Download",
-    "main_tabs_flow_trajectories": "Chart",
+    "main_tabs_flow_trajectories": "Download",
     "main_tabs_pgitt_trainee_need": "Download",
     "main_tabs_pupil_teacher": "Download",
-    "tabsetpanels": "PGITT trainee need time series"
+    "tabsetpanels": "Flow trajectories"
   },
   "output": {
+    "download_button_ui_flows": {
+      "html": "<a id=\"download_flow_data\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
+      "deps": [
+        {
+          "name": "sr-only",
+          "version": "0.1.0.9000",
+          "src": {
+            "href": "shinyGovstyle/css"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "sr-only.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
     "download_button_ui_pgitt_need": {
       "html": "<a id=\"download_pgitt_need\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (xlsx)<\/a>",
       "deps": [
@@ -381,6 +400,234 @@
             "highlight": true,
             "striped": true,
             "dataKey": "c3d8ad3c1a8b639144672bf97d7da58f",
+            "static": false
+          },
+          "children": [
+
+          ]
+        },
+        "class": "reactR_markup"
+      },
+      "evals": [
+
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+
+      ]
+    },
+    "table_flow_trajectories": {
+      "x": {
+        "tag": {
+          "name": "Reactable",
+          "attribs": {
+            "data": {
+              "Phase": [
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary",
+                "Primary"
+              ],
+              "Subject": [
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total",
+                "Total"
+              ],
+              "Academic year": [
+                "2011/12",
+                "2012/13",
+                "2013/14",
+                "2014/15",
+                "2015/16",
+                "2016/17",
+                "2017/18",
+                "2018/19",
+                "2019/20",
+                "2020/21",
+                "2021/22",
+                "2022/23",
+                "2023/24",
+                "2024/25",
+                "2025/26",
+                "2026/27",
+                "2027/28"
+              ],
+              "Type": [
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners",
+                "Returners"
+              ],
+              "DUMMY": [
+                7865.32650207533,
+                8298.23204151142,
+                8401.94409648966,
+                9343.21158209103,
+                8948.59741198016,
+                9172.98823561824,
+                9170.33946244061,
+                8913.30119713011,
+                8450.43281848934,
+                8310.34038352463,
+                7734.24684493366,
+                8667.40439981356,
+                8199.54321645649,
+                8764.63092996608,
+                8731.12129308463,
+                8743.83746584289,
+                8743.83746584289
+              ],
+              "Unit": [
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE",
+                "FTE"
+              ],
+              "Historic or trajectory": [
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Historic",
+                "Trajectory",
+                "Trajectory",
+                "Trajectory"
+              ]
+            },
+            "columns": [
+              {
+                "id": "Phase",
+                "name": "Phase",
+                "type": "character",
+                "headerClassName": "bar-sort-header",
+                "align": "left"
+              },
+              {
+                "id": "Subject",
+                "name": "Subject",
+                "type": "character",
+                "headerClassName": "bar-sort-header",
+                "show": false,
+                "align": "left"
+              },
+              {
+                "id": "Academic year",
+                "name": "Academic<br>year",
+                "type": "character",
+                "headerClassName": "bar-sort-header",
+                "html": true,
+                "align": "left"
+              },
+              {
+                "id": "Type",
+                "name": "Type",
+                "type": "character",
+                "headerClassName": "bar-sort-header",
+                "align": "left"
+              },
+              {
+                "id": "DUMMY",
+                "name": "DUMMY",
+                "type": "numeric",
+                "headerClassName": "bar-sort-header",
+                "format": {
+                  "cell": {
+                    "digits": 0,
+                    "separators": true
+                  },
+                  "aggregated": {
+                    "digits": 0,
+                    "separators": true
+                  }
+                },
+                "align": "right"
+              },
+              {
+                "id": "Unit",
+                "name": "Unit",
+                "type": "character",
+                "headerClassName": "bar-sort-header",
+                "show": true,
+                "align": "left"
+              },
+              {
+                "id": "Historic or trajectory",
+                "name": "Historic or<br>trajectory",
+                "type": "character",
+                "headerClassName": "bar-sort-header",
+                "html": true,
+                "align": "left"
+              }
+            ],
+            "pagination": false,
+            "defaultPageSize": 10,
+            "highlight": true,
+            "striped": true,
+            "dataKey": "aee044ee545f5fdd078c0ec92bf03056",
             "static": false
           },
           "children": [

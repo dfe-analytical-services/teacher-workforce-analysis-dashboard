@@ -1,45 +1,26 @@
 {
   "input": {
     "file_type_drivers": "JPEG (Up to XXX KB)",
-    "file_type_flows": "JPEG (Up to XXX KB)",
-    "file_type_pgitt_need": "JPEG (Up to XXX KB)",
+    "file_type_flows": "CSV (Up to X.XX MB)",
+    "file_type_pgitt_need": "XLSX (Up to X.XX MB)",
     "file_type_pupil_teacher": "JPEG (Up to XXX KB)",
-    "filter_flow_type": "Returners",
+    "filter_flow_type": "Total leaver rate",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Secondary",
-    "filter_phase_flow": "Secondary",
+    "filter_phase_flow": "Primary",
     "filter_phase_pgitt_need": "Primary",
     "filter_subject_drivers": "Religious Education",
-    "filter_subject_flow": "Classics",
+    "filter_subject_flow": "Total",
     "filter_subject_pgitt_need": "Computing",
-    "main_tabs_drivers_analysis": "Download",
-    "main_tabs_flow_trajectories": "Table",
+    "main_tabs_drivers_analysis": "Table",
+    "main_tabs_flow_trajectories": "Chart",
     "main_tabs_pgitt_trainee_need": "Download",
     "main_tabs_pupil_teacher": "Download",
-    "tabsetpanels": "Flow trajectories"
+    "tabsetpanels": "PGITT trainee need time series"
   },
   "output": {
-    "download_button_ui_flows": {
-      "html": "<a id=\"download_flow_data\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
-      "deps": [
-        {
-          "name": "sr-only",
-          "version": "0.1.0.9000",
-          "src": {
-            "href": "shinyGovstyle/css"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "sr-only.css",
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
     "download_button_ui_pgitt_need": {
-      "html": "<a id=\"download_pgitt_need\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
+      "html": "<a id=\"download_pgitt_need\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (xlsx)<\/a>",
       "deps": [
         {
           "name": "sr-only",
@@ -400,234 +381,6 @@
             "highlight": true,
             "striped": true,
             "dataKey": "c3d8ad3c1a8b639144672bf97d7da58f",
-            "static": false
-          },
-          "children": [
-
-          ]
-        },
-        "class": "reactR_markup"
-      },
-      "evals": [
-
-      ],
-      "jsHooks": [
-
-      ],
-      "deps": [
-
-      ]
-    },
-    "table_flow_trajectories": {
-      "x": {
-        "tag": {
-          "name": "Reactable",
-          "attribs": {
-            "data": {
-              "Phase": [
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary",
-                "Secondary"
-              ],
-              "Subject": [
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics",
-                "Classics"
-              ],
-              "Academic year": [
-                "2011/12",
-                "2012/13",
-                "2013/14",
-                "2014/15",
-                "2015/16",
-                "2016/17",
-                "2017/18",
-                "2018/19",
-                "2019/20",
-                "2020/21",
-                "2021/22",
-                "2022/23",
-                "2023/24",
-                "2024/25",
-                "2025/26",
-                "2026/27",
-                "2027/28"
-              ],
-              "Type": [
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners",
-                "Returners"
-              ],
-              "DUMMY": [
-                5.97589439468777,
-                7.32157936956177,
-                10.2860377072626,
-                8.92120386941239,
-                7.00493895412587,
-                3.13596390550248,
-                1.90373816460538,
-                3.06441299129204,
-                6.65678525310412,
-                3.64309104170276,
-                3.81921863784825,
-                5.12756665143171,
-                5.60450772739305,
-                4.11941054660997,
-                4.11941054660997,
-                4.11941054660997,
-                4.11941054660997
-              ],
-              "Unit": [
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE",
-                "FTE"
-              ],
-              "Historic or trajectory": [
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Historic",
-                "Trajectory",
-                "Trajectory",
-                "Trajectory"
-              ]
-            },
-            "columns": [
-              {
-                "id": "Phase",
-                "name": "Phase",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "align": "left"
-              },
-              {
-                "id": "Subject",
-                "name": "Subject",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "show": true,
-                "align": "left"
-              },
-              {
-                "id": "Academic year",
-                "name": "Academic<br>year",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "html": true,
-                "align": "left"
-              },
-              {
-                "id": "Type",
-                "name": "Type",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "align": "left"
-              },
-              {
-                "id": "DUMMY",
-                "name": "DUMMY",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header",
-                "format": {
-                  "cell": {
-                    "digits": 0,
-                    "separators": true
-                  },
-                  "aggregated": {
-                    "digits": 0,
-                    "separators": true
-                  }
-                },
-                "align": "right"
-              },
-              {
-                "id": "Unit",
-                "name": "Unit",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "show": true,
-                "align": "left"
-              },
-              {
-                "id": "Historic or trajectory",
-                "name": "Historic or<br>trajectory",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "html": true,
-                "align": "left"
-              }
-            ],
-            "pagination": false,
-            "defaultPageSize": 10,
-            "highlight": true,
-            "striped": true,
-            "dataKey": "209bdc84fbeb0b20255ef1b9ba75a227",
             "static": false
           },
           "children": [

@@ -2,42 +2,23 @@
   "input": {
     "file_type_drivers": "CSV (Up to X.XX MB)",
     "file_type_flows": "CSV (Up to X.XX MB)",
-    "file_type_pgitt_need": "JPEG (Up to XXX KB)",
+    "file_type_pgitt_need": "CSV (Up to X.XX MB)",
     "file_type_pupil_teacher": "JPEG (Up to XXX KB)",
     "filter_flow_type": "Total leaver rate",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Primary",
     "filter_phase_flow": "Primary",
-    "filter_phase_pgitt_need": "Primary",
+    "filter_phase_pgitt_need": "Secondary",
     "filter_subject_drivers": "Total",
     "filter_subject_flow": "Total",
     "filter_subject_pgitt_need": "Computing",
     "main_tabs_drivers_analysis": "Chart",
     "main_tabs_flow_trajectories": "Chart",
-    "main_tabs_pgitt_trainee_need": "Download",
+    "main_tabs_pgitt_trainee_need": "Chart",
     "main_tabs_pupil_teacher": "Download",
     "tabsetpanels": "PGITT trainee need time series"
   },
   "output": {
-    "download_button_ui_pgitt_need": {
-      "html": "<a id=\"download_pgitt_need\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
-      "deps": [
-        {
-          "name": "sr-only",
-          "version": "0.1.0.9000",
-          "src": {
-            "href": "shinyGovstyle/css"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "sr-only.css",
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
     "download_button_ui_pupil_teacher": {
       "html": "<a id=\"download_pupil_teacher\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
       "deps": [
@@ -58,160 +39,6 @@
       ]
     },
     "pt_summary_box": "We project 3 more pupils (0.0%) and teacher demand to be 3,538 lower (-1.7%) in 2027/28 compared to 2024/25. (dummy)",
-    "tablePgittNeedTimeseries": {
-      "x": {
-        "tag": {
-          "name": "Reactable",
-          "attribs": {
-            "data": {
-              "Academic year": [
-                "2021/22",
-                "2022/23",
-                "2023/24",
-                "2024/25",
-                "2025/26"
-              ],
-              "Phase": [
-                "Primary",
-                "Primary",
-                "Primary",
-                "Primary",
-                "Primary"
-              ],
-              "Subject": [
-                "Total",
-                "Total",
-                "Total",
-                "Total",
-                "Total"
-              ],
-              "PGITT trainee need": [
-                10800,
-                11655,
-                9180,
-                9400,
-                7650
-              ],
-              "Difference in need to previous year": [
-                "NA",
-                855,
-                -2475,
-                220,
-                -1750
-              ],
-              "Percentage change in need to previous year": [
-                "NA",
-                7.9,
-                -21.2,
-                2.4,
-                -18.6
-              ]
-            },
-            "columns": [
-              {
-                "id": "Academic year",
-                "name": "Academic<br>year",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "html": true,
-                "width": 120,
-                "align": "left"
-              },
-              {
-                "id": "Phase",
-                "name": "Phase",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "width": 120,
-                "align": "left"
-              },
-              {
-                "id": "Subject",
-                "name": "Subject",
-                "type": "character",
-                "headerClassName": "bar-sort-header",
-                "show": false,
-                "width": 120,
-                "align": "left"
-              },
-              {
-                "id": "PGITT trainee need",
-                "name": "PGITT trainee need",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header",
-                "format": {
-                  "cell": {
-                    "digits": 0,
-                    "separators": true
-                  },
-                  "aggregated": {
-                    "digits": 0,
-                    "separators": true
-                  }
-                },
-                "align": "right"
-              },
-              {
-                "id": "Difference in need to previous year",
-                "name": "Difference in need<br>to previous year",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header",
-                "format": {
-                  "cell": {
-                    "digits": 0,
-                    "separators": true
-                  },
-                  "aggregated": {
-                    "digits": 0,
-                    "separators": true
-                  }
-                },
-                "html": true,
-                "align": "right"
-              },
-              {
-                "id": "Percentage change in need to previous year",
-                "name": "Percentage change in<br>need to previous year",
-                "type": "numeric",
-                "headerClassName": "bar-sort-header",
-                "format": {
-                  "cell": {
-                    "suffix": "%",
-                    "digits": 1
-                  },
-                  "aggregated": {
-                    "suffix": "%",
-                    "digits": 1
-                  }
-                },
-                "html": true,
-                "align": "right"
-              }
-            ],
-            "resizable": true,
-            "pagination": false,
-            "defaultPageSize": 10,
-            "highlight": true,
-            "striped": true,
-            "dataKey": "7f1d01d2f934e732f5005690bf161324",
-            "static": false
-          },
-          "children": [
-
-          ]
-        },
-        "class": "reactR_markup"
-      },
-      "evals": [
-
-      ],
-      "jsHooks": [
-
-      ],
-      "deps": [
-
-      ]
-    },
     "tablePupilTeacher": {
       "x": {
         "tag": {

@@ -115,7 +115,6 @@ showtext_auto()
 
 # Read in the data ------------------------------------------------------------
 
-
 # Add data for teacher and pupil numbers ----------------------------------------
 
 pupil_teacher_numbers <- read_pupil_teacher_numbers()
@@ -132,11 +131,17 @@ pgitt_need_timeseries <- read_pgitt_need_timeseries()
 # phase and subject list for pgitt trainee need tab filter
 # sort phase so total first
 
-choices_pgitt_need_phase <- c("Total", sort(setdiff(unique(pgitt_need_timeseries$phase), "Total")))
+choices_pgitt_need_phase <- c(
+  "Total",
+  sort(setdiff(unique(pgitt_need_timeseries$phase), "Total"))
+)
 
 # make a unique subject list but it starts with total
 
-choices_pgitt_need_subject <- c("Total", sort(setdiff(unique(pgitt_need_timeseries$subject), "Total")))
+choices_pgitt_need_subject <- c(
+  "Total",
+  sort(setdiff(unique(pgitt_need_timeseries$subject), "Total"))
+)
 
 
 # Add data for drivers ----------------------------------------------------------
@@ -145,10 +150,13 @@ choices_pgitt_need_subject <- c("Total", sort(setdiff(unique(pgitt_need_timeseri
 # to be consistent with final dataset - TO DELETE
 
 drivers_data <- read_drivers_data() %>%
-  mutate(driver = recode(driver,
-    "Last year's need" = "2025/26 PGITT need",
-    "This year's need" = "2026/27 PGITT need"
-  ))
+  mutate(
+    driver = recode(
+      driver,
+      "Last year's need" = "2025/26 PGITT need",
+      "This year's need" = "2026/27 PGITT need"
+    )
+  )
 
 # phase and subject list for drivers tab
 
@@ -158,7 +166,10 @@ choices_drivers_phase <- sort(unique(drivers_data$phase))
 
 # make a unique subject list but it starts with total
 
-choices_drivers_subject <- c("Total", sort(setdiff(unique(drivers_data$subject), "Total")))
+choices_drivers_subject <- c(
+  "Total",
+  sort(setdiff(unique(drivers_data$subject), "Total"))
+)
 
 
 # Add data for flow trajectories  ---------------------------------------------------
@@ -179,7 +190,11 @@ dummy_26_flow_data_NQE <- flow_data_last_year %>%
 
 # bind to original dataset
 
-dummy_flow_data_this_year <- bind_rows(flow_data_last_year, dummy_27_flow_data_all_bar_NQEs, dummy_26_flow_data_NQE) %>%
+dummy_flow_data_this_year <- bind_rows(
+  flow_data_last_year,
+  dummy_27_flow_data_all_bar_NQEs,
+  dummy_26_flow_data_NQE
+) %>%
   mutate(
     historic_or_trajectory = ifelse(year >= 2025, "Trajectory", "Historic"),
     value = value * 1.1,
@@ -194,7 +209,12 @@ flow_data <- bind_rows(flow_data_last_year, dummy_flow_data_this_year) %>%
 
 # remove others
 
-rm(flow_data_last_year, dummy_27_flow_data_all_bar_NQEs, dummy_26_flow_data_NQE, dummy_flow_data_this_year)
+rm(
+  flow_data_last_year,
+  dummy_27_flow_data_all_bar_NQEs,
+  dummy_26_flow_data_NQE,
+  dummy_flow_data_this_year
+)
 
 # save values of phase, subject and flow type
 
@@ -202,13 +222,22 @@ choices_flow_phase <- sort(unique(flow_data$phase))
 
 choices_flow_subject <- sort(unique(flow_data$subject))
 
-choices_flow_type <- c("Total leaver rate", "Under 55 leaver rate", "55+ leaver rate", "Newly qualified entrants", "New to state-funded sector entrants", "Returners")
+choices_flow_type <- c(
+  "Total leaver rate",
+  "Under 55 leaver rate",
+  "55+ leaver rate",
+  "Newly qualified entrants",
+  "New to state-funded sector entrants",
+  "Returners"
+)
 
 # set display labels for flow type to include abbreviations for drop down filter list
 
 flow_type_labels <- dplyr::case_when(
-  choices_flow_type == "Newly qualified entrants" ~ "Newly qualified entrants (NQEs)",
-  choices_flow_type == "New to state-funded sector entrants" ~ "New to state-funded sector (NTSF) entrants",
+  choices_flow_type == "Newly qualified entrants" ~
+    "Newly qualified entrants (NQEs)",
+  choices_flow_type == "New to state-funded sector entrants" ~
+    "New to state-funded sector (NTSF) entrants",
   TRUE ~ choices_flow_type
 )
 

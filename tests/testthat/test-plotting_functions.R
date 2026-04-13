@@ -9,7 +9,6 @@
 #   • for interactive ggiraph plots: expected class attributes exist
 # -----------------------------------------------------------------------------------------------------------------
 
-
 # Tests for plot_pupil_teacher_timeseries() -----------------------------------------------------------------------
 
 test_that("plot_pupil_teacher_timeseries works and returns an interactive ggplot object", {
@@ -17,7 +16,14 @@ test_that("plot_pupil_teacher_timeseries works and returns an interactive ggplot
   # Contains just enough rows/columns for the function to run without error
   df <- data.frame(
     start_year = 2020:2025,
-    academic_year = c("2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26"),
+    academic_year = c(
+      "2020/21",
+      "2021/22",
+      "2022/23",
+      "2023/24",
+      "2024/25",
+      "2025/26"
+    ),
     pupil_numbers = c(400, 420, 430, 440, 450, 460),
     teacher_numbers = c(20, 21, 22, 23, 24, 25),
     phase = "Primary",
@@ -74,8 +80,11 @@ test_that("plot_drivers_waterfall works and returns an interactive ggplot", {
   # Minimal but realistic waterfall input
   df <- data.frame(
     driver = c(
-      "2025/26 PGITT need", "Demand growth YOY", "Leavers",
-      "NTSF", "2026/27 PGITT need"
+      "2025/26 PGITT need",
+      "Demand growth YOY",
+      "Leavers",
+      "NTSF",
+      "2026/27 PGITT need"
     ),
     value = c(3000, -200, 100, -50, 2850)
   )
@@ -105,8 +114,11 @@ test_that("plot_flow_trajectories works and returns an interactive ggplot", {
     type = "Total leaver rate",
     value = c(0.08, 0.09, 0.10, 0.11, 0.12, 0.13),
     version = c(
-      "Last year", "Last year", "Last year",
-      "This year (dummy data)", "This year (dummy data)",
+      "Last year",
+      "Last year",
+      "Last year",
+      "This year (dummy data)",
+      "This year (dummy data)",
       "This year (dummy data)"
     )
   )
