@@ -69,7 +69,7 @@ ui <- function(input, output, session) {
     shinyGovstyle::skip_to_main(),
     shinyGovstyle::header(
       main_text = "Department for Education",
-      secondary_text = "Teacher Workforce Supply Dashboard"
+      secondary_text = "Teacher workforce analysis dashboard (England)" # This is setting the page header!
     ),
 
     # Google analytics --------------------------------------------------------
