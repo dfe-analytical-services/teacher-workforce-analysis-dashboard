@@ -83,12 +83,25 @@ server <- function(input, output, session) {
   # Data sources and updates table for teacher demand and PGITT need tab
 
   output$data_sources_updates <- reactable::renderReactable({
+    parent_pub_link <- htmltools::tags$a(
+      href = parent_publication,
+      parent_pub_name,
+      target = "_blank",
+      rel = "noopener noreferrer"
+    )
+
     df <- tibble::tribble(
       ~Tab, ~`Data from`, ~File, ~`Data last updated`,
-      "Teacher demand trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "PGITT trainee need time series", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "Drivers of PGITT trainee need changes", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX",
-      "Flow trajectories", "Teacher demand and PGITT need publication - link", "XXXX", "XX/XX/XXXX"
+      "Teacher demand trajectories", parent_pub_link,
+      "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’",
+      "XX/XX/XXXX",
+      "PGITT trainee need time series", parent_pub_link,
+      "Featured table ‘PGITT trainee need time series by phase and subject’", "XX/XX/XXXX",
+      "Drivers of change in PGITT trainee need", parent_pub_link,
+      "Supporting information data file ‘Calculation of drivers of 2026-27 postgraduate ITT trainee need’", "XX/XX/XXXX",
+      "Flow trajectories", parent_pub_link,
+      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
+      and related data’ from this year’s publication (includes data from last year’s publication).", "XX/XX/XXXX"
     )
 
     reactable::reactable(
@@ -98,7 +111,12 @@ server <- function(input, output, session) {
       sortable = FALSE,
       highlight = TRUE,
       striped = TRUE,
-      defaultColDef = reactable::colDef(minWidth = 140)
+      columns = list(
+        "Data from" = reactable::colDef(
+          html = TRUE,
+          cell = function(value) value
+        )
+      )
     )
   })
 
@@ -314,50 +332,34 @@ server <- function(input, output, session) {
     }
   )
 
-  # Create dataframe of pupil and teacher number changes between 24/25 and 27/28
+  ## Section for pupil/teacher number blue summary box
+  ## See helper functions script for calc_pt_change_24_to_27() + build_pupil_teacher_summary() functions
+
+  # Reactive: Calculate pupil and teacher changes between 2024/25 and 2027/28
 
   pt_change_24_to_27 <- reactive({
+    # Ensure filtered pupil/teacher data is available before proceeding
     req(pt_data_filtered())
 
-    pt_data_filtered() %>%
-      filter(start_year %in% c(2024, 2027)) %>%
-      arrange(start_year) %>%
-      mutate(
-        pupil_diff   = pupil_numbers - lag(pupil_numbers),
-        pupil_pct    = (pupil_diff / lag(pupil_numbers)) * 100,
-        teacher_diff = teacher_numbers - lag(teacher_numbers),
-        teacher_pct  = (teacher_diff / lag(teacher_numbers)) * 100
-      )
+    # Apply helper function to calculate absolute and percentage changes
+    # between 2023/24 and 2027/28
+    calc_pt_change_24_to_27(pt_data_filtered())
   })
 
-  # Create summary dataframe
+  # Reactive: Build summary text describing projected changes
 
   pupil_teacher_summary <- reactive({
-    df <- pt_change_24_to_27()
-    df_27 <- df[df$start_year == 2027, ]
-
-    # Determine direction words
-    pupil_dir <- if (df_27$pupil_diff > 0) "more" else "fewer"
-    teacher_dir <- if (df_27$teacher_diff > 0) "higher" else "lower"
-
-    pupil_diff_txt <- scales::label_comma()(abs(df_27$pupil_diff))
-    teacher_diff_txt <- scales::label_comma()(abs(df_27$teacher_diff))
-
-    pupil_pct_txt <- scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct)
-    teacher_pct_txt <- scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct)
-
-    glue::glue(
-      "We project {pupil_diff_txt} {pupil_dir} pupils ({pupil_pct_txt}) ",
-      "and teacher demand to be {teacher_diff_txt} {teacher_dir} ({teacher_pct_txt}) ",
-      "in 2027/28 compared to 2024/25. (dummy)"
-    )
+    # Generate a human-readable summary sentence based on the calculated changes
+    build_pupil_teacher_summary(pt_change_24_to_27())
   })
 
-  # Pupil teacher summary box
+  # Output: Render pupil and teacher summary text in the UI
 
   output$pt_summary_box <- renderText({
+    # Display the summary sentence in the summary box
     pupil_teacher_summary()
   })
+
 
 
   # # PGITT trainee need time series tab ----------------------------------------------------------------------------
@@ -694,8 +696,9 @@ server <- function(input, output, session) {
     ggiraph::girafe(
       ggobj = p,
       width_svg = 12,
-      height_svg = 7,
+      height_svg = 6,
       options = list(
+        ggiraph::opts_sizing(rescale = TRUE),
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_toolbar(saveaspng = FALSE),
         ggiraph::opts_hover(css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"),

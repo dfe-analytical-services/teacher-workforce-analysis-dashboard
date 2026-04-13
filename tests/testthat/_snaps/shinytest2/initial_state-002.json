@@ -8,7 +8,7 @@
     "filter_phase": "Primary",
     "filter_phase_drivers": "Primary",
     "filter_phase_flow": "Primary",
-    "filter_phase_pgitt_need": "Primary",
+    "filter_phase_pgitt_need": "Total",
     "filter_subject_drivers": "Total",
     "filter_subject_flow": "Total",
     "filter_subject_pgitt_need": "Total",

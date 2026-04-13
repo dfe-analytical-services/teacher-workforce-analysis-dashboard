@@ -1,9 +1,102 @@
-# -----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 # This is the helper file, filled with lots of helpful functions!
 #
 # It is commonly used as an R script to store custom functions used through the
 # app to keep the rest of the app code easier to read.
-# -----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------------------
+# Calculate change in pupil and teacher numbers between 2024/25 and 2027/28
+# --------------------------------------------------------------------------------------
+
+# Filters the input dataset to 2024 and 2027, orders by year, and
+# calculates absolute and percentage changes in pupil and teacher numbers.
+#
+# param: df A data frame containing pupil and teacher numbers by start year.
+#   Must include columns:
+#   - start_year
+#   - pupil_numbers
+#   - teacher_numbers
+#
+# return: A data frame with additional columns:
+#   - pupil_diff
+#   - pupil_pct
+#   - teacher_diff
+#   - teacher_pct
+#
+# example:
+# calc_pt_change_24_to_27(df)
+
+calc_pt_change_24_to_27 <- function(df) {
+  # Error if 2024 or 2027 data is missing
+
+  required_years <- c(2024, 2027)
+  years_present <- sort(unique(df$start_year))
+
+  if (!all(required_years %in% years_present)) {
+    missing_years <- setdiff(required_years, years_present)
+
+    stop(
+      "Missing required start_year(s): ",
+      paste(missing_years, collapse = ", "),
+      ". Data for both 2024 and 2027 is required.",
+      call. = FALSE
+    )
+  }
+
+  df %>%
+    # Keep only start years of interest
+    dplyr::filter(start_year %in% c(2024, 2027)) %>%
+    # Ensure correct ordering for lag calculations
+    dplyr::arrange(start_year) %>%
+    # Calculate absolute and percentage changes
+    dplyr::mutate(
+      pupil_diff   = pupil_numbers - dplyr::lag(pupil_numbers),
+      pupil_pct    = (pupil_diff / dplyr::lag(pupil_numbers)) * 100,
+      teacher_diff = teacher_numbers - dplyr::lag(teacher_numbers),
+      teacher_pct  = (teacher_diff / dplyr::lag(teacher_numbers)) * 100
+    )
+}
+
+# --------------------------------------------------------------------------------------
+# Build summary text for change in pupil and teacher numbers between 2024/25 and 2027/28
+# --------------------------------------------------------------------------------------
+
+# Takes a data frame of changes (as produced by `calc_pt_change_24_to_27`)
+# and returns a human-readable summary sentence describing projected
+# changes between 2024/25 and 2027/28.
+#
+# param: df_change A data frame containing change metrics for 2024 and 2027.
+#
+# return: A single character string suitable for display in a Shiny text output.
+#
+# example:
+# build_pupil_teacher_summary(df_change)
+
+build_pupil_teacher_summary <- function(df_change) {
+  # Extract the 2027 row (where differences are defined)
+  df_27 <- df_change[df_change$start_year == 2027, ]
+
+  # Determine directional wording for changes
+  pupil_dir <- if (df_27$pupil_diff > 0) "more" else "fewer"
+  teacher_dir <- if (df_27$teacher_diff > 0) "higher" else "lower"
+
+  # Construct summary sentence
+  glue::glue(
+    "We project ",
+    scales::label_comma()(abs(df_27$pupil_diff)), " ", pupil_dir,
+    " pupils (",
+    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct), ") ",
+    "and teacher demand to be ",
+    scales::label_comma()(abs(df_27$teacher_diff)), " ", teacher_dir,
+    " (",
+    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct), ") ",
+    "in 2027/28 compared to 2024/25. (dummy)"
+  )
+}
+
+
+# # FROM TEMPLATE -------------------------------------------------------------------------------------------------
 
 # Value box function ----------------------------------------------------------
 # fontsize: can be small, medium or large

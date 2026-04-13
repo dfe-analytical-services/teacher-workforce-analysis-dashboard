@@ -81,13 +81,13 @@ lapply(list.files("R/ui_panels/", full.names = TRUE), source)
 
 # Set global variables --------------------------------------------------------
 
-site_title <- "Teacher Workforce Supply Dashboard (England)" # name of app # UPDATED
-parent_pub_name <- "Statistical publication" # name of source publication # TBC
+site_title <- "Teacher workforce analysis dashboard (England)" # name of app
+parent_pub_name <- "Teacher demand and postgraduate trainee need" # name of source publication
 parent_publication <- # link to source publication
-  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TBC
+  "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27"
 
 # Set the URLs that the site will be published to
-site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # ??
+site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # TO ADD
 
 # Combine URLs into list for disconnect function
 # We can add further mirrors where necessary. Each one can generally handle
@@ -130,9 +130,9 @@ choices_pupil_teacher_phase <- sort(unique(pupil_teacher_numbers$phase))
 pgitt_need_timeseries <- read_pgitt_need_timeseries()
 
 # phase and subject list for pgitt trainee need tab filter
-# sort phase so primary first
+# sort phase so total first
 
-choices_pgitt_need_phase <- sort(unique(pgitt_need_timeseries$phase))
+choices_pgitt_need_phase <- c("Total", sort(setdiff(unique(pgitt_need_timeseries$phase), "Total")))
 
 # make a unique subject list but it starts with total
 
@@ -183,7 +183,8 @@ dummy_flow_data_this_year <- bind_rows(flow_data_last_year, dummy_27_flow_data_a
   mutate(
     historic_or_trajectory = ifelse(year >= 2025, "Trajectory", "Historic"),
     value = value * 1.1,
-    version = "This year (dummy data)"
+    version = "This year (dummy data)",
+    publication_year = 2026
   )
 
 # final dataset
