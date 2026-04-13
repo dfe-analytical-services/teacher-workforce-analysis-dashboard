@@ -25,14 +25,21 @@ server <- function(input, output, session) {
   # any entries in your own dashboard's bookmarking url that you don't want
   # including.
   setBookmarkExclude(c(
-    "cookies", "link_to_app_content_tab",
-    "tabBenchmark_rows_current", "tabBenchmark_rows_all",
-    "tabBenchmark_columns_selected", "tabBenchmark_cell_clicked",
-    "tabBenchmark_cells_selected", "tabBenchmark_search",
-    "tabBenchmark_rows_selected", "tabBenchmark_row_last_clicked",
+    "cookies",
+    "link_to_app_content_tab",
+    "tabBenchmark_rows_current",
+    "tabBenchmark_rows_all",
+    "tabBenchmark_columns_selected",
+    "tabBenchmark_cell_clicked",
+    "tabBenchmark_cells_selected",
+    "tabBenchmark_search",
+    "tabBenchmark_rows_selected",
+    "tabBenchmark_row_last_clicked",
     "tabBenchmark_state",
     "plotly_relayout-A",
-    "plotly_click-A", "plotly_hover-A", "plotly_afterplot-A",
+    "plotly_click-A",
+    "plotly_hover-A",
+    "plotly_afterplot-A",
     ".clientValue-default-plotlyCrosstalkOpts"
   ))
 
@@ -51,8 +58,10 @@ server <- function(input, output, session) {
       change_window_title(
         session,
         paste0(
-          site_title, " - ",
-          input$selectPhase, ", ",
+          site_title,
+          " - ",
+          input$selectPhase,
+          ", ",
           input$selectArea
         )
       )
@@ -60,7 +69,8 @@ server <- function(input, output, session) {
       change_window_title(
         session,
         paste0(
-          site_title, " - ",
+          site_title,
+          " - ",
           input$navlistPanel
         )
       )
@@ -91,17 +101,27 @@ server <- function(input, output, session) {
     )
 
     df <- tibble::tribble(
-      ~Tab, ~`Data from`, ~File, ~`Data last updated`,
-      "Teacher demand trajectories", parent_pub_link,
+      ~Tab,
+      ~`Data from`,
+      ~File,
+      ~`Data last updated`,
+      "Teacher demand trajectories",
+      parent_pub_link,
       "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’",
       "XX/XX/XXXX",
-      "PGITT trainee need time series", parent_pub_link,
-      "Featured table ‘PGITT trainee need time series by phase and subject’", "XX/XX/XXXX",
-      "Drivers of change in PGITT trainee need", parent_pub_link,
-      "Supporting information data file ‘Calculation of drivers of 2026-27 postgraduate ITT trainee need’", "XX/XX/XXXX",
-      "Flow trajectories", parent_pub_link,
+      "PGITT trainee need time series",
+      parent_pub_link,
+      "Featured table ‘PGITT trainee need time series by phase and subject’",
+      "XX/XX/XXXX",
+      "Drivers of change in PGITT trainee need",
+      parent_pub_link,
+      "Supporting information data file ‘Calculation of drivers of 2026-27 postgraduate ITT trainee need’",
+      "XX/XX/XXXX",
+      "Flow trajectories",
+      parent_pub_link,
       "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
-      and related data’ from this year’s publication (includes data from last year’s publication).", "XX/XX/XXXX"
+      and related data’ from this year’s publication (includes data from last year’s publication).",
+      "XX/XX/XXXX"
     )
 
     reactable::reactable(
@@ -142,7 +162,12 @@ server <- function(input, output, session) {
 
   # create a function that builds the ggplot graph
 
-  build_pupil_teacher_plot <- function(df, phase, for_download = FALSE, axis_lock = NULL) {
+  build_pupil_teacher_plot <- function(
+    df,
+    phase,
+    for_download = FALSE,
+    axis_lock = NULL
+  ) {
     # dynamic labels (used inside plot function already, but keeping here is fine)
     phase_title <- if (tolower(phase) == "primary") "Primary" else "Secondary"
     left_title <- paste0(phase_title, " pupils")
@@ -150,7 +175,11 @@ server <- function(input, output, session) {
 
     # Let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
     # including the manual lock (breaks and matching).
-    p <- plot_pupil_teacher_timeseries(df, phase = phase_title, axis_lock = axis_lock)
+    p <- plot_pupil_teacher_timeseries(
+      df,
+      phase = phase_title,
+      axis_lock = axis_lock
+    )
 
     # Make axis text larger for downloads
     if (for_download) {
@@ -195,20 +224,25 @@ server <- function(input, output, session) {
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_hover(css = "stroke-width:2px;"),
         # Keep dashed appearance in legend keys on hover as well:
-        ggiraph::opts_hover_key(css = "stroke-dasharray:8,6; stroke-width:1.6px;"),
+        ggiraph::opts_hover_key(
+          css = "stroke-dasharray:8,6; stroke-width:1.6px;"
+        ),
         ggiraph::opts_sizing(rescale = TRUE, width = 1),
         ggiraph::opts_toolbar(saveaspng = FALSE)
       )
     )
   })
 
-
   # Table: pupil/teacher numbers ----------------------------------------------------------
 
   output$tablePupilTeacher <- renderReactable({
     df <- pt_data_filtered() %>%
       dplyr::mutate(
-        `Academic year` = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
+        `Academic year` = paste0(
+          start_year,
+          "/",
+          sprintf("%02d", (start_year + 1) %% 100)
+        ),
         `Pupil numbers` = pupil_numbers,
         `Teacher numbers` = teacher_numbers,
         Projection = dplyr::if_else(start_year > 2024, "Yes", "No")
@@ -254,7 +288,9 @@ server <- function(input, output, session) {
     pt_data_filtered() %>%
       dplyr::mutate(
         `Academic year` = paste0(
-          start_year, "/", sprintf("%02d", (start_year + 1) %% 100)
+          start_year,
+          "/",
+          sprintf("%02d", (start_year + 1) %% 100)
         ),
         Projection = dplyr::if_else(start_year > 2024, "Yes", "No")
       ) %>%
@@ -269,7 +305,6 @@ server <- function(input, output, session) {
 
   # Create download chart for pupil teacher data
 
-
   download_chart_pupil_teacher_data <- reactive({
     phase_in <- input$filter_phase
     lock <- if (tolower(phase_in) == "primary") primary_lock else secondary_lock
@@ -282,7 +317,6 @@ server <- function(input, output, session) {
     )
   })
 
-
   # Create the download button UI
 
   output$download_button_ui_pupil_teacher <- renderUI({
@@ -294,13 +328,17 @@ server <- function(input, output, session) {
     )
   })
 
-
   # Define action when user clicks download button
 
   output$download_pupil_teacher <- downloadHandler(
     filename = function() {
       phase_clean <- tolower(input$filter_phase)
-      raw_name <- paste0("twm_pupil_teacher_numbers_", phase_clean, "_", Sys.Date())
+      raw_name <- paste0(
+        "twm_pupil_teacher_numbers_",
+        phase_clean,
+        "_",
+        Sys.Date()
+      )
       extension <- if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
         ".csv"
       } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
@@ -317,14 +355,25 @@ server <- function(input, output, session) {
       } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
         # Added a basic pop up notification as the Excel file can take time to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
-        openxlsx::write.xlsx(download_table_pupil_teacher_data(), file, colWidths = "Auto")
+        openxlsx::write.xlsx(
+          download_table_pupil_teacher_data(),
+          file,
+          colWidths = "Auto"
+        )
         on.exit(removeNotification(pop_up), add = TRUE)
       } else {
         file.copy(
           ggplot2::ggsave(
-            filename = tempfile(paste0("twm_pupil_teacher_numbers_chart_", Sys.Date(), ".jpeg")),
-            plot = download_chart_pupil_teacher_data(), device = "jpeg",
-            width = 12, height = 6, dpi = 300
+            filename = tempfile(paste0(
+              "twm_pupil_teacher_numbers_chart_",
+              Sys.Date(),
+              ".jpeg"
+            )),
+            plot = download_chart_pupil_teacher_data(),
+            device = "jpeg",
+            width = 12,
+            height = 6,
+            dpi = 300
           ),
           file
         )
@@ -359,8 +408,6 @@ server <- function(input, output, session) {
     # Display the summary sentence in the summary box
     pupil_teacher_summary()
   })
-
-
 
   # # PGITT trainee need time series tab ----------------------------------------------------------------------------
 
@@ -415,8 +462,16 @@ server <- function(input, output, session) {
       subject_selected <- unique(df$subject)
 
       # Pick a single value if vectors have length > 1 (edge filters)
-      phase_val <- if (length(phase_selected) == 1) phase_selected else phase_selected[1]
-      subject_val <- if (length(subject_selected) == 1) subject_selected else subject_selected[1]
+      phase_val <- if (length(phase_selected) == 1) {
+        phase_selected
+      } else {
+        phase_selected[1]
+      }
+      subject_val <- if (length(subject_selected) == 1) {
+        subject_selected
+      } else {
+        subject_selected[1]
+      }
 
       # Derive min/max academic year from data (uses 'start_year')
       min_year <- min(df$start_year, na.rm = TRUE)
@@ -430,22 +485,28 @@ server <- function(input, output, session) {
       )
 
       plot_title <- paste0(
-        title_prefix, " PGITT trainee need ",
-        min_year, "/", sprintf("%02d", (min_year + 1) %% 100),
+        title_prefix,
+        " PGITT trainee need ",
+        min_year,
+        "/",
+        sprintf("%02d", (min_year + 1) %% 100),
         " to ",
-        max_year, "/", sprintf("%02d", (max_year + 1) %% 100)
+        max_year,
+        "/",
+        sprintf("%02d", (max_year + 1) %% 100)
       )
 
       p <- p + ggplot2::labs(title = plot_title)
 
       # Increase plot title text size
 
-      p <- p + ggplot2::theme(
-        plot.title = ggplot2::element_text(
-          size = 40,
-          face = "bold"
+      p <- p +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(
+            size = 40,
+            face = "bold"
+          )
         )
-      )
     }
     p
   }
@@ -458,7 +519,8 @@ server <- function(input, output, session) {
 
     ggiraph::girafe(
       ggobj = p,
-      width_svg = 12, height_svg = 6,
+      width_svg = 12,
+      height_svg = 6,
       options = list(
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_hover(css = "stroke-width:2px;"),
@@ -474,7 +536,11 @@ server <- function(input, output, session) {
   output$tablePgittNeedTimeseries <- reactable::renderReactable({
     df <- pgitt_need_filtered() %>%
       mutate(
-        `Academic year` = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
+        `Academic year` = paste0(
+          start_year,
+          "/",
+          sprintf("%02d", (start_year + 1) %% 100)
+        ),
         Phase = phase,
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
@@ -482,8 +548,12 @@ server <- function(input, output, session) {
         `Percentage change in need to previous year` = percentage_difference_to_previous_year
       ) %>%
       dplyr::select(
-        `Academic year`, Phase, Subject, `PGITT trainee need`,
-        `Difference in need to previous year`, `Percentage change in need to previous year`
+        `Academic year`,
+        Phase,
+        Subject,
+        `PGITT trainee need`,
+        `Difference in need to previous year`,
+        `Percentage change in need to previous year`
       )
 
     # Highlight if primary or total selected so can remove subject column from table
@@ -501,9 +571,18 @@ server <- function(input, output, session) {
       highlight = TRUE,
       resizable = TRUE,
       columns = list(
-        `Academic year` = reactable::colDef(name = "Academic<br>year", html = TRUE, align = "left", width = 120),
+        `Academic year` = reactable::colDef(
+          name = "Academic<br>year",
+          html = TRUE,
+          align = "left",
+          width = 120
+        ),
         Phase = reactable::colDef(align = "left", width = 120),
-        Subject = reactable::colDef(show = !is_primary_or_total, align = "left", width = 120),
+        Subject = reactable::colDef(
+          show = !is_primary_or_total,
+          align = "left",
+          width = 120
+        ),
         `PGITT trainee need` = reactable::colDef(
           align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
@@ -532,7 +611,11 @@ server <- function(input, output, session) {
   download_table_pgitt_need_data <- reactive({
     df <- pgitt_need_filtered() %>%
       dplyr::mutate(
-        `Academic year` = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
+        `Academic year` = paste0(
+          start_year,
+          "/",
+          sprintf("%02d", (start_year + 1) %% 100)
+        ),
         Phase = phase,
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
@@ -540,8 +623,12 @@ server <- function(input, output, session) {
         `Percentage difference in need to previous year` = percentage_difference_to_previous_year
       ) %>%
       dplyr::select(
-        `Academic year`, Phase, Subject, `PGITT trainee need`,
-        `Difference in need to previous year`, `Percentage difference in need to previous year`
+        `Academic year`,
+        Phase,
+        Subject,
+        `PGITT trainee need`,
+        `Difference in need to previous year`,
+        `Percentage difference in need to previous year`
       )
 
     # Drop column subject from dataset if phase is primary
@@ -571,7 +658,6 @@ server <- function(input, output, session) {
 
   # Download handler (CSV/XLSX/JPEG)
 
-
   output$download_pgitt_need <- downloadHandler(
     filename = function() {
       raw_name <- paste0("twm_pgitt_need_timeseries_", Sys.Date())
@@ -588,26 +674,39 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
-        utils::write.csv(download_table_pgitt_need_data(), file, row.names = FALSE)
+        utils::write.csv(
+          download_table_pgitt_need_data(),
+          file,
+          row.names = FALSE
+        )
       } else if (input$file_type_pgitt_need == "XLSX (Up to X.XX MB)") {
         # Optional: notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
-        openxlsx::write.xlsx(download_table_pgitt_need_data(), file, colWidths = "Auto")
+        openxlsx::write.xlsx(
+          download_table_pgitt_need_data(),
+          file,
+          colWidths = "Auto"
+        )
       } else {
         # JPEG: save static ggplot.
-        tmp_file <- tempfile(paste0("twm_pgitt_need_timeseries_chart_", Sys.Date(), ".jpeg"))
+        tmp_file <- tempfile(paste0(
+          "twm_pgitt_need_timeseries_chart_",
+          Sys.Date(),
+          ".jpeg"
+        ))
         ggplot2::ggsave(
           filename = tmp_file,
           plot = download_chart_pgitt_need_data(),
           device = "jpeg",
-          width = 10, height = 6, dpi = 300
+          width = 10,
+          height = 6,
+          dpi = 300
         )
         file.copy(tmp_file, file, overwrite = TRUE)
       }
     }
   )
-
 
   # # Drivers of PGITT trainee need changes tab ---------------------------------------------------------------------
 
@@ -628,7 +727,6 @@ server <- function(input, output, session) {
     df
   })
 
-
   # Plot builder for drivers analysis which adds title & larger text for downloads
 
   build_drivers_waterfall_plot <- function(df, for_download = FALSE) {
@@ -638,8 +736,16 @@ server <- function(input, output, session) {
       # Title prefix: Primary / Secondary / Secondary subject
       phase_selected <- unique(df$phase)
       subject_selected <- unique(df$subject)
-      phase_val <- if (length(phase_selected) == 1) phase_selected else phase_selected[1]
-      subject_val <- if (length(subject_selected) == 1) subject_selected else subject_selected[1]
+      phase_val <- if (length(phase_selected) == 1) {
+        phase_selected
+      } else {
+        phase_selected[1]
+      }
+      subject_val <- if (length(subject_selected) == 1) {
+        subject_selected
+      } else {
+        subject_selected[1]
+      }
 
       title_prefix <- dplyr::case_when(
         phase_val == "Primary" ~ "Primary",
@@ -649,7 +755,10 @@ server <- function(input, output, session) {
       )
 
       # Fixed comparison phrase as requested
-      plot_title <- paste0(title_prefix, " drivers analysis: 2026/27 compared to 2025/26")
+      plot_title <- paste0(
+        title_prefix,
+        " drivers analysis: 2026/27 compared to 2025/26"
+      )
 
       # Apply title + bigger text for download graph only
       p <- p +
@@ -664,23 +773,24 @@ server <- function(input, output, session) {
       })
 
       # Increase text size
-      p <- p + ggplot2::theme(
-        plot.title = ggplot2::element_text(size = 38, face = "bold"),
-        axis.title.y = ggplot2::element_text(size = 30),
-        axis.text.y = ggplot2::element_text(size = 26),
+      p <- p +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 38, face = "bold"),
+          axis.title.y = ggplot2::element_text(size = 30),
+          axis.text.y = ggplot2::element_text(size = 26),
 
-        # Tighten spacing between wrapped lines and reduce top margin
-        axis.text.x = ggplot2::element_text(
-          size = 28,
-          lineheight = 0.35,
-          margin = ggplot2::margin(t = 5)
-        ),
+          # Tighten spacing between wrapped lines and reduce top margin
+          axis.text.x = ggplot2::element_text(
+            size = 28,
+            lineheight = 0.35,
+            margin = ggplot2::margin(t = 5)
+          ),
 
-        # Set white background for downloads - prevents issue
-        # with devices not rendering the transparent bg properly
-        plot.background = ggplot2::element_rect(fill = "white", colour = NA),
-        panel.background = ggplot2::element_rect(fill = "white", colour = NA)
-      )
+          # Set white background for downloads - prevents issue
+          # with devices not rendering the transparent bg properly
+          plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+          panel.background = ggplot2::element_rect(fill = "white", colour = NA)
+        )
     }
 
     p
@@ -701,9 +811,12 @@ server <- function(input, output, session) {
         ggiraph::opts_sizing(rescale = TRUE),
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_toolbar(saveaspng = FALSE),
-        ggiraph::opts_hover(css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"),
+        ggiraph::opts_hover(
+          css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"
+        ),
         ggiraph::opts_hover_inv(css = "opacity:1;"), # keep others unchanged on hover
-        ggiraph::opts_tooltip(css = "
+        ggiraph::opts_tooltip(
+          css = "
           max-width: 260px;
           white-space: normal;
           background-color: rgba(0,0,0,0.88);
@@ -712,7 +825,8 @@ server <- function(input, output, session) {
           border-radius: 6px;
           border: 0;
           box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-          ")
+          "
+        )
       )
     )
   })
@@ -722,7 +836,10 @@ server <- function(input, output, session) {
   output$table_pgitt_need_diff <- reactable::renderReactable({
     df_wide <- drivers_filtered() %>%
       dplyr::select(driver, value) %>%
-      dplyr::filter(driver %in% (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"))) %>%
+      dplyr::filter(
+        driver %in%
+          (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"))
+      ) %>%
       tidyr::pivot_wider(names_from = driver, values_from = value)
 
     reactable::reactable(
@@ -756,13 +873,16 @@ server <- function(input, output, session) {
   output$table_drivers_breakdown <- reactable::renderReactable({
     df <- drivers_filtered() %>%
       dplyr::mutate(
-        Driver  = driver,
-        Value   = value,
-        Phase   = phase,
+        Driver = driver,
+        Value = value,
+        Phase = phase,
         Subject = subject
       ) %>%
       dplyr::select(Phase, Subject, Driver, Value) %>%
-      dplyr::filter(!(Driver %in% (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"))))
+      dplyr::filter(
+        !(Driver %in%
+          (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference")))
+      )
 
     # highlight if primary selected so can remove subject column from table
 
@@ -853,7 +973,11 @@ server <- function(input, output, session) {
       } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
-        openxlsx::write.xlsx(download_table_drivers_data(), file, colWidths = "Auto")
+        openxlsx::write.xlsx(
+          download_table_drivers_data(),
+          file,
+          colWidths = "Auto"
+        )
       } else {
         # JPEG: save static ggplot (interactive tooltips are not present in static export)
         tmp_file <- tempfile(paste0("twm_drivers_chart_", Sys.Date(), ".jpeg"))
@@ -861,13 +985,14 @@ server <- function(input, output, session) {
           filename = tmp_file,
           plot = download_drivers_waterfall_plot(),
           device = "jpeg",
-          width = 10, height = 6, dpi = 300
+          width = 10,
+          height = 6,
+          dpi = 300
         )
         file.copy(tmp_file, file, overwrite = TRUE)
       }
     }
   )
-
 
   # # Flow trajectories tab -----------------------------------------------------------------------------------------
 
@@ -881,7 +1006,7 @@ server <- function(input, output, session) {
       updateSelectizeInput(
         session,
         "filter_subject_flow",
-        choices  = new_choices,
+        choices = new_choices,
         selected = new_choices[1] # pick the first valid choice
       )
     } else {
@@ -889,7 +1014,7 @@ server <- function(input, output, session) {
       updateSelectizeInput(
         session,
         "filter_subject_flow",
-        choices  = c("Total"), # only choice
+        choices = c("Total"), # only choice
         selected = "Total"
       )
     }
@@ -941,8 +1066,16 @@ server <- function(input, output, session) {
       type_selected <- unique(df$type)
 
       # Pick a single value if vectors have length > 1 (edge filters)
-      phase_val <- if (length(phase_selected) == 1) phase_selected else phase_selected[1]
-      subject_val <- if (length(subject_selected) == 1) subject_selected else subject_selected[1]
+      phase_val <- if (length(phase_selected) == 1) {
+        phase_selected
+      } else {
+        phase_selected[1]
+      }
+      subject_val <- if (length(subject_selected) == 1) {
+        subject_selected
+      } else {
+        subject_selected[1]
+      }
 
       title_prefix <- dplyr::case_when(
         phase_val == "Primary" ~ "Primary",
@@ -952,19 +1085,22 @@ server <- function(input, output, session) {
       )
 
       plot_title <- paste0(
-        title_prefix, ": ", type_selected
+        title_prefix,
+        ": ",
+        type_selected
       )
 
       p <- p + ggplot2::labs(title = plot_title)
 
       # Increase plot title text size
 
-      p <- p + ggplot2::theme(
-        plot.title = ggplot2::element_text(
-          size = 40,
-          face = "bold"
+      p <- p +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(
+            size = 40,
+            face = "bold"
+          )
         )
-      )
     }
     p
   }
@@ -981,7 +1117,8 @@ server <- function(input, output, session) {
 
     ggiraph::girafe(
       ggobj = p,
-      width_svg = 12, height_svg = 6,
+      width_svg = 12,
+      height_svg = 6,
       options = list(
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_hover(css = "stroke-width:2px;"),
@@ -1010,7 +1147,15 @@ server <- function(input, output, session) {
         `Historic or trajectory` = historic_or_trajectory,
         `Academic year` = academic_year
       ) %>%
-      dplyr::select(Phase, Subject, `Academic year`, Type, DUMMY, Unit, `Historic or trajectory`)
+      dplyr::select(
+        Phase,
+        Subject,
+        `Academic year`,
+        Type,
+        DUMMY,
+        Unit,
+        `Historic or trajectory`
+      )
 
     # highlight if primary selected so can remove subject column from table
 
@@ -1018,7 +1163,11 @@ server <- function(input, output, session) {
 
     # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
 
-    leaver_types <- c("Total leaver rate", "55+ leaver rate", "Under 55 leaver rate")
+    leaver_types <- c(
+      "Total leaver rate",
+      "55+ leaver rate",
+      "Under 55 leaver rate"
+    )
 
     is_leaver_table <- all(df$Type %in% leaver_types)
 
@@ -1093,7 +1242,15 @@ server <- function(input, output, session) {
         `Historic or trajectory` = historic_or_trajectory,
         `Academic year` = academic_year
       ) %>%
-      dplyr::select(Phase, Subject, `Academic year`, Type, DUMMY, Unit, `Historic or trajectory`)
+      dplyr::select(
+        Phase,
+        Subject,
+        `Academic year`,
+        Type,
+        DUMMY,
+        Unit,
+        `Historic or trajectory`
+      )
 
     # Drop column subject from dataset
     is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
@@ -1102,7 +1259,11 @@ server <- function(input, output, session) {
     }
 
     # Format entrants (FTE) to 0 dp and leaver rates (%) to 1 dp
-    leaver_types <- c("Total leaver rate", "55+ leaver rate", "Under 55 leaver rate")
+    leaver_types <- c(
+      "Total leaver rate",
+      "55+ leaver rate",
+      "Under 55 leaver rate"
+    )
     is_leaver_table <- all(df$Type %in% leaver_types)
 
     if (is_leaver_table) {
@@ -1140,7 +1301,6 @@ server <- function(input, output, session) {
 
   # Download handler(CSV/XLSX/JPEG)
 
-
   output$download_flow_data <- downloadHandler(
     filename = function() {
       raw_name <- paste0("twm_flow_trajectories_", Sys.Date())
@@ -1157,20 +1317,34 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       if (input$file_type_flows == "CSV (Up to X.XX MB)") {
-        utils::write.csv(download_table_flow_trajectories(), file, row.names = FALSE)
+        utils::write.csv(
+          download_table_flow_trajectories(),
+          file,
+          row.names = FALSE
+        )
       } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
         # Optional: notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
-        openxlsx::write.xlsx(download_table_flow_trajectories(), file, colWidths = "Auto")
+        openxlsx::write.xlsx(
+          download_table_flow_trajectories(),
+          file,
+          colWidths = "Auto"
+        )
       } else {
         # JPEG: save static ggplot.
-        tmp_file <- tempfile(paste0("twm_flow_trajectories_chart_", Sys.Date(), ".jpeg"))
+        tmp_file <- tempfile(paste0(
+          "twm_flow_trajectories_chart_",
+          Sys.Date(),
+          ".jpeg"
+        ))
         ggplot2::ggsave(
           filename = tmp_file,
           plot = download_chart_flow_trajectories(),
           device = "jpeg",
-          width = 10, height = 6, dpi = 300
+          width = 10,
+          height = 6,
+          dpi = 300
         )
         file.copy(tmp_file, file, overwrite = TRUE)
       }
@@ -1191,7 +1365,12 @@ server <- function(input, output, session) {
   )
 
   # Wrap a plot with a larger spinner
-  with_gov_spinner <- function(ui_element, spinner_type = 6, size = 1, color = "#1d70b8") {
+  with_gov_spinner <- function(
+    ui_element,
+    spinner_type = 6,
+    size = 1,
+    color = "#1d70b8"
+  ) {
     shinycssloaders::withSpinner(
       ui_element,
       type = spinner_type,
@@ -1217,16 +1396,25 @@ server <- function(input, output, session) {
   })
 
   shiny::observeEvent(input$use_of_cookies, {
-    shiny::updateTabsetPanel(session, "navlistPanel", selected = "cookies_panel_ui")
+    shiny::updateTabsetPanel(
+      session,
+      "navlistPanel",
+      selected = "cookies_panel_ui"
+    )
   })
 
   shiny::observeEvent(input$support_and_feedback, {
-    shiny::updateTabsetPanel(session, "navlistPanel", selected = "support_panel_ui")
+    shiny::updateTabsetPanel(
+      session,
+      "navlistPanel",
+      selected = "support_panel_ui"
+    )
   })
 
   shiny::observeEvent(input$privacy_notice, {
     showModal(modalDialog(
-      external_link("https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter", # nolint
+      external_link(
+        "https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter", # nolint
         "Privacy notice",
         add_warning = FALSE
       ),
@@ -1235,7 +1423,8 @@ server <- function(input, output, session) {
     ))
 
     # JavaScript to auto-click the link and close the modal
-    shinyjs::runjs("
+    shinyjs::runjs(
+      "
       setTimeout(function() {
         var link = document.querySelector('.modal a');
         if (link) {
@@ -1245,12 +1434,14 @@ server <- function(input, output, session) {
           }, 20); // Extra delay to avoid any race conditions
         }
       }, 400);
-    ")
+    "
+    )
   })
 
   shiny::observeEvent(input$external_link, {
     showModal(modalDialog(
-      external_link("https://shiny.posit.co/",
+      external_link(
+        "https://shiny.posit.co/",
         "External Link",
         add_warning = FALSE
       ),
@@ -1259,7 +1450,8 @@ server <- function(input, output, session) {
     ))
 
     # JavaScript to auto-click the link and close the modal
-    shinyjs::runjs("
+    shinyjs::runjs(
+      "
       setTimeout(function() {
         var link = document.querySelector('.modal a');
         if (link) {
@@ -1269,7 +1461,8 @@ server <- function(input, output, session) {
           }, 20); // Extra delay to avoid any race conditions
         }
       }, 400);
-    ")
+    "
+    )
   })
 
   # Stop app ------------------------------------------------------------------

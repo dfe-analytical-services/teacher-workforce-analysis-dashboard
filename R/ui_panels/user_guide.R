@@ -35,14 +35,17 @@ user_guide_panel <- function() {
           ),
           p(
             "This interactive dashboard accompanies the ",
-            a("Teacher demand and postgraduate trainee need publication.",
+            a(
+              "Teacher demand and postgraduate trainee need publication.",
               href = "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27",
               target = "_blank"
             )
           ),
           h2("Context and purpose"),
           p(
-            "The ", em("‘teacher demand and PGITT need’"), " section of the dashboard supports analysis of ",
+            "The ",
+            em("‘teacher demand and PGITT need’"),
+            " section of the dashboard supports analysis of ",
             "teacher demand and supply and trainee demand by visualising several components of the teacher ",
             "workforce model. It enables users to:"
           ),
@@ -51,8 +54,12 @@ user_guide_panel <- function() {
               "Explore how projections of pupil numbers influence the future teacher demand ",
               "trajectory for both primary and secondary state-funded schools."
             ),
-            tags$li("Understand the factors involved in estimating PGITT trainee need."),
-            tags$li("Examine how PGITT trainee need is changing over time and the drivers of these changes."),
+            tags$li(
+              "Understand the factors involved in estimating PGITT trainee need."
+            ),
+            tags$li(
+              "Examine how PGITT trainee need is changing over time and the drivers of these changes."
+            ),
             tags$li(
               "Explore the inflows and outflows to the teacher workforce, both historical and ",
               "forecast, and how these relate to PGITT trainee need."
@@ -66,7 +73,9 @@ user_guide_panel <- function() {
               em("'teacher demand and PGITT need'"),
               " part of the dashboard as it was data used to estimate 2026/27 PGITT need.",
               tags$ul(
-                tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
+                tags$li(
+                  "2026/27 PGITT need will not be retrospectively updated in future. "
+                ),
                 tags$li(
                   "As a consequence, the ",
                   em("'teacher demand and PGITT need'"),
@@ -133,7 +142,8 @@ user_guide_panel <- function() {
               "will be highlighted in blue."
             ),
             tags$li(
-              "The ", em("'Teacher demand and PGITT need' "),
+              "The ",
+              em("'Teacher demand and PGITT need' "),
               "tab contains several charts, diagrams and tables. These are organised into tabbed ",
               "panels, and users can move between them by clicking the chart titles displayed ",
               "above the chart space. The active chart tab will be highlighted in yellow. "

@@ -51,10 +51,10 @@ calc_pt_change_24_to_27 <- function(df) {
     dplyr::arrange(start_year) %>%
     # Calculate absolute and percentage changes
     dplyr::mutate(
-      pupil_diff   = pupil_numbers - dplyr::lag(pupil_numbers),
-      pupil_pct    = (pupil_diff / dplyr::lag(pupil_numbers)) * 100,
+      pupil_diff = pupil_numbers - dplyr::lag(pupil_numbers),
+      pupil_pct = (pupil_diff / dplyr::lag(pupil_numbers)) * 100,
       teacher_diff = teacher_numbers - dplyr::lag(teacher_numbers),
-      teacher_pct  = (teacher_diff / dplyr::lag(teacher_numbers)) * 100
+      teacher_pct = (teacher_diff / dplyr::lag(teacher_numbers)) * 100
     )
 }
 
@@ -84,13 +84,19 @@ build_pupil_teacher_summary <- function(df_change) {
   # Construct summary sentence
   glue::glue(
     "We project ",
-    scales::label_comma()(abs(df_27$pupil_diff)), " ", pupil_dir,
+    scales::label_comma()(abs(df_27$pupil_diff)),
+    " ",
+    pupil_dir,
     " pupils (",
-    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct), ") ",
+    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct),
+    ") ",
     "and teacher demand to be ",
-    scales::label_comma()(abs(df_27$teacher_diff)), " ", teacher_dir,
+    scales::label_comma()(abs(df_27$teacher_diff)),
+    " ",
+    teacher_dir,
     " (",
-    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct), ") ",
+    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct),
+    ") ",
     "in 2027/28 compared to 2024/25. (dummy)"
   )
 }
@@ -100,9 +106,15 @@ build_pupil_teacher_summary <- function(df_change) {
 
 # Value box function ----------------------------------------------------------
 # fontsize: can be small, medium or large
-value_box <- function(value, subtitle, icon = NULL,
-                      color = "blue", width = 4,
-                      href = NULL, fontsize = "medium") {
+value_box <- function(
+  value,
+  subtitle,
+  icon = NULL,
+  color = "blue",
+  width = 4,
+  href = NULL,
+  fontsize = "medium"
+) {
   validate_color(color)
   if (!is.null(icon)) tagAssert(icon, type = "i")
 
@@ -136,8 +148,11 @@ validate_color <- function(color) {
   }
 
   stop(
-    "Invalid color: ", color, ". Valid colors are: ",
-    paste(valid_colors, collapse = ", "), "."
+    "Invalid color: ",
+    color,
+    ". Valid colors are: ",
+    paste(valid_colors, collapse = ", "),
+    "."
   )
 }
 
@@ -148,7 +163,11 @@ validate_color <- function(color) {
 # Note the advice on trying to keep to a maximum of 4 series in a single plot
 # AF colours package guidance here: https://best-practice-and-impact.github.io/afcolours/
 suppressMessages(
-  gss_colour_pallette <- afcolours::af_colours("categorical", colour_format = "hex", n = 4)
+  gss_colour_pallette <- afcolours::af_colours(
+    "categorical",
+    colour_format = "hex",
+    n = 4
+  )
 )
 
 #' Create a Tabset Panel with Optional Tabs
@@ -162,21 +181,24 @@ create_output_tabs <- function(
   table_output = NULL,
   download_output = NULL
 ) {
-  tabs <- Filter(Negate(is.null), list(
-    if (!is.null(chart_output)) tabPanel("Chart", chart_output),
-    if (!is.null(table_output)) {
-      tabPanel(
-        "Table",
-        div(style = "margin-top: 20px;", table_output)
-      )
-    },
-    if (!is.null(download_output)) {
-      tabPanel(
-        "Download",
-        div(style = "margin-top: 40px;", download_output)
-      )
-    }
-  ))
+  tabs <- Filter(
+    Negate(is.null),
+    list(
+      if (!is.null(chart_output)) tabPanel("Chart", chart_output),
+      if (!is.null(table_output)) {
+        tabPanel(
+          "Table",
+          div(style = "margin-top: 20px;", table_output)
+        )
+      },
+      if (!is.null(download_output)) {
+        tabPanel(
+          "Download",
+          div(style = "margin-top: 40px;", download_output)
+        )
+      }
+    )
+  )
 
   do.call(tabsetPanel, c(list(id = paste0("main_tabs_", id)), tabs))
 }

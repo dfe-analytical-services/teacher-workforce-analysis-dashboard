@@ -3,24 +3,24 @@
     "file_type_drivers": "CSV (Up to X.XX MB)",
     "file_type_flows": "CSV (Up to X.XX MB)",
     "file_type_pgitt_need": "CSV (Up to X.XX MB)",
-    "file_type_pupil_teacher": "JPEG (Up to XXX KB)",
+    "file_type_pupil_teacher": "XLSX (Up to X.XX MB)",
     "filter_flow_type": "Total leaver rate",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Primary",
     "filter_phase_flow": "Primary",
-    "filter_phase_pgitt_need": "Secondary",
+    "filter_phase_pgitt_need": "Total",
     "filter_subject_drivers": "Total",
     "filter_subject_flow": "Total",
-    "filter_subject_pgitt_need": "Computing",
+    "filter_subject_pgitt_need": "Total",
     "main_tabs_drivers_analysis": "Chart",
     "main_tabs_flow_trajectories": "Chart",
     "main_tabs_pgitt_trainee_need": "Chart",
     "main_tabs_pupil_teacher": "Download",
-    "tabsetpanels": "PGITT trainee need time series"
+    "tabsetpanels": "Teacher demand trajectories"
   },
   "output": {
     "download_button_ui_pupil_teacher": {
-      "html": "<a id=\"download_pupil_teacher\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (jpeg)<\/a>",
+      "html": "<a id=\"download_pupil_teacher\" class=\"shiny-download-link govuk-button\" href=\"\" target=\"_blank\" download>Download Chart Data (xlsx)<\/a>",
       "deps": [
         {
           "name": "sr-only",

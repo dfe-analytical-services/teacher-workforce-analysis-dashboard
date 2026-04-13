@@ -7,16 +7,16 @@
     "filter_flow_type": "Total leaver rate",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Secondary",
-    "filter_phase_flow": "Primary",
+    "filter_phase_flow": "Secondary",
     "filter_phase_pgitt_need": "Primary",
     "filter_subject_drivers": "Religious Education",
-    "filter_subject_flow": "Total",
+    "filter_subject_flow": "Physics",
     "filter_subject_pgitt_need": "Computing",
     "main_tabs_drivers_analysis": "Download",
     "main_tabs_flow_trajectories": "Chart",
     "main_tabs_pgitt_trainee_need": "Download",
     "main_tabs_pupil_teacher": "Download",
-    "tabsetpanels": "PGITT trainee need time series"
+    "tabsetpanels": "Flow trajectories"
   },
   "output": {
     "download_button_ui_pgitt_need": {

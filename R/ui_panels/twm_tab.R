@@ -22,7 +22,10 @@ twm_tab_panel <- function() {
         # Header --------------------------------------------------------------
         column(
           width = 12,
-          div(id = "main_col", h1("Teacher demand trajectories and PGITT trainee need"))
+          div(
+            id = "main_col",
+            h1("Teacher demand trajectories and PGITT trainee need")
+          )
         ),
 
         # Tabs ---------------------------------------------------------------
@@ -47,7 +50,8 @@ twm_tab_panel <- function() {
                 bslib::card_body(
                   p(
                     "This interactive dashboard accompanies the ",
-                    a("Teacher demand and postgraduate trainee need publication.",
+                    a(
+                      "Teacher demand and postgraduate trainee need publication.",
                       href = "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27",
                       target = "_blank"
                     )
@@ -78,8 +82,12 @@ twm_tab_panel <- function() {
                       "of February 2026. It has been presented within this part of the dashboard as it ",
                       "was data used to estimate 2026/27 PGITT need.",
                       tags$ul(
-                        tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
-                        tags$li("As a consequence, this part of the dashboard will not be updated after publication."),
+                        tags$li(
+                          "2026/27 PGITT need will not be retrospectively updated in future. "
+                        ),
+                        tags$li(
+                          "As a consequence, this part of the dashboard will not be updated after publication."
+                        ),
                         tags$li(
                           "Therefore, these data may differ slightly to that in subsequent updates to ",
                           "the school workforce census (SWC), ITT census, and ITT performance ",
@@ -132,8 +140,6 @@ twm_tab_panel <- function() {
               )
             ),
 
-
-
             #####################################################################
 
             #   Demand trajectories tab
@@ -142,7 +148,9 @@ twm_tab_panel <- function() {
 
             tabPanel(
               "Teacher demand trajectories",
-              h2("Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories"),
+              h2(
+                "Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories"
+              ),
               p(
                 "This section shows historic trends in pupil and teacher numbers (including ",
                 "unqualified teachers), alongside projections of both future pupil numbers and the ",
@@ -166,7 +174,7 @@ twm_tab_panel <- function() {
                     ),
                     ggiraph::girafeOutput(
                       "pupil_teacher_plot",
-                      width  = "100%",
+                      width = "100%",
                       height = "600px"
                     )
                   ),
@@ -223,7 +231,9 @@ twm_tab_panel <- function() {
                         "numbers and future teacher demand. These figures cover state-funded primary and ",
                         "state-funded secondary schools in England."
                       ),
-                      p("Select a school phase to view its data and hover over the data points to see the value."),
+                      p(
+                        "Select a school phase to view its data and hover over the data points to see the value."
+                      ),
                       tags$ul(
                         tags$li(HTML(
                           'Pupil numbers are shown by the <span style="color:#F46A25; font-weight: 600;">orange</span> line
@@ -306,7 +316,9 @@ twm_tab_panel <- function() {
 
             tabPanel(
               "PGITT trainee need calculation",
-              h2("Calculation of postgraduate initial teacher training (PGITT) trainee need"),
+              h2(
+                "Calculation of postgraduate initial teacher training (PGITT) trainee need"
+              ),
               p(
                 "This year, the teacher workforce model has estimated PGITT trainee need ",
                 "for 2026/27 courses. This refers to trainees that will be recruited during 2025/26, to start ",
@@ -320,8 +332,8 @@ twm_tab_panel <- function() {
                 bslib::card_header("Estimating PGITT trainee need for 2026/27"),
                 bslib::card_body(
                   tags$img(
-                    src   = "pgitt_trainee_need_26_27_calculation_flow_chart.svg",
-                    alt   = "Schematic of how teacher demand trajectories and postgraduate
+                    src = "pgitt_trainee_need_26_27_calculation_flow_chart.svg",
+                    alt = "Schematic of how teacher demand trajectories and postgraduate
                     initial teacher training trainee need for 2026/27 is estimated by the teacher workforce model",
                     style = "max-width:80%; height:auto; display:block;"
                   )
@@ -346,8 +358,12 @@ twm_tab_panel <- function() {
                       "once other expected workforce changes are taken into account."
                     )
                   ),
-                  p(strong("Step 1: Calculate teacher demand trajectory to 2027/28")),
-                  p("Firstly, the model estimates how many teachers are needed in future."),
+                  p(strong(
+                    "Step 1: Calculate teacher demand trajectory to 2027/28"
+                  )),
+                  p(
+                    "Firstly, the model estimates how many teachers are needed in future."
+                  ),
                   tags$ul(
                     tags$li(
                       "The model assumes that the current numbers of teacher numbers from the latest school workforce census (2024/25) ",
@@ -360,8 +376,12 @@ twm_tab_panel <- function() {
                       "This reflects historical relationships between these factors."
                     )
                   ),
-                  p("This produces a teacher demand trajectory of the number of teachers needed up to and including 2027/28."),
-                  p(strong("Step 2: Calculate the number of PGITT trainees needed for 2026/27")),
+                  p(
+                    "This produces a teacher demand trajectory of the number of teachers needed up to and including 2027/28."
+                  ),
+                  p(strong(
+                    "Step 2: Calculate the number of PGITT trainees needed for 2026/27"
+                  )),
                   p(
                     "Using estimated teacher demand for 2027/28, the model estimates the number of trainees ",
                     "needed in 2026/27 to meet it."
@@ -427,7 +447,9 @@ twm_tab_panel <- function() {
 
             tabPanel(
               "PGITT trainee need time series",
-              h2("Postgraduate initial teacher training (PGITT) trainee need time series"),
+              h2(
+                "Postgraduate initial teacher training (PGITT) trainee need time series"
+              ),
               p(
                 "PGITT trainee need by phase and subject, and how it has changed over ",
                 "time from 2021/22 to 2026/27, as estimated by the teacher workforce model."
@@ -444,7 +466,7 @@ twm_tab_panel <- function() {
                     style = "margin-top: 3rem;",
                     ggiraph::girafeOutput(
                       "pgitt_need_timeseries_plot",
-                      width  = "100%",
+                      width = "100%",
                       height = "600px"
                     )
                   ),
@@ -468,7 +490,6 @@ twm_tab_panel <- function() {
                   )
                 ),
 
-
                 # Right column: sidebar with filters and about this graph text box
 
                 div(
@@ -480,7 +501,8 @@ twm_tab_panel <- function() {
                     bslib::card_header("Filters"),
                     bslib::card_body(
                       selectizeInput(
-                        "filter_phase_pgitt_need", "Select a school phase:",
+                        "filter_phase_pgitt_need",
+                        "Select a school phase:",
                         choices = choices_pgitt_need_phase,
                         multiple = FALSE,
                         selected = "Total",
@@ -491,7 +513,8 @@ twm_tab_panel <- function() {
                       conditionalPanel(
                         condition = "input.filter_phase_pgitt_need == 'Secondary'",
                         selectizeInput(
-                          "filter_subject_pgitt_need", "Subject",
+                          "filter_subject_pgitt_need",
+                          "Subject",
                           choices = choices_pgitt_need_subject,
                           multiple = FALSE,
                           selected = "Total",
@@ -517,10 +540,14 @@ twm_tab_panel <- function() {
                       ),
                       p("Footnotes:"),
                       tags$ul(
-                        tags$li("PGITT trainee need has been rounded to the nearest 5."),
-                        tags$li("‘Others’ includes Child Development, Citizenship, Law, Media Studies,
+                        tags$li(
+                          "PGITT trainee need has been rounded to the nearest 5."
+                        ),
+                        tags$li(
+                          "‘Others’ includes Child Development, Citizenship, Law, Media Studies,
                                 Other Social Studies, Other Technology, Politics, Psychology, Sociology,
-                                and Social Sciences among others.")
+                                and Social Sciences among others."
+                        )
                       )
                     )
                   )
@@ -548,7 +575,9 @@ twm_tab_panel <- function() {
                   ),
                   p(
                     "Changes in individual subjects have been driven by individual circumstances, with ",
-                    "further information available on the ", em("'Drivers of change in PGITT trainee need'"), " tab."
+                    "further information available on the ",
+                    em("'Drivers of change in PGITT trainee need'"),
+                    " tab."
                   )
                 )
               )
@@ -577,8 +606,9 @@ twm_tab_panel <- function() {
                   # Mini tab 1 - chart
                   chart_output = div(
                     style = "margin-top: 3rem;",
-                    ggiraph::girafeOutput("drivers_waterfall_plot",
-                      width  = NULL,
+                    ggiraph::girafeOutput(
+                      "drivers_waterfall_plot",
+                      width = NULL,
                       height = NULL
                     )
                   ),
@@ -618,7 +648,8 @@ twm_tab_panel <- function() {
                     bslib::card_header("Filters"),
                     bslib::card_body(
                       selectizeInput(
-                        "filter_phase_drivers", "Select a school phase:",
+                        "filter_phase_drivers",
+                        "Select a school phase:",
                         choices = choices_drivers_phase,
                         multiple = FALSE,
                         selected = "Primary",
@@ -629,7 +660,8 @@ twm_tab_panel <- function() {
                       conditionalPanel(
                         condition = "input.filter_phase_drivers == 'Secondary'",
                         selectizeInput(
-                          "filter_subject_drivers", "Subject",
+                          "filter_subject_drivers",
+                          "Subject",
                           choices = choices_drivers_subject,
                           multiple = FALSE,
                           selected = "Total",
@@ -666,7 +698,9 @@ twm_tab_panel <- function() {
                         "this year, rather returners acted to increase/decrease PGITT need this year by ‘x’ PGITT ",
                         "trainees this year."
                       ),
-                      p("As the graph shows, not all drivers have acted upon PGITT need this year in the same direction.")
+                      p(
+                        "As the graph shows, not all drivers have acted upon PGITT need this year in the same direction."
+                      )
                     )
                   )
                 )
@@ -804,8 +838,10 @@ twm_tab_panel <- function() {
 
                   # Mini tab 2 - table
                   table_output = div(
-                    tags$p("This table shows the latest data which relates to the April 2026 publication.
-                           This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."),
+                    tags$p(
+                      "This table shows the latest data which relates to the April 2026 publication.
+                           This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."
+                    ),
                     reactableOutput("table_flow_trajectories")
                   ),
 
@@ -825,7 +861,6 @@ twm_tab_panel <- function() {
                   )
                 ),
 
-
                 # Right column:  sidebar with filters and about this graph
                 div(
                   class = "sidebar",
@@ -836,7 +871,8 @@ twm_tab_panel <- function() {
                     bslib::card_header("Filters"),
                     bslib::card_body(
                       selectizeInput(
-                        "filter_phase_flow", "Select a school phase:",
+                        "filter_phase_flow",
+                        "Select a school phase:",
                         choices = choices_flow_phase,
                         width = "100%",
                         multiple = FALSE,
@@ -848,7 +884,8 @@ twm_tab_panel <- function() {
                       conditionalPanel(
                         condition = "input.filter_phase_flow == 'Secondary'",
                         selectizeInput(
-                          "filter_subject_flow", "Select a secondary subject:",
+                          "filter_subject_flow",
+                          "Select a secondary subject:",
                           choices = choices_flow_subject,
                           width = "100%",
                           multiple = FALSE,
@@ -859,7 +896,8 @@ twm_tab_panel <- function() {
                         )
                       ),
                       selectizeInput(
-                        "filter_flow_type", "Select entrant or leaver flow type:",
+                        "filter_flow_type",
+                        "Select entrant or leaver flow type:",
                         choices = choices_flow_type,
                         width = "100%",
                         multiple = FALSE,
