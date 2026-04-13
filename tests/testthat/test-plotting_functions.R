@@ -113,13 +113,13 @@ test_that("plot_flow_trajectories works and returns an interactive ggplot", {
     subject = "Physics",
     type = "Total leaver rate",
     value = c(0.08, 0.09, 0.10, 0.11, 0.12, 0.13),
-    version = c(
-      "Last year",
-      "Last year",
-      "Last year",
-      "This year (dummy data)",
-      "This year (dummy data)",
-      "This year (dummy data)"
+    publication_year = c(
+      "2025",
+      "2025",
+      "2025",
+      "2026",
+      "2026",
+      "2026"
     )
   )
 
