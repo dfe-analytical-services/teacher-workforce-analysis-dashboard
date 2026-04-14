@@ -91,6 +91,7 @@ read_pgitt_need_timeseries <- function(
     rename(phase = subject_filter_group, ees_subject = subject) %>% # rename columns from pub names
     mutate(
       start_year = as.integer(substr(time_period, 1, 4)), # create start year column
+      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
       subject = if_else(
         phase == "Primary",
         "Total",
@@ -145,7 +146,7 @@ read_flows_data <- function(
     rename(academic_year = year) %>%
     mutate(
       unit = if_else(str_detect(type, "leaver"), "%", "FTE"), # make a column of unit which is % for leaver rates and FTE for entrants
-      year = as.integer(substr(academic_year, 1, 4)), # create start year column
+      start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
       version = "Last year"
     )
 
