@@ -182,11 +182,11 @@ flow_data_last_year <- read_flows_data()
 
 dummy_27_flow_data_all_bar_NQEs <- flow_data_last_year %>%
   filter(type != "Newly qualified entrants" & academic_year == "2026/27") %>%
-  mutate(academic_year = "2027/28", year = 2027)
+  mutate(academic_year = "2027/28", start_year = 2027)
 
 dummy_26_flow_data_NQE <- flow_data_last_year %>%
   filter(type == "Newly qualified entrants" & academic_year == "2025/26") %>%
-  mutate(academic_year = "2026/27", year = 2026)
+  mutate(academic_year = "2026/27", start_year = 2026)
 
 # bind to original dataset
 
@@ -196,7 +196,7 @@ dummy_flow_data_this_year <- bind_rows(
   dummy_26_flow_data_NQE
 ) %>%
   mutate(
-    historic_or_trajectory = ifelse(year >= 2025, "Trajectory", "Historic"),
+    historic_or_trajectory = ifelse(start_year >= 2025, "Trajectory", "Historic"),
     value = value * 1.1,
     version = "This year (dummy data)",
     publication_year = 2026
