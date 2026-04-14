@@ -76,12 +76,7 @@ plot_pupil_teacher_timeseries <- function(
   #--------------------------
   df2 <- df %>%
     dplyr::mutate(
-      academic_year = paste0(
-        start_year,
-        "/",
-        sprintf("%02d", (start_year + 1) %% 100)
-      ),
-      is_projection = start_year > last_census_year,
+      is_projection = projection == "Yes",
       tooltip = dplyr::if_else(
         is_projection,
         paste0(
@@ -144,6 +139,7 @@ plot_pupil_teacher_timeseries <- function(
       next_year = dplyr::lead(start_year),
       next_value = dplyr::lead(value),
       segment_linetype = ifelse(
+        # for line type can't use column projected
         start_year >= last_census_year,
         "Projected",
         "Historic"
@@ -347,11 +343,6 @@ plot_pupil_teacher_timeseries <- function(
 plot_pgitt_need_timeseries <- function(df) {
   df2 <- df %>%
     dplyr::mutate(
-      academic_year = paste0(
-        start_year,
-        "/",
-        sprintf("%02d", (start_year + 1) %% 100)
-      ),
       # Tooltip with year, phase, subject and PGITT need
       # Only show subject if secondary is selected
       subject_line = ifelse(
@@ -580,13 +571,12 @@ plot_flow_trajectories <- function(df) {
     "Under 55 leaver rate"
   )
 
-  # --- DEFINE per-row last census year based on version ------------------------
+  # --- DEFINE per-row last census year based on publication year ------------------------
   df <- df %>%
     dplyr::mutate(
       last_census_year_row = dplyr::case_when(
         publication_year == 2025 ~ 2023L,
-        publication_year == 2026 ~ 2024L,
-        TRUE ~ 2023L # fallback/default; adjust if you have other versions
+        publication_year == 2026 ~ 2024L
       )
     )
 
@@ -594,12 +584,7 @@ plot_flow_trajectories <- function(df) {
 
   df <- df %>%
     dplyr::mutate(
-      academic_year_label = paste0(
-        year,
-        "/",
-        sprintf("%02d", (year + 1) %% 100)
-      ),
-      is_trajectory = year > last_census_year_row,
+      is_trajectory = historic_or_trajectory == "Trajectory",
       type_lower = ifelse(
         type %in%
           c("Newly qualified entrants", "New to state-funded sector entrants"),
@@ -618,7 +603,7 @@ plot_flow_trajectories <- function(df) {
         is_trajectory,
         paste0(
           "<p>",
-          academic_year_label,
+          academic_year,
           "</p>",
           "<p><b>Phase:</b> ",
           phase,
@@ -637,7 +622,7 @@ plot_flow_trajectories <- function(df) {
         ),
         paste0(
           "<p>",
-          academic_year_label,
+          academic_year,
           "</p>",
           "<p><b>Phase:</b> ",
           phase,
@@ -677,7 +662,7 @@ plot_flow_trajectories <- function(df) {
   # group by any series identifiers that exist (phase/subject/type) so joins are correct
 
   df_seg <- df %>%
-    dplyr::arrange(year) %>%
+    dplyr::arrange(start_year) %>%
     dplyr::group_by(dplyr::across(dplyr::any_of(c(
       "phase",
       "subject",
@@ -685,11 +670,11 @@ plot_flow_trajectories <- function(df) {
       "publication_year"
     )))) %>%
     dplyr::mutate(
-      next_year = dplyr::lead(year),
+      next_year = dplyr::lead(start_year),
       next_value = dplyr::lead(value),
       # IMPORTANT: compare the segment's start year against its row-specific cutover
       segment_linetype = ifelse(
-        year >= last_census_year_row,
+        start_year >= last_census_year_row,
         "Trajectory",
         "Historic"
       ),
@@ -702,7 +687,7 @@ plot_flow_trajectories <- function(df) {
 
   # Keep only years present in df
   years_available <- df %>%
-    dplyr::pull(year) %>%
+    dplyr::pull(start_year) %>%
     unique() %>%
     sort()
 
@@ -713,19 +698,19 @@ plot_flow_trajectories <- function(df) {
 
   # Axis labels for those years
   axis_labels <- df %>%
-    dplyr::distinct(year, academic_year_label) %>%
-    dplyr::filter(year %in% years_for_axis) %>%
-    dplyr::arrange(year) %>%
-    dplyr::pull(academic_year_label)
+    dplyr::distinct(start_year, academic_year) %>%
+    dplyr::filter(start_year %in% years_for_axis) %>%
+    dplyr::arrange(start_year) %>%
+    dplyr::pull(academic_year)
 
   # ---------- plot ----------
-  ggplot2::ggplot(df, ggplot2::aes(x = year)) +
+  ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
 
     # Lines as segments with linetype mapped to Historic/Trajectory
     ggiraph::geom_segment_interactive(
       data = df_seg,
       ggplot2::aes(
-        x = year,
+        x = start_year,
         xend = next_year,
         y = value,
         yend = next_value,
