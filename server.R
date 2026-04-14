@@ -89,7 +89,9 @@ server <- function(input, output, session) {
     google_analytics_key = google_analytics_key
   )
 
-  # User guide
+
+  # User guide ------------------------------------------------------------------------------------------------------
+
   # Data sources and updates table for teacher demand and PGITT need tab
 
   output$data_sources_updates <- reactable::renderReactable({
@@ -140,6 +142,9 @@ server <- function(input, output, session) {
     )
   })
 
+
+  # Teacher demand trajectories tab ------------------------------------------------------------------------------------
+
   # Dataset: pupil/teacher timeseries ----------------------------------------------
   # Reactive data filtered by phase selection
 
@@ -158,7 +163,7 @@ server <- function(input, output, session) {
     df
   })
 
-  # Graph: pupil/teacher timeseries plot ----------------------------------------------
+  # Graph: pupil/teacher timeseries plot
 
   # create a function that builds the ggplot graph
 
@@ -228,31 +233,21 @@ server <- function(input, output, session) {
           css = "stroke-dasharray:8,6; stroke-width:1.6px;"
         ),
         ggiraph::opts_sizing(rescale = TRUE, width = 1),
-        ggiraph::opts_toolbar(saveaspng = FALSE)
+        ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng")
       )
     )
   })
 
-  # Table: pupil/teacher numbers ----------------------------------------------------------
+  # Table: pupil/teacher numbers
 
-  output$tablePupilTeacher <- renderReactable({
+  output$pupil_teacher_table <- renderReactable({
     df <- pt_data_filtered() %>%
-      dplyr::mutate(
-        `Academic year` = paste0(
-          start_year,
-          "/",
-          sprintf("%02d", (start_year + 1) %% 100)
-        ),
-        `Pupil numbers` = pupil_numbers,
-        `Teacher numbers` = teacher_numbers,
-        Projection = dplyr::if_else(start_year > 2024, "Yes", "No")
-      ) %>%
       dplyr::select(
         Phase = phase,
-        `Academic year`,
-        `Pupil numbers`,
-        `Teacher numbers`,
-        Projection
+        `Academic year` = academic_year,
+        `Pupil numbers` = pupil_numbers,
+        `Teacher numbers` = teacher_numbers,
+        Projection = projection
       )
 
     reactable::reactable(
@@ -263,22 +258,22 @@ server <- function(input, output, session) {
       filterable = FALSE,
       striped = TRUE,
       highlight = TRUE,
+      defaultColDef = reactable::colDef(
+        headerClass = "bar-sort-header",
+        align = "left"
+      ),
       columns = list(
         `Pupil numbers` = reactable::colDef(
           align = "right",
-          format = reactable::colFormat(separators = TRUE, digits = 0),
-          name = "Pupil numbers (FTE)"
+          name = "Pupil numbers (FTE)",
+          format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
         `Teacher numbers` = reactable::colDef(
           align = "right",
+          name = "Teacher numbers (FTE)",
           format = reactable::colFormat(separators = TRUE, digits = 0),
-          name = "Teacher numbers (FTE)"
-        ),
-        Phase = reactable::colDef(align = "left"),
-        `Academic year` = reactable::colDef(align = "left"),
-        Projection = reactable::colDef(align = "left")
+        )
       ),
-      defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
     )
   })
 
@@ -287,12 +282,8 @@ server <- function(input, output, session) {
   download_table_pupil_teacher_data <- reactive({
     pt_data_filtered() %>%
       dplyr::mutate(
-        `Academic year` = paste0(
-          start_year,
-          "/",
-          sprintf("%02d", (start_year + 1) %% 100)
-        ),
-        Projection = dplyr::if_else(start_year > 2024, "Yes", "No")
+        `Academic year` = academic_year,
+        Projection = projection
       ) %>%
       dplyr::select(
         Phase = phase,
@@ -348,7 +339,7 @@ server <- function(input, output, session) {
       }
       paste0(raw_name, extension)
     },
-    ## Generate downloaded file ---------------------------------------------
+    ## Generate downloaded file
     content = function(file) {
       if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
         write.csv(download_table_pupil_teacher_data(), file, row.names = FALSE)
@@ -409,7 +400,8 @@ server <- function(input, output, session) {
     pupil_teacher_summary()
   })
 
-  # # PGITT trainee need time series tab ----------------------------------------------------------------------------
+
+  # PGITT trainee need time series tab ----------------------------------------------------------------------------
 
   # Data
   # Reactive PGITT trainee need time series data filtered by phase and/or subject selection
@@ -526,40 +518,35 @@ server <- function(input, output, session) {
         ggiraph::opts_hover(css = "stroke-width:2px;"),
         ggiraph::opts_hover_key(css = "stroke-dasharray:4,4;"),
         ggiraph::opts_sizing(rescale = TRUE, width = 1),
-        ggiraph::opts_toolbar(saveaspng = FALSE)
+        ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng")
       )
     )
   })
 
   # Table: PGITT trainee need timeseries table for app (interactive via reactable)
 
-  output$tablePgittNeedTimeseries <- reactable::renderReactable({
+  output$pgitt_need_timeseries_table <- reactable::renderReactable({
     df <- pgitt_need_filtered() %>%
-      mutate(
-        `Academic year` = paste0(
-          start_year,
-          "/",
-          sprintf("%02d", (start_year + 1) %% 100)
-        ),
+      dplyr::select(
+        `Academic year` = academic_year,
         Phase = phase,
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
         `Difference in need to previous year` = difference_to_previous_year,
-        `Percentage change in need to previous year` = percentage_difference_to_previous_year
-      ) %>%
-      dplyr::select(
-        `Academic year`,
-        Phase,
-        Subject,
-        `PGITT trainee need`,
-        `Difference in need to previous year`,
-        `Percentage change in need to previous year`
+        `Percentage change in need to previous year` =
+          percentage_difference_to_previous_year
       )
 
     # Highlight if primary or total selected so can remove subject column from table
 
     is_primary_or_total <- nrow(df) > 0 &&
       all(df$Phase %in% c("Primary", "Total"))
+
+    # Common column formats
+    right_number <- reactable::colDef(
+      align = "right",
+      format = reactable::colFormat(separators = TRUE, digits = 0)
+    )
 
     reactable::reactable(
       df,
@@ -570,17 +557,19 @@ server <- function(input, output, session) {
       striped = TRUE,
       highlight = TRUE,
       resizable = TRUE,
+      defaultColDef = reactable::colDef(
+        align = "left",
+        headerClass = "bar-sort-header"
+      ),
       columns = list(
         `Academic year` = reactable::colDef(
           name = "Academic<br>year",
           html = TRUE,
-          align = "left",
           width = 120
         ),
-        Phase = reactable::colDef(align = "left", width = 120),
+        Phase = reactable::colDef(width = 120),
         Subject = reactable::colDef(
           show = !is_primary_or_total,
-          align = "left",
           width = 120
         ),
         `PGITT trainee need` = reactable::colDef(
@@ -588,52 +577,38 @@ server <- function(input, output, session) {
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
         `Difference in need to previous year` = reactable::colDef(
+          align = "right",
           name = "Difference in need<br>to previous year",
           html = TRUE,
-          align = "right",
           format = reactable::colFormat(separators = TRUE, digits = 0)
         ),
-        `Percentage change in need to previous year` = reactable::colDef(
-          name = "Percentage change in<br>need to previous year",
-          html = TRUE,
-          align = "right",
-          format = reactable::colFormat(suffix = "%", digits = 1)
-        )
-      ),
-      defaultColDef = reactable::colDef(
-        headerClass = "bar-sort-header"
+        `Percentage change in need to previous year` =
+          reactable::colDef(
+            align = "right",
+            name = "Percentage change in<br>need to previous year",
+            html = TRUE,
+            format = reactable::colFormat(suffix = "%", digits = 1)
+          )
       )
     )
   })
+
 
   # Create download dataset (matches table)
 
   download_table_pgitt_need_data <- reactive({
     df <- pgitt_need_filtered() %>%
-      dplyr::mutate(
-        `Academic year` = paste0(
-          start_year,
-          "/",
-          sprintf("%02d", (start_year + 1) %% 100)
-        ),
+      dplyr::select(
+        `Academic year`,
         Phase = phase,
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
         `Difference in need to previous year` = difference_to_previous_year,
-        `Percentage difference in need to previous year` = percentage_difference_to_previous_year
-      ) %>%
-      dplyr::select(
-        `Academic year`,
-        Phase,
-        Subject,
-        `PGITT trainee need`,
-        `Difference in need to previous year`,
-        `Percentage difference in need to previous year`
+        `Percentage difference in need to previous year` =
+          percentage_difference_to_previous_year
       )
-
     # Drop column subject from dataset if phase is primary
-    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
-    if (is_primary_phase) {
+    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
       df <- dplyr::select(df, -Subject)
     }
     df
@@ -708,7 +683,7 @@ server <- function(input, output, session) {
     }
   )
 
-  # # Drivers of PGITT trainee need changes tab ---------------------------------------------------------------------
+  # Drivers of change in PGITT trainee need tab ---------------------------------------------------------------------
 
   # Data
   # Reactive drivers analysis data filtered by phase and/or subject selection
@@ -810,7 +785,7 @@ server <- function(input, output, session) {
       options = list(
         ggiraph::opts_sizing(rescale = TRUE),
         ggiraph::opts_selection(type = "none"),
-        ggiraph::opts_toolbar(saveaspng = FALSE),
+        ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng"),
         ggiraph::opts_hover(
           css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"
         ),
@@ -838,9 +813,20 @@ server <- function(input, output, session) {
       dplyr::select(driver, value) %>%
       dplyr::filter(
         driver %in%
-          (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"))
+          (c(
+            "2025/26 PGITT need",
+            "2026/27 PGITT need",
+            "Overall difference"
+          ))
       ) %>%
-      tidyr::pivot_wider(names_from = driver, values_from = value)
+      tidyr::pivot_wider(
+        names_from = driver,
+        values_from = value
+      )
+    right_num <- reactable::colDef(
+      align = "right",
+      format = reactable::colFormat(separators = TRUE)
+    )
 
     reactable::reactable(
       df_wide,
@@ -850,38 +836,32 @@ server <- function(input, output, session) {
       filterable = FALSE,
       striped = FALSE,
       highlight = TRUE,
+      defaultColDef = reactable::colDef(headerClass = "bar-sort-header"),
       columns = list(
-        `Last year's need` = reactable::colDef(
-          align = "right",
-          format = reactable::colFormat(separators = TRUE)
-        ),
-        `This year's need` = reactable::colDef(
-          align = "right",
-          format = reactable::colFormat(separators = TRUE)
-        ),
-        `Overall difference` = reactable::colDef(
-          align = "right",
-          format = reactable::colFormat(separators = TRUE)
-        )
-      ),
-      defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
+        `2025/26 PGITT need` = right_num,
+        `2026/27 PGITT need` = right_num,
+        `Overall difference` = right_num
+      )
     )
   })
+
 
   # Table 2: Drivers analysis with drivers breakdown (interactive via reactable)
 
   output$table_drivers_breakdown <- reactable::renderReactable({
     df <- drivers_filtered() %>%
-      dplyr::mutate(
-        Driver = driver,
-        Value = value,
-        Phase = phase,
-        Subject = subject
-      ) %>%
-      dplyr::select(Phase, Subject, Driver, Value) %>%
       dplyr::filter(
-        !(Driver %in%
-          (c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference")))
+        !driver %in% c(
+          "2025/26 PGITT need",
+          "2026/27 PGITT need",
+          "Overall difference"
+        )
+      ) %>%
+      dplyr::select(
+        Phase = phase,
+        Subject = subject,
+        Driver = driver,
+        Value = value
       )
 
     # highlight if primary selected so can remove subject column from table
@@ -896,25 +876,20 @@ server <- function(input, output, session) {
       filterable = FALSE,
       striped = TRUE,
       highlight = TRUE,
+      defaultColDef = reactable::colDef(
+        align = "left",
+        headerClass = "bar-sort-header"
+      ),
       columns = list(
-        Phase = reactable::colDef(
-          align = "left"
-        ),
-        Subject = reactable::colDef(
-          show = !is_primary_phase,
-          align = "left"
-        ),
-        Driver = reactable::colDef(
-          align = "left"
-        ),
+        Subject = reactable::colDef(show = !is_primary_phase),
         Value = reactable::colDef(
           align = "right",
           format = reactable::colFormat(separators = TRUE)
         )
-      ),
-      defaultColDef = reactable::colDef(headerClass = "bar-sort-header")
+      )
     )
   })
+
 
   # Create download dataset (matches filtered table so all data in the two tables in the app)
   # Spell out acronyms in download table
@@ -994,7 +969,7 @@ server <- function(input, output, session) {
     }
   )
 
-  # # Flow trajectories tab -----------------------------------------------------------------------------------------
+  # Flow trajectories tab -----------------------------------------------------------------------------------------
 
   # Prevent subject = total being included from subject dropdown if secondary selected
 
@@ -1124,37 +1099,32 @@ server <- function(input, output, session) {
         ggiraph::opts_hover(css = "stroke-width:2px;"),
         ggiraph::opts_hover_key(css = "stroke-dasharray:4,4;"),
         ggiraph::opts_sizing(rescale = TRUE, width = 1),
-        ggiraph::opts_toolbar(saveaspng = FALSE)
+        ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng")
       )
     )
   })
 
   # Table: Flow trajectories table for app (interactive via reactable)
+  # Abbrev NQEs and NTSFs to help fit in table
 
   output$table_flow_trajectories <- reactable::renderReactable({
     df <- flow_filtered() %>%
-      filter(version == "This year (dummy data)") %>%
+      filter(publication_year == 2026) %>%
       dplyr::mutate(
         Type = dplyr::case_when(
           type == "Newly qualified entrants" ~ "NQEs",
           type == "New to state-funded sector entrants" ~ "NTSF entrants",
           TRUE ~ type
-        ),
-        DUMMY = value,
-        Unit = unit,
-        Phase = phase,
-        Subject = subject,
-        `Historic or trajectory` = historic_or_trajectory,
-        `Academic year` = academic_year
+        )
       ) %>%
       dplyr::select(
-        Phase,
-        Subject,
-        `Academic year`,
+        Phase = phase,
+        Subject = subject,
+        `Academic year` = academic_year,
         Type,
-        DUMMY,
-        Unit,
-        `Historic or trajectory`
+        DUMMY = value,
+        Unit = unit,
+        `Historic or trajectory` = historic_or_trajectory
       )
 
     # highlight if primary selected so can remove subject column from table
@@ -1169,92 +1139,65 @@ server <- function(input, output, session) {
       "Under 55 leaver rate"
     )
 
-    is_leaver_table <- all(df$Type %in% leaver_types)
+    is_leaver_table <- nrow(df) > 0 && all(df$Type %in% leaver_types)
 
-    if (is_leaver_table) {
-      value_formatter <- reactable::colFormat(
-        digits = 1,
-        percent = TRUE # converts 0.056 -> 5.6%
-      )
+
+    value_formatter <- if (is_leaver_table) {
+      reactable::colFormat(digits = 1, percent = TRUE)
     } else {
-      value_formatter <- reactable::colFormat(
-        separators = TRUE, # adds 1,234 formatting
-        digits = 0
-      )
+      reactable::colFormat(separators = TRUE, digits = 0)
     }
 
     reactable::reactable(
       df,
       defaultPageSize = 10,
-      pagination = FALSE, # If FALSE, defaultPageSize is ignored, but it's okay to leave
+      pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
       striped = TRUE,
       highlight = TRUE,
       wrap = TRUE,
       defaultColDef = reactable::colDef(
+        align = "left",
         headerClass = "bar-sort-header"
       ),
       columns = list(
-        Phase = reactable::colDef(
-          align = "left"
-        ),
-        Subject = reactable::colDef(
-          show = !is_primary_phase, # hide when phase is primary
-          align = "left"
-        ),
+        Subject = reactable::colDef(show = !is_primary_phase),
         `Academic year` = reactable::colDef(
           name = "Academic<br>year",
-          html = TRUE,
-          align = "left"
-        ),
-        Type = reactable::colDef(
-          align = "left"
+          html = TRUE
         ),
         DUMMY = reactable::colDef(
           align = "right",
           format = value_formatter
         ),
-        Unit = reactable::colDef(
-          show = !is_leaver_table,
-          align = "left"
-        ),
+        Unit = reactable::colDef(show = !is_leaver_table),
         `Historic or trajectory` = reactable::colDef(
           name = "Historic or<br>trajectory",
-          html = TRUE,
-          align = "left"
+          html = TRUE
         )
       )
     )
   })
 
+
   # Create download dataset (matches table)
 
   download_table_flow_trajectories <- reactive({
     df <- flow_filtered() %>%
-      dplyr::filter(version == "This year (dummy data)") %>%
-      dplyr::mutate(
-        Type = type,
-        DUMMY = value,
-        Unit = unit,
+      dplyr::filter(publication_year == 2026) %>%
+      dplyr::select(
         Phase = phase,
         Subject = subject,
-        `Historic or trajectory` = historic_or_trajectory,
-        `Academic year` = academic_year
-      ) %>%
-      dplyr::select(
-        Phase,
-        Subject,
-        `Academic year`,
+        `Academic year` = academic_year,
         Type,
-        DUMMY,
-        Unit,
-        `Historic or trajectory`
+        DUMMY = value,
+        Unit = unit,
+        `Historic or trajectory` = historic_or_trajectory
       )
 
-    # Drop column subject from dataset
-    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
-    if (is_primary_phase) {
+    # Drop column subject from dataset if primary selected
+    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
       df <- dplyr::select(df, -Subject)
     }
 
@@ -1264,21 +1207,17 @@ server <- function(input, output, session) {
       "55+ leaver rate",
       "Under 55 leaver rate"
     )
-    is_leaver_table <- all(df$Type %in% leaver_types)
+    is_leaver_table <- nrow(df) > 0 && all(df$Type %in% leaver_types)
 
-    if (is_leaver_table) {
-      # convert 0.056 → 5.6%
-      df <- df %>%
-        dplyr::mutate(
-          DUMMY = round(DUMMY * 100, 1)
-        )
-    } else {
-      # format as whole numbers (e.g., 1234)
-      df <- df %>%
-        dplyr::mutate(
-          DUMMY = round(DUMMY, 0)
-        )
-    }
+    df <- df %>%
+      dplyr::mutate(
+        DUMMY = if (is_leaver_table) {
+          round(DUMMY * 100, 1) # 0.056 → 5.6
+        } else {
+          round(DUMMY, 0) # 1234 → 1234
+        }
+      )
+
     df
   })
 
