@@ -101,6 +101,59 @@ build_pupil_teacher_summary <- function(df_change) {
   )
 }
 
+# --------------------------------------------------------------------------------------
+# Build dynamic title for PGITT trainee need time series outputs
+# --------------------------------------------------------------------------------------
+
+# Takes a filtered PGITT trainee need data frame (by phase and subject)
+# and returns a human-readable title describing the selected phase/subject
+# and academic year range covered by the data.
+#
+# The title is designed for use across multiple outputs, including
+# ggplot chart titles and GOV.UK Reactable table captions, ensuring
+# consistency between visual and tabular views.
+#
+# param: df A data frame containing PGITT trainee need data with the
+#             following fields:
+#             - phase
+#             - subject
+#             - start_year
+#
+# return: A single character string suitable for use as a plot title
+#         or table caption in a Shiny app.
+#
+# example:
+# build_pgitt_title(df)
+
+build_pgitt_need_ts_title <- function(df) {
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+
+  phase_val <- phase_selected[1]
+  subject_val <- subject_selected[1]
+
+  min_year <- min(df$start_year, na.rm = TRUE)
+  max_year <- max(df$start_year, na.rm = TRUE)
+
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  paste0(
+    title_prefix,
+    " PGITT trainee need ",
+    min_year,
+    "/",
+    sprintf("%02d", (min_year + 1) %% 100),
+    " to ",
+    max_year,
+    "/",
+    sprintf("%02d", (max_year + 1) %% 100)
+  )
+}
 
 # # FROM TEMPLATE -------------------------------------------------------------------------------------------------
 
