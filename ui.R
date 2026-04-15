@@ -89,8 +89,8 @@ ui <- function(input, output, session) {
       widths = c(2, 8),
       well = FALSE,
       # Content for these panels is defined in the R/ui_panels/ folder
-      user_guide_panel(),
       twm_tab_panel(),
+      user_guide_panel(),
       shiny::tabPanel(
         value = "a11y_panel",
         "Accessibility",
