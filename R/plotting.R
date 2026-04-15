@@ -426,14 +426,21 @@ plot_pgitt_need_timeseries <- function(df) {
     ylab("PGITT trainee need") +
     # Theme customisation (fonts/spacing/text angles)
     theme(
-      text = element_text(size = 12),
-      axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
+      text = element_text(size = 14),
+      axis.title.x = element_text(
+        size = 14,
+        margin = margin(t = 12),
+        family = "dejavu"
+      ),
       axis.title.y = element_text(
+        size = 14,
         angle = 90,
         vjust = 0.5,
         margin = margin(r = 12),
         family = "dejavu"
-      )
+      ),
+      axis.text.x = element_text(size = 14),
+      axis.text.y = element_text(size = 14)
     ) +
     # Custom x-axis breaks and labels
     scale_x_continuous(
@@ -445,8 +452,9 @@ plot_pgitt_need_timeseries <- function(df) {
       labels = scales::comma,
       limits = c(0, NA),
     )
+
   # Return the plot object
-  p
+  p + ggplot2::labs(title = build_pgitt_need_ts_title(df))
 }
 
 # Drivers analysis waterfall graph --------------------------------------------------------------------------------
