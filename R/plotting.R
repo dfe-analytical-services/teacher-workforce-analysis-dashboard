@@ -338,18 +338,31 @@ plot_pupil_teacher_timeseries <- function(
 }
 
 
-# pgitt trainee need timeseries
+# PGITT trainee need time series ----------------------------------------------------------------------------------
 
 plot_pgitt_need_timeseries <- function(df) {
+  # ------------------------------------------------------------
+  # Prepare the data for plotting
+  # Create extra columns that will be used for tooltips
+  # and make sure the data is in a sensible order
+  # ------------------------------------------------------------
+
   df2 <- df %>%
     dplyr::mutate(
-      # Tooltip with year, phase, subject and PGITT need
+      # Build a subject line for the tooltip
       # Only show subject if secondary is selected
+      # For other phaes, we return an empty string
       subject_line = ifelse(
         phase == "Secondary",
         paste0("<p><b>Subject:</b> ", subject, "</p>"),
         ""
       ),
+      # Build the full tooltip shown when hovering over a bar
+      # Tooltips include:
+      #  - academic year
+      #  - phase (Primary / Secondary)
+      #  - subject (only for Secondary)
+      #  - PGITT trainee need (formatted with commas)
       tooltip = paste0(
         "<p>",
         academic_year,
@@ -362,8 +375,7 @@ plot_pgitt_need_timeseries <- function(df) {
         scales::comma(pgitt_trainee_need),
         "</p>"
       )
-    ) %>%
-    dplyr::arrange(subject, start_year)
+    )
 
   # Axis helpers
   year_breaks <- sort(unique(df2$start_year))
