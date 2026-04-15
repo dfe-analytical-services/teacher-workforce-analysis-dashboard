@@ -430,8 +430,17 @@ server <- function(input, output, session) {
     }
   })
 
+
+  # Build reactive title describing selected phase/subject and year range
+  # for PGITT trainee need outputs
+
+  pgitt_need_ts_title <- reactive({
+    build_pgitt_need_ts_title(pgitt_need_filtered())
+  })
+
+
   # Builder that can upscale text when graph is downloaded
-  # Keep the look on-screen exactly as-is; only enlarge axis text and add title if for_download=TRUE.
+  # Keep the look on-screen exactly as-is; only enlarge text and add white background if for_download=TRUE.
   build_pgitt_need_plot <- function(df, for_download = FALSE) {
     p <- plot_pgitt_need_timeseries(df)
 
@@ -442,62 +451,14 @@ server <- function(input, output, session) {
           axis.title.y = ggplot2::element_text(size = 30),
           axis.text.x = ggplot2::element_text(size = 28),
           axis.text.y = ggplot2::element_text(size = 28),
-
+          plot.title = ggplot2::element_text(
+            size = 40,
+            face = "bold"
+          ),
           # Set white background for downloads - prevents issue
           # with devices not rendering the transparent bg properly
           plot.background = ggplot2::element_rect(fill = "white", colour = NA),
           panel.background = ggplot2::element_rect(fill = "white", colour = NA)
-        )
-
-      # Add dynamic title only for downloaded plots
-      phase_selected <- unique(df$phase)
-      subject_selected <- unique(df$subject)
-
-      # Pick a single value if vectors have length > 1 (edge filters)
-      phase_val <- if (length(phase_selected) == 1) {
-        phase_selected
-      } else {
-        phase_selected[1]
-      }
-      subject_val <- if (length(subject_selected) == 1) {
-        subject_selected
-      } else {
-        subject_selected[1]
-      }
-
-      # Derive min/max academic year from data (uses 'start_year')
-      min_year <- min(df$start_year, na.rm = TRUE)
-      max_year <- max(df$start_year, na.rm = TRUE)
-
-      title_prefix <- dplyr::case_when(
-        phase_val == "Primary" ~ "Primary",
-        phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
-        phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
-        TRUE ~ subject_val
-      )
-
-      plot_title <- paste0(
-        title_prefix,
-        " PGITT trainee need ",
-        min_year,
-        "/",
-        sprintf("%02d", (min_year + 1) %% 100),
-        " to ",
-        max_year,
-        "/",
-        sprintf("%02d", (max_year + 1) %% 100)
-      )
-
-      p <- p + ggplot2::labs(title = plot_title)
-
-      # Increase plot title text size
-
-      p <- p +
-        ggplot2::theme(
-          plot.title = ggplot2::element_text(
-            size = 40,
-            face = "bold"
-          )
         )
     }
     p
@@ -590,6 +551,17 @@ server <- function(input, output, session) {
             format = reactable::colFormat(suffix = "%", digits = 1)
           )
       )
+    )
+  })
+
+  # Update table so that it has reactable caption
+
+  output$pgitt_need_timeseries_table_ui <- renderUI({
+    govReactableOutput(
+      "pgitt_need_timeseries_table",
+      caption = pgitt_need_ts_title(),
+      caption_size = "1",
+      heading_level = "h5"
     )
   })
 
