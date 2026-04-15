@@ -2,7 +2,7 @@ library(shinytest2)
 
 
 all_inputs <- c(
-  "tabsetpanels",
+  "twm_tabsetpanels",
 
   # Teacher demand trajectories
   "file_type_pupil_teacher",
