@@ -1290,18 +1290,55 @@ server <- function(input, output, session) {
     }
   )
 
-  # Link in the user guide panel back to the main panel -----------------------
-  observeEvent(input$link_to_app_content_tab, {
-    updateTabsetPanel(session, "navlistPanel", selected = "Example tab 1")
+
+  # Dashboard navigation --------------------------------------------------------------------------------------------
+
+  # Adding content navigation for Teacher demand trajectories and PGITT trainee need section
+
+  # Teacher demand trajectories link
+
+  observeEvent(input$link_to_teacher_demand_traj, {
+    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Teacher demand trajectories")
   })
 
-  # Download the underlying data button --------------------------------------
-  output$download_data <- downloadHandler(
-    filename = "shiny_template_underlying_data.csv",
-    content = function(file) {
-      write.csv(df_revbal, file)
-    }
-  )
+  # PGITT trainee need calculation link
+
+  observeEvent(input$link_to_pgitt_need_calc, {
+    updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need calculation")
+  })
+
+  # PGITT trainee need time series link
+
+  observeEvent(input$link_to_pgitt_need_ts, {
+    updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need time series")
+  })
+
+  # Drivers analysis link
+
+  observeEvent(input$link_to_drivers_change, {
+    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Drivers of change in PGITT trainee need")
+  })
+
+  # Flow trajectories link
+
+  observeEvent(input$link_to_flow_traj, {
+    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Flow trajectories")
+  })
+
+  # User guide link
+
+  observeEvent(input$link_to_user_guide, {
+    updateTabsetPanel(session, "navlistPanel", selected = "User guide")
+  })
+
+  # Support and feedback link
+
+  observeEvent(input$link_to_support, {
+    updateTabsetPanel(session, "navlistPanel", selected = "support_panel_ui")
+  })
+
+
+  #### DO I NEED THIS BIT BELOW?
 
   # Wrap a plot with a larger spinner
   with_gov_spinner <- function(
@@ -1319,15 +1356,6 @@ server <- function(input, output, session) {
     )
   }
 
-  # navigation link within text --------------------------------------------
-  observeEvent(input$nav_link, {
-    shiny::updateTabsetPanel(session, "navlistPanel", selected = input$nav_link)
-  })
-
-  # Dynamic label showing custom selections -----------------------------------
-  output$dropdown_label <- renderText({
-    paste0("Current selections: ", input$selectPhase, ", ", input$selectArea)
-  })
 
   # footer links -----------------------
   shiny::observeEvent(input$accessibility_statement, {
@@ -1402,11 +1430,5 @@ server <- function(input, output, session) {
       }, 400);
     "
     )
-  })
-
-  # Adding content navigation for Teacher demand and PGITT need
-
-  observeEvent(input$link_to_teacher_demand_traj, {
-    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Teacher demand trajectories")
   })
 }
