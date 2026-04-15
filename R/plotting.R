@@ -10,6 +10,16 @@
 
 # Pupil vs Teacher timeseries ---------------------------
 
+# Plot pupil numbers and teacher numbers over time on a dual y-axis
+#
+# This function:
+# - draws pupils (left axis) and teachers (right axis) on the same timeline
+# - optionally locks both axes so Primary and Secondary plots are comparable
+# - uses dotted lines to show projected values after the last census year
+#
+# Required columns in df include:
+# start_year, academic_year, pupil_numbers, teacher_numbers, projection
+
 # axis locks for dual axis primary and secondary graphs
 
 primary_lock <- list(
@@ -341,12 +351,9 @@ plot_pupil_teacher_timeseries <- function(
 # PGITT trainee need time series ----------------------------------------------------------------------------------
 
 plot_pgitt_need_timeseries <- function(df) {
-  # ------------------------------------------------------------
   # Prepare the data for plotting
   # Create extra columns that will be used for tooltips
   # and make sure the data is in a sensible order
-  # ------------------------------------------------------------
-
   df2 <- df %>%
     dplyr::mutate(
       # Build a subject line for the tooltip
@@ -357,6 +364,7 @@ plot_pgitt_need_timeseries <- function(df) {
         paste0("<p><b>Subject:</b> ", subject, "</p>"),
         ""
       ),
+
       # Build the full tooltip shown when hovering over a bar
       # Tooltips include:
       #  - academic year
@@ -378,30 +386,45 @@ plot_pgitt_need_timeseries <- function(df) {
     )
 
   # Axis helpers
+  # These objects control which years appear on the x-axis
+  # and how they are labelled
+  # Numeric positions of x-axis ticks (one per year)
   year_breaks <- sort(unique(df2$start_year))
+
+  # Text labels for the x-axis (e.g. "2022/23")
+  # We deduplicate year/label pairs, order them,
+  # and then pull out just the label column
   year_labels <- df2 %>%
     dplyr::distinct(start_year, academic_year) %>%
     dplyr::arrange(start_year) %>%
     dplyr::pull(academic_year)
 
+  # Build the plot
   p <- ggplot(
     df2,
     aes(
+      # What is plotted
       x = start_year,
       y = pgitt_trainee_need
     )
   ) +
+    # Draw an interactive bar chart
+    # Each bar represents PGITT trainee need in a year
     ggiraph::geom_col_interactive(
       aes(
-        tooltip = tooltip,
-        data_id = paste(subject, start_year, sep = "_")
+        tooltip = tooltip, # shows tooltip
+        data_id = paste(subject, start_year, sep = "_") # unique id for each bar used by ggiraph
       ),
+      # Styling
       fill = "#801650",
       width = 0.6
     ) +
+    # Apply the standard AF chart theme for consistent styling
     afcharts::theme_af() +
+    # Axis labels
     xlab("Academic year") +
     ylab("PGITT trainee need") +
+    # Theme customisation (fonts/spacing/text angles)
     theme(
       text = element_text(size = 12),
       axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
@@ -412,14 +435,17 @@ plot_pgitt_need_timeseries <- function(df) {
         family = "dejavu"
       )
     ) +
+    # Custom x-axis breaks and labels
     scale_x_continuous(
       breaks = year_breaks,
       labels = year_labels
     ) +
+    # Format y-axis with commas and force the axis to start at 0
     scale_y_continuous(
       labels = scales::comma,
       limits = c(0, NA),
     )
+  # Return the plot object
   p
 }
 
@@ -574,16 +600,29 @@ plot_drivers_waterfall <- function(df_raw) {
     )
 }
 
-# plot flow trajectories -----------------------------------------------------------
+# Plot flow trajectories -----------------------------------------------------------
+
+# Plot historic and trajectory flows (e.g. entrants and leavers) over time
+#
+# This function:
+# - builds interactive line trajectories by publication year
+# - switches automatically between percentage and FTE scales
+# - uses dotted lines to indicate trajectory values after the last census year
+#
+# Expected columns include:
+# start_year, academic_year, phase, subject, type, value,
+# publication_year, historic_or_trajectory
 
 plot_flow_trajectories <- function(df) {
+  # Types that represent rates rather than counts
+  # These will be shown as percentages on the y-axis
   leaver_types <- c(
     "Total leaver rate",
     "55+ leaver rate",
     "Under 55 leaver rate"
   )
 
-  # --- DEFINE per-row last census year based on publication year ------------------------
+  # Define per-row last census year based on publication year
   df <- df %>%
     dplyr::mutate(
       last_census_year_row = dplyr::case_when(
@@ -592,8 +631,9 @@ plot_flow_trajectories <- function(df) {
       )
     )
 
-  # ---------- labels & tooltip ----------
-
+  # Build labels and tooltips for interactivity
+  # This is presentation-only logic: it does not affect the plot data,
+  # only what users see when hovering
   df <- df %>%
     dplyr::mutate(
       is_trajectory = historic_or_trajectory == "Trajectory",
@@ -654,7 +694,9 @@ plot_flow_trajectories <- function(df) {
       )
     )
 
-  # ---------- y scale ----------
+  # Choose y-axis scale automatically based on the data:
+  # - percentage scale for leaver rates
+  # - numeric (FTE) scale for all other flow types
   unique_type <- unique(df$type)
   if (all(df$type %in% leaver_types)) {
     y_scale <- ggplot2::scale_y_continuous(
@@ -670,11 +712,12 @@ plot_flow_trajectories <- function(df) {
     y_title <- paste0(unique_type, " (FTE)")
   }
 
-  # ---------- build segment data ----------
-  # group by any series identifiers that exist (phase/subject/type) so joins are correct
-
+  # Build segment-level data for drawing line trajectories
+  # Each row represents a single line segment from one year to the next
+  # Grouping ensures lines are drawn separately for each series
   df_seg <- df %>%
     dplyr::arrange(start_year) %>%
+    # any_of() allows this to work safely even if some grouping columns are missing
     dplyr::group_by(dplyr::across(dplyr::any_of(c(
       "phase",
       "subject",
@@ -684,7 +727,7 @@ plot_flow_trajectories <- function(df) {
     dplyr::mutate(
       next_year = dplyr::lead(start_year),
       next_value = dplyr::lead(value),
-      # IMPORTANT: compare the segment's start year against its row-specific cutover
+      # Compare the segment's start year against its row-specific cutover
       segment_linetype = ifelse(
         start_year >= last_census_year_row,
         "Trajectory",
@@ -695,9 +738,9 @@ plot_flow_trajectories <- function(df) {
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(next_year))
 
-  # Robust x axis breaks/labels based only on data
 
-  # Keep only years present in df
+  # X-axis breaks are derived entirely from the data,
+  # so the plot adapts automatically if years change
   years_available <- df %>%
     dplyr::pull(start_year) %>%
     unique() %>%
@@ -715,7 +758,7 @@ plot_flow_trajectories <- function(df) {
     dplyr::arrange(start_year) %>%
     dplyr::pull(academic_year)
 
-  # ---------- plot ----------
+  # Plot
   ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
 
     # Lines as segments with linetype mapped to Historic/Trajectory
@@ -762,13 +805,14 @@ plot_flow_trajectories <- function(df) {
       legend.background = element_rect(fill = "transparent", colour = NA)
     ) +
 
-    # X axis: biennial ticks (unchanged)
+    # X axis: biennial ticks
     ggplot2::scale_x_continuous(
       breaks = years_for_axis,
       labels = axis_labels
     ) +
 
     # Linetype scale & legend entry for trajectories
+    # Show dotted lines for trajectories but avoid duplicating legend entries
     scale_linetype_manual(
       name = "",
       values = c("Historic" = "solid", "Trajectory" = "dotted"),
