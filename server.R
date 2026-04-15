@@ -1404,8 +1404,9 @@ server <- function(input, output, session) {
     )
   })
 
-  # Stop app ------------------------------------------------------------------
-  session$onSessionEnded(function() {
-    stopApp()
+  # Adding content navigation for Teacher demand and PGITT need
+
+  observeEvent(input$link_to_teacher_demand_traj, {
+    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Teacher demand trajectories")
   })
 }
