@@ -46,15 +46,46 @@ twm_tab_panel <- function() {
 
               # Intro to dashboard section
               bslib::card(
-                bslib::card_header("About this section"),
+                bslib::card_header(gov_text("About this section")),
                 bslib::card_body(
                   gov_text(
-                    "The teacher demand and PGITT need is presented across 5 separate reporting metrics:"
+                    "The ",
+                    em("teacher demand trajectories and postgraduation initial teacher training (PGITT) trainee need"),
+                    " section of the dashboard can be explored across five areas:"
                   ),
                   tags$ul(
                     tags$li(
-                      actionLink("link_to_teacher_demand_traj", "Teacher demand trajectories"),
-                      " shows historic trends in pupil and teacher numbers (including unqualified teachers), alongside projections of both future pupil numbers and the resulting demand for teachers as calculated by the teacher workforce model. All numbers are in full time equivalent (FTE)."
+                      gov_text(
+                        actionLink("link_to_teacher_demand_traj", "Teacher demand trajectories"),
+                        " shows historic trends in pupil and teacher numbers (including unqualified teachers), ",
+                        "alongside projections of both future pupil numbers and teacher demand."
+                      )
+                    ),
+                    tags$li(
+                      gov_text(
+                        actionLink("link_to_pgitt_need_calc", "PGITT trainee need calculation"),
+                        " shows a flow chart illustrating how the Teacher Workforce Model estimates ",
+                        "teacher demand trajectories and PGITT trainee need."
+                      )
+                    ),
+                    tags$li(
+                      gov_text(
+                        actionLink("link_to_pgitt_need_ts", "PGITT trainee need time series"),
+                        " shows PGITT trainee need by phase and secondary subject from 2021/22 to 2026/27."
+                      )
+                    ),
+                    tags$li(
+                      gov_text(
+                        actionLink("link_to_drivers_change", "Drivers of change in PGITT trainee need"),
+                        " compares the 2025/26 and 2026/27 PGITT trainee need and the estimated drivers ",
+                        "behind these changes."
+                      )
+                    ),
+                    tags$li(
+                      gov_text(
+                        actionLink("link_to_flows_traj", "Flow trajectories"),
+                        " shows historic and trajectories of inflows and outflows to the teacher workforce."
+                      )
                     )
                   ),
                   gov_text(
@@ -73,69 +104,99 @@ twm_tab_panel <- function() {
                   gov_text(
                     "Data is available for state-funded primary (including maintained nurseries ",
                     "attached to schools), and secondary schools in England. Where possible, secondary ",
-                    "data is also broken down by individual subject.",
-                    "Please see the user guide for details of data sources."
+                    "data is also broken down by individual subject."
                   ),
-                  gov_text(strong("Data last updated:"), "XX/XX/XXXX") # TO ADD: PUB DATE
+                  gov_text(
+                    "Please see the ",
+                    actionLink("link_to_user_guide", "user guide"),
+                    " for details of data sources."
+                  ),
+                  gov_text(strong("Data last updated:"), "23/4/2026")
                 )
               ),
 
               # Disclaimers text box
               bslib::card(
-                bslib::card_header("Disclaimers and caveats"),
+                bslib::card_header(gov_text("Disclaimers and caveats")),
                 bslib::card_body(
                   tags$ul(
                     tags$li(
-                      "The inputs to the teacher workforce model are the most timely data available as ",
-                      "of February 2026. It has been presented within this part of the dashboard as it ",
-                      "was data used to estimate 2026/27 PGITT need.",
+                      gov_text(
+                        "The inputs to the teacher workforce model are the most timely data available as ",
+                        "of February 2026. It has been presented within this part of the dashboard as it ",
+                        "was data used to estimate 2026/27 PGITT need."
+                      ),
                       tags$ul(
-                        tags$li("2026/27 PGITT need will not be retrospectively updated in future. "),
-                        tags$li("As a consequence, this part of the dashboard will not be updated after publication."),
                         tags$li(
-                          "Therefore, these data may differ slightly to that in subsequent updates to ",
-                          "the school workforce census (SWC), ITT census, and ITT performance ",
-                          "profiles data."
+                          gov_text("2026/27 PGITT need will not be retrospectively updated in future. ")
+                        ),
+                        tags$li(
+                          gov_text("As a consequence, this part of the dashboard will not be updated after publication.")
+                        ),
+                        tags$li(
+                          gov_text(
+                            "Therefore, these data may differ slightly to that in subsequent updates to ",
+                            "the school workforce census (SWC), ITT census, and ITT performance ",
+                            "profiles data."
+                          )
                         )
                       )
                     ),
                     tags$li(
-                      "Note – next year PGITT need will be calculated for 2027/28 and will reflect any data updates."
+                      gov_text(
+                        "Note – next year PGITT need will be calculated for 2027/28 and will reflect any data updates."
+                      )
                     ),
                     tags$li(
-                      "Figures used within the TWM may differ to the SWC publication (school workforce in England) ",
-                      "which includes special schools and PRUs within the state-funded schools sector."
+                      gov_text(
+                        "Figures used within the TWM may differ to the SWC publication (school workforce in England) ",
+                        "which includes special schools and PRUs within the state-funded schools sector."
+                      )
                     ),
                     tags$li(
-                      "This publication uses a different naming convention to the SWC for teachers leaving service.",
+                      gov_text(
+                        "This publication uses a different naming convention to the SWC for teachers leaving service."
+                      ),
                       tags$ul(
                         tags$li(
-                          "A teacher that leaves service between the November 2023 and November ",
-                          "2024 SWC is classified as being a 2023/24 leaver in the School Workforce ",
-                          "publication. By contrast, in the TWM, such leavers are classified as being ",
-                          "leavers in the 2024/25 academic year."
+                          gov_text(
+                            "A teacher that leaves service between the November 2023 and November ",
+                            "2024 SWC is classified as being a 2023/24 leaver in the School Workforce ",
+                            "publication. By contrast, in the TWM, such leavers are classified as being ",
+                            "leavers in the 2024/25 academic year."
+                          )
                         ),
                         tags$li(
-                          "This approach is taken within the TWM for modelling purposes to ensure ",
-                          "leavers align with entrants coming in to replace them."
+                          gov_text(
+                            "This approach is taken within the TWM for modelling purposes to ensure ",
+                            "leavers align with entrants coming in to replace them."
+                          )
                         ),
                         tags$li(
-                          "I.e. teachers leaving at the very end of the 2023/24 academic year would ",
-                          "largely be replaced by entrants entering service in September 2024."
+                          gov_text(
+                            "I.e. teachers leaving at the very end of the 2023/24 academic year would ",
+                            "largely be replaced by entrants entering service in September 2024."
+                          )
                         )
                       )
                     ),
                     tags$li(
-                      "Finally, pupil projections in the dashboard differ slightly from those in the ",
-                      "national pupil projections release due to:",
+                      gov_text(
+                        "Finally, pupil projections in the dashboard differ slightly from those in the ",
+                        "national pupil projections release due to:"
+                      ),
                       tags$ul(
                         tags$li(
-                          "Coverage differences which are needed to align with the TWM methodology ",
-                          "(e.g. post-16 pupils in secondary schools are included within the TWM), and"
+                          gov_text(
+                            "Coverage differences which are needed to align with the TWM methodology ",
+                            "(e.g. post-16 pupils in secondary schools are included within the TWM), and"
+                          )
                         ),
                         tags$li(
-                          "Adjustments reflecting the actual number of pupils captured in October ",
-                          "2025 school returns."
+                          gov_text(
+                            "Adjustments reflecting the actual number of pupils captured in October ",
+                            "2025 school returns."
+                          )
                         )
                       )
                     )
@@ -317,6 +378,7 @@ twm_tab_panel <- function() {
             #####################################################################
 
             tabPanel(
+              id = "pgitt_need_calc",
               "PGITT trainee need calculation",
               h2("Calculation of postgraduate initial teacher training (PGITT) trainee need"),
               gov_text(
@@ -438,11 +500,12 @@ twm_tab_panel <- function() {
             #####################################################################
 
             tabPanel(
+              id = "pgitt_need_ts",
               "PGITT trainee need time series",
               h2("Postgraduate initial teacher training (PGITT) trainee need time series"),
               gov_text(
-                "PGITT trainee need by phase and subject, and how it has changed over ",
-                "time from 2021/22 to 2026/27, as estimated by the teacher workforce model."
+                "PGITT trainee need by phase and secondary subject, ",
+                "2021/22 to 2026/27, as estimated by the teacher workforce model."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -457,12 +520,14 @@ twm_tab_panel <- function() {
                     ggiraph::girafeOutput(
                       "pgitt_need_timeseries_plot",
                       width  = "100%",
-                      height = "600px"
+                      height = "450px"
                     )
                   ),
 
                   # Mini tab 2 - table
-                  table_output = reactableOutput("pgitt_need_timeseries_table"),
+                  table_output = uiOutput(
+                    "pgitt_need_timeseries_table_ui"
+                  ),
 
                   # Mini tab 3 - download
                   download_output = tagList(
@@ -517,12 +582,8 @@ twm_tab_panel <- function() {
 
                   # About this graph text box
                   bslib::card(
-                    bslib::card_header("About this graph"),
+                    bslib::card_header("User guide"),
                     bslib::card_body(
-                      gov_text(
-                        "This page shows PGITT trainee need for both primary and secondary and each ",
-                        "secondary subject for the 2021/22 to 2026/27 academic years."
-                      ),
                       gov_text(
                         "Select a school phase or secondary subject to view its data and hover over the columns ",
                         "to see the value."
@@ -561,7 +622,8 @@ twm_tab_panel <- function() {
                   gov_text(
                     "Changes in individual subjects have been driven by individual circumstances, with ",
                     "further information available on the ",
-                    em("'Drivers of change in PGITT trainee need'"), " tab."
+                    actionLink("link_to_drivers", "Drivers of change in PGITT trainee need"),
+                    " tab."
                   )
                 )
               )
@@ -574,6 +636,7 @@ twm_tab_panel <- function() {
             #####################################################################
 
             tabPanel(
+              id = "drivers_change",
               "Drivers of change in PGITT trainee need",
               h2("Drivers of changes in PGITT trainee need this year"),
               gov_text(
@@ -792,6 +855,7 @@ twm_tab_panel <- function() {
             #####################################################################
 
             tabPanel(
+              id = "flow_traj",
               "Flow trajectories",
               h2("Flow trajectories"),
               gov_text(
@@ -956,9 +1020,9 @@ twm_tab_panel <- function() {
                 )
               )
             )
-          ) # <-- closes tabsetPanel
-        ) # <-- closes column(width = 12)
-      ) # <-- closes gov_row
-    ) # <-- closes gov_main_layout
-  ) # <-- closes tabPanel("Dashboard")
+          )
+        )
+      )
+    )
+  )
 }
