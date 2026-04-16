@@ -83,7 +83,7 @@ build_pupil_teacher_summary <- function(df_change) {
 
   # Construct summary sentence
   glue::glue(
-    "We project ",
+    "DfE project there will be ",
     scales::label_comma()(abs(df_27$pupil_diff)),
     " ",
     pupil_dir,
@@ -97,7 +97,7 @@ build_pupil_teacher_summary <- function(df_change) {
     " (",
     scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct),
     ") ",
-    "in 2027/28 compared to 2024/25. (dummy)"
+    "in 2027/28 compared to 2024/25."
   )
 }
 
