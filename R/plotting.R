@@ -321,11 +321,13 @@ plot_pupil_teacher_timeseries <- function(
     afcharts::theme_af() +
     theme(
       axis.title.y.left = element_text(
+        size = 14,
         color = "#F46A25",
         angle = 90,
         vjust = 0.5
       ),
       axis.title.y.right = element_text(
+        size = 14,
         color = "#12436D",
         angle = 270,
         vjust = 0.5
@@ -538,8 +540,37 @@ plot_drivers_waterfall <- function(df_raw) {
       )
     )
 
+  # Reactive title based on phase/subject selected
+
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+  phase_val <- if (length(phase_selected) == 1) {
+    phase_selected
+  } else {
+    phase_selected[1]
+  }
+  subject_val <- if (length(subject_selected) == 1) {
+    subject_selected
+  } else {
+    subject_selected[1]
+  }
+
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  # Fixed comparison phrase as requested
+  plot_title <- paste0(
+    "Drivers of change in ",
+    tolower(title_prefix),
+    " PGITT need: 2026/27 vs 2025/26"
+  )
+
   # Build the interactive waterfall chart
-  ggplot(df, aes(x = driver)) +
+  p <- ggplot(df, aes(x = driver)) +
     # Rectangle for each bar
     ggiraph::geom_rect_interactive(
       aes(
@@ -595,17 +626,22 @@ plot_drivers_waterfall <- function(df_raw) {
     labs(x = NULL, y = "PGITT trainees") +
     theme_minimal() +
     theme(
+      plot.title = element_text(size = 20),
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       axis.title.y = element_text(size = 16),
       axis.title.x = element_text(size = 16),
-      axis.text.y = element_text(size = 12),
+      axis.text.y = element_text(size = 13, colour = "black"),
       axis.text.x = element_text(
-        size = 12,
+        colour = "black",
+        size = 13,
         margin = margin(t = 6),
         lineheight = 0.95
       )
     )
+  # Apply title
+  p <- p +
+    ggplot2::labs(title = plot_title)
 }
 
 # Plot flow trajectories -----------------------------------------------------------
@@ -767,7 +803,7 @@ plot_flow_trajectories <- function(df) {
     dplyr::pull(academic_year)
 
   # Plot
-  ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
 
     # Lines as segments with linetype mapped to Historic/Trajectory
     ggiraph::geom_segment_interactive(
@@ -797,7 +833,7 @@ plot_flow_trajectories <- function(df) {
     ggplot2::xlab("Academic year") +
     ggplot2::ylab(y_title) +
     ggplot2::theme(
-      text = element_text(size = 12),
+      text = element_text(size = 14),
       axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
       axis.title.y = element_text(
         angle = 90,
