@@ -110,20 +110,20 @@ server <- function(input, output, session) {
       "Teacher demand trajectories",
       parent_pub_link,
       "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’",
-      "XX/XX/XXXX",
+      "23/4/2026",
       "PGITT trainee need time series",
       parent_pub_link,
       "Featured table ‘PGITT trainee need time series by phase and subject’",
-      "XX/XX/XXXX",
+      "23/4/2026",
       "Drivers of change in PGITT trainee need",
       parent_pub_link,
       "Supporting information data file ‘Calculation of drivers of 2026-27 postgraduate ITT trainee need’",
-      "XX/XX/XXXX",
+      "23/4/2026",
       "Flow trajectories",
       parent_pub_link,
       "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
       and related data’ from this year’s publication (includes data from last year’s publication).",
-      "XX/XX/XXXX"
+      "23/4/2026"
     )
 
     reactable::reactable(
@@ -431,7 +431,7 @@ server <- function(input, output, session) {
   })
 
 
-  # Build reactive title describing selected phase/subject and year range
+  # Reactive title describing selected phase/subject and year range
   # for PGITT trainee need outputs
 
   pgitt_need_ts_title <- reactive({
@@ -674,43 +674,36 @@ server <- function(input, output, session) {
     df
   })
 
+
+  # Build a reactive title describing the selected school phase/subject
+  # and academic year comparison for the drivers table 1 header
+
+
+  drivers_title <- reactive({
+    build_drivers_table_title(drivers_filtered())
+  })
+
+
+  # Export the reactive title as plain text for use in table 1 header
+
+  output$drivers_title <- renderText({
+    drivers_title()
+  })
+
+
+  # Render the text in heading_text format
+
+  output$drivers_table_1_heading <- renderUI({
+    heading_text(drivers_title(), level = 4, size = "s")
+  })
+
+
   # Plot builder for drivers analysis which adds title & larger text for downloads
 
   build_drivers_waterfall_plot <- function(df, for_download = FALSE) {
     p <- plot_drivers_waterfall(df) # your existing ggplot builder
 
     if (for_download) {
-      # Title prefix: Primary / Secondary / Secondary subject
-      phase_selected <- unique(df$phase)
-      subject_selected <- unique(df$subject)
-      phase_val <- if (length(phase_selected) == 1) {
-        phase_selected
-      } else {
-        phase_selected[1]
-      }
-      subject_val <- if (length(subject_selected) == 1) {
-        subject_selected
-      } else {
-        subject_selected[1]
-      }
-
-      title_prefix <- dplyr::case_when(
-        phase_val == "Primary" ~ "Primary",
-        phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
-        phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
-        TRUE ~ subject_val
-      )
-
-      # Fixed comparison phrase as requested
-      plot_title <- paste0(
-        title_prefix,
-        " drivers analysis: 2026/27 compared to 2025/26"
-      )
-
-      # Apply title + bigger text for download graph only
-      p <- p +
-        ggplot2::labs(title = plot_title)
-
       # Increase size of existing data labels
       p$layers <- lapply(p$layers, function(layer) {
         if (inherits(layer$geom, "GeomText")) {
@@ -1007,37 +1000,9 @@ server <- function(input, output, session) {
           panel.background = ggplot2::element_rect(fill = "white", colour = NA)
         )
 
-      # Add dynamic title only for downloaded plots
-      phase_selected <- unique(df$phase)
-      subject_selected <- unique(df$subject)
-      type_selected <- unique(df$type)
+      # Add reactive title
 
-      # Pick a single value if vectors have length > 1 (edge filters)
-      phase_val <- if (length(phase_selected) == 1) {
-        phase_selected
-      } else {
-        phase_selected[1]
-      }
-      subject_val <- if (length(subject_selected) == 1) {
-        subject_selected
-      } else {
-        subject_selected[1]
-      }
-
-      title_prefix <- dplyr::case_when(
-        phase_val == "Primary" ~ "Primary",
-        phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
-        phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
-        TRUE ~ subject_val
-      )
-
-      plot_title <- paste0(
-        title_prefix,
-        ": ",
-        type_selected
-      )
-
-      p <- p + ggplot2::labs(title = plot_title)
+      p + ggplot2::labs(title = build_flow_traj_title(df))
 
       # Increase plot title text size
 
@@ -1075,6 +1040,31 @@ server <- function(input, output, session) {
       )
     )
   })
+
+
+  # Reactive title for flow trajectories based on current filters
+  # Used to keep chart and table titles consistent
+
+  flow_traj_title <- reactive({
+    build_flow_traj_title(flow_filtered())
+  })
+
+
+  # Render the reactive title as GOV.UK–styled body text
+  # uiOutput() is used in the twm_tab UI to allow this to update dynamically
+
+  # For chart
+
+  output$flow_traj_title_chart_ui <- renderUI({
+    gov_text(flow_traj_title())
+  })
+
+  # For table
+
+  output$flow_traj_title_table_ui <- renderUI({
+    gov_text(flow_traj_title())
+  })
+
 
   # Table: Flow trajectories table for app (interactive via reactable)
   # Abbrev NQEs and NTSFs to help fit in table
