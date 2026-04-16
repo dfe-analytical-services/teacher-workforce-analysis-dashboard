@@ -24,7 +24,7 @@ twm_tab_panel <- function() {
           width = 12,
           div(
             id = "main_col",
-            heading_text("Teacher demand trajectories and PGITT trainee need", level = 1, size = "xl")
+            heading_text("Teacher demand trajectories and PGITT trainee need", level = 1, size = "l")
           )
         ),
 
@@ -42,15 +42,15 @@ twm_tab_panel <- function() {
 
             tabPanel(
               "Introduction",
-              heading_text("Introduction", level = 2, size = "l"),
+              heading_text("Introduction", level = 3, size = "m"),
 
               # Intro to dashboard section
               bslib::card(
-                bslib::card_header(gov_text("About this section")),
+                bslib::card_header("About this section"),
                 bslib::card_body(
                   gov_text(
                     "The ",
-                    em("teacher demand trajectories and postgraduation initial teacher training (PGITT) trainee need"),
+                    em("teacher demand trajectories and postgraduate initial teacher training (PGITT) trainee need"),
                     " section of the dashboard can be explored across five areas:"
                   ),
                   tags$ul(
@@ -83,7 +83,7 @@ twm_tab_panel <- function() {
                     ),
                     tags$li(
                       gov_text(
-                        actionLink("link_to_flows_traj", "Flow trajectories"),
+                        actionLink("link_to_flow_traj", "Flow trajectories"),
                         " shows historic and trajectories of inflows and outflows to the teacher workforce."
                       )
                     )
@@ -117,7 +117,7 @@ twm_tab_panel <- function() {
 
               # Disclaimers text box
               bslib::card(
-                bslib::card_header(gov_text("Disclaimers and caveats")),
+                bslib::card_header("Disclaimers and caveats"),
                 bslib::card_body(
                   tags$ul(
                     tags$li(
@@ -215,12 +215,16 @@ twm_tab_panel <- function() {
             tabPanel(
               id = "teacher_demand_traj",
               "Teacher demand trajectories",
-              h2("Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories"),
+              heading_text("Historical pupil and teacher numbers, projected pupil numbers ",
+                "and teacher demand trajectories",
+                level = 3, size = "m"
+              ),
               gov_text(
                 "This section shows historic trends in pupil and teacher numbers (including ",
                 "unqualified teachers), alongside projections of both future pupil numbers and the ",
                 "resulting demand for teachers as calculated by the teacher workforce model. ",
-                "All numbers are in full time equivalent (FTE)."
+                "All numbers are in full time equivalent (FTE) and cover state-funded primary ",
+                "and state-funded secondary schools in England."
               ),
               bslib::layout_columns(
                 col_widths = bslib::breakpoints(md = c(12, 12), lg = c(8, 4)),
@@ -232,20 +236,27 @@ twm_tab_panel <- function() {
                   # Mini tab 1 - chart
                   chart_output = div(
                     style = "margin-top: 1.5rem;",
-                    gov_text(
-                      "Pupil and teacher numbers are shown on separate y axes ",
-                      "because they are on very different scales. ",
-                      "The axes start above zero to make the trends easier to see."
-                    ),
                     ggiraph::girafeOutput(
                       "pupil_teacher_plot",
                       width  = "100%",
-                      height = "600px"
-                    )
+                      height = "450px"
+                    ),
+                    gov_text(
+                      tags$span(
+                        "Please note: pupil and teacher numbers are shown on separate y axes ",
+                        "because they are on very different scales. ",
+                        "The axes start above zero to make the trends easier to see.",
+                        style = "font-size: 1rem;"
+                      )
+                    ),
                   ),
 
                   # Mini tab 2 - table
-                  table_output = reactableOutput("pupil_teacher_table"),
+                  table_output = govReactableOutput("pupil_teacher_table",
+                    caption = "",
+                    caption_size = "1",
+                    heading_level = "h5"
+                  ),
 
                   # Mini tab 3 - download
 
@@ -292,22 +303,26 @@ twm_tab_panel <- function() {
                     bslib::card_header("About this graph"),
                     bslib::card_body(
                       gov_text(
-                        "Historical and projected pupil numbers are presented here alongside historic teacher ",
-                        "numbers and future teacher demand. These figures cover state-funded primary and ",
-                        "state-funded secondary schools in England."
+                        HTML(
+                          paste0(
+                            "Pupil numbers are shown by the ",
+                            "<span style='color:#F46A25; font-weight:600;'>orange</span>",
+                            " line with star markers; with projections shown as the dotted part. ",
+                            "Values correspond to the left hand axis."
+                          )
+                        )
+                      ),
+                      gov_text(
+                        HTML(
+                          paste0(
+                            "Teacher numbers are shown by the ",
+                            "<span style='color:#12436D; font-weight: 600;'>blue</span>",
+                            " line with dot markers, with projected demand being the dotted part. ",
+                            "Values correspond to the right hand axis."
+                          )
+                        )
                       ),
                       gov_text("Select a school phase to view its data and hover over the data points to see the value."),
-                      tags$ul(
-                        tags$li(HTML(
-                          'Pupil numbers are shown by the <span style="color:#F46A25; font-weight: 600;">orange</span> line
-                          with star markers; with projections shown as the dotted part.
-                          Values correspond to the left hand axis.'
-                        )),
-                        tags$li(HTML(
-                          'Teacher numbers are shown by the <span style="color:#12436D; font-weight: 600;">blue</span> line
-                          with dot markers, with projected demand being the dotted part. Values correspond to the right hand axis.'
-                        ))
-                      )
                     )
                   )
                 )
@@ -380,7 +395,9 @@ twm_tab_panel <- function() {
             tabPanel(
               id = "pgitt_need_calc",
               "PGITT trainee need calculation",
-              h2("Calculation of postgraduate initial teacher training (PGITT) trainee need"),
+              heading_text("Calculation of postgraduate initial teacher training (PGITT) trainee need",
+                level = 3, size = "m"
+              ),
               gov_text(
                 "This year, the teacher workforce model has estimated PGITT trainee need ",
                 "for 2026/27 courses. This refers to trainees that will be recruited during 2025/26, to start ",
@@ -407,86 +424,108 @@ twm_tab_panel <- function() {
               bslib::card(
                 bslib::card_header("Estimating PGITT trainee need for 2026/27"),
                 bslib::card_body(
+                  # Intro paragraph
                   gov_text(
                     "This diagram shows how the teacher workforce model (TWM) estimates the number of ",
-                    "postgraduate initial teacher training (PGITT) trainees needed for 2026/27 for state-funded primary schools ",
-                    "and for state-funded secondary schools for each secondary subject. ",
+                    "postgraduate initial teacher training (PGITT) trainees needed for 2026/27 for state-funded ",
+                    "primary schools and for state-funded secondary schools for each secondary subject. ",
                     "The process happens in two main steps:"
                   ),
+
+                  # Two-step bullet list
                   tags$ul(
-                    tags$li("Calculating future teacher demand, and"),
                     tags$li(
-                      "Estimating how many postgraduate initial trainees are needed to meet that demand ",
-                      "once other expected workforce changes are taken into account."
+                      gov_text("Calculating future teacher demand.")
+                    ),
+                    tags$li(
+                      gov_text(
+                        "Estimating how many postgraduate initial trainees are needed to meet that demand ",
+                        "once other expected workforce changes are taken into account."
+                      )
                     )
                   ),
+
+                  # Step 1
                   gov_text(strong("Step 1: Calculate teacher demand trajectory to 2027/28")),
                   gov_text("Firstly, the model estimates how many teachers are needed in future."),
                   tags$ul(
                     tags$li(
-                      "The model assumes that the current numbers of teacher numbers from the latest school workforce census (2024/25) ",
-                      "are sufficient to meet current pupil demand."
+                      gov_text(
+                        "The model assumes that the current teacher numbers from the latest school workforce ",
+                        "census (2024/25) are sufficient to meet current pupil demand."
+                      )
                     ),
                     tags$li(
-                      "Using projected pupil numbers, the model makes an assumption that rising pupil numbers increase teacher demand, ",
-                      "with part of the demand being met by growth in pupil to teacher ratios. ",
-                      "The opposite is true when pupil numbers are projected to fall. ",
-                      "This reflects historical relationships between these factors."
+                      gov_text(
+                        "Using projected pupil numbers, the model assumes that rising pupil numbers increase ",
+                        "teacher demand, with part of the demand being met by growth in pupil-to-teacher ratios (PTRs). ",
+                        "The opposite is true when pupil numbers are projected to fall. ",
+                        "This reflects historical relationships between these factors."
+                      )
                     )
                   ),
-                  gov_text("This produces a teacher demand trajectory of the number of teachers needed up to and including 2027/28."),
-                  gov_text(strong("Step 2: Calculate the number of PGITT trainees needed for 2026/27")),
                   gov_text(
-                    "Using estimated teacher demand for 2027/28, the model estimates the number of trainees ",
-                    "needed in 2026/27 to meet it."
+                    "This produces a teacher demand trajectory showing how many teachers are needed up to and ",
+                    "including 2027/28."
                   ),
 
-                  # Top-level ordered list (1, 2, 3)
+                  # Step 2
+                  gov_text(strong("Step 2: Calculate the number of PGITT trainees needed for 2026/27")),
+                  gov_text(
+                    "Using estimated teacher demand for 2027/28, the model estimates the number of PGITT trainees ",
+                    "needed in 2026/27 to meet that demand."
+                  ),
+
+                  # Ordered list (1, 2, 3)
                   tags$ol(
-                    # 1.
+                    # 1
                     tags$li(
-                      "Firstly, the model estimates the teacher entrant need in 2027/28; this is made up of two parts.",
+                      gov_text(
+                        "Firstly, the model estimates the teacher entrant need in 2027/28; this is made up of two parts."
+                      ),
+
                       # Nested ordered list (a, b)
                       tags$ol(
                         type = "a",
-                        # a.
                         tags$li(
-                          "The difference between teacher demand for 2027/28 and the size of the ",
-                          "teacher workforce in 2026/27. For subjects for which it is estimated there ",
-                          "will be a 2026/27 teacher supply deficit, an estimate of ",
-                          strong("SUPPLY"),
-                          " is used as the basis for the 2026/27 teacher workforce for that subject. This ",
-                          "ensures that PGITT need is inflated to correct that deficit. For subjects for ",
-                          "which a 2026/27 teacher supply surplus is estimated, 2026/27 ",
-                          strong("DEMAND"),
-                          " is used as the basis for the 2026/27 teacher workforce for that subject. To",
-                          "do otherwise would mean PGITT need would be deflated due to the surplus."
+                          gov_text(
+                            "The difference between teacher demand for 2027/28 and the size of the teacher workforce ",
+                            "in 2026/27. For subjects where a 2026/27 teacher supply deficit is estimated, ",
+                            strong("SUPPLY"),
+                            " is used as the basis for the 2026/27 workforce to ensure PGITT need is inflated to correct ",
+                            "that deficit. Where a supply surplus is estimated, ",
+                            strong("DEMAND"),
+                            " is used instead. This prevents PGITT need being deflated due to an existing surplus."
+                          )
                         ),
-                        # b.
                         tags$li(
-                          "Estimated losses from the workforce in 2027/28 that require replacement. ",
-                          "These include both leavers (teachers leaving the state-funded sector) and ",
-                          "losses due to teachers reducing their individual working hours between years."
+                          gov_text(
+                            "Estimated losses from the workforce in 2027/28 that require replacement. ",
+                            "These include leavers (teachers leaving the state-funded sector) and losses arising ",
+                            "from teachers reducing their individual working hours between years."
+                          )
                         )
                       )
                     ),
 
-                    # 2.
+                    # 2
                     tags$li(
-                      "From the teacher entrant need in 2027/28, the model subtracts the teachers ",
-                      "expected to enter in 2027/28 through routes other than PGITT. These include ",
-                      "returners, teachers new to the state-funded sector, and newly qualified entrants ",
-                      "from undergraduate ITT or assessment-only routes. The remainder is the PGITT ",
-                      "newly qualified entrant (NQE) need for 2027/28 in FTE."
+                      gov_text(
+                        "From the teacher entrant need in 2027/28, the model subtracts teachers expected to enter ",
+                        "through routes other than PGITT. These include returners, teachers new to the state-funded ",
+                        "sector, and newly qualified entrants from undergraduate ITT or assessment-only routes. ",
+                        "The remainder represents the PGITT newly qualified entrant (NQE) need for 2027/28 in FTE."
+                      )
                     ),
 
-                    # 3.
+                    # 3
                     tags$li(
-                      "Finally, this is converted into the PGITT trainee need for 2026/27 (headcount) by ",
-                      "applying an NQE-specific FTE-to-headcount conversion rate (not all NQEs will ",
-                      "start in full-time roles) and applying ITT completion and post-training ",
-                      "employment rates (to account for trainees who will not complete ITT and those ",
-                      "who will not enter service in state-funded schools within four to six months)."
+                      gov_text(
+                        "Finally, this is converted into PGITT trainee need for 2026/27 (headcount) by applying ",
+                        "an NQE-specific FTE-to-headcount conversion rate and accounting for ITT completion rates ",
+                        "and post-training employment rates. These adjustments reflect trainees who do not complete ",
+                        "ITT or who do not enter employment in state-funded schools within four to six months."
+                      )
                     )
                   )
                 )
@@ -502,7 +541,9 @@ twm_tab_panel <- function() {
             tabPanel(
               id = "pgitt_need_ts",
               "PGITT trainee need time series",
-              h2("Postgraduate initial teacher training (PGITT) trainee need time series"),
+              heading_text("Postgraduate initial teacher training (PGITT) trainee need time series",
+                level = 3, size = "m"
+              ),
               gov_text(
                 "PGITT trainee need by phase and secondary subject, ",
                 "2021/22 to 2026/27, as estimated by the teacher workforce model."
@@ -590,10 +631,14 @@ twm_tab_panel <- function() {
                       ),
                       gov_text("Footnotes:"),
                       tags$ul(
-                        tags$li("PGITT trainee need has been rounded to the nearest 5."),
-                        tags$li("‘Others’ includes Child Development, Citizenship, Law, Media Studies,
+                        tags$li(
+                          gov_text("PGITT trainee need has been rounded to the nearest 5.")
+                        ),
+                        tags$li(
+                          gov_text("‘Others’ includes Child Development, Citizenship, Law, Media Studies,
                                 Other Social Studies, Other Technology, Politics, Psychology, Sociology,
                                 and Social Sciences among others.")
+                        )
                       )
                     )
                   )
@@ -638,7 +683,9 @@ twm_tab_panel <- function() {
             tabPanel(
               id = "drivers_change",
               "Drivers of change in PGITT trainee need",
-              h2("Drivers of changes in PGITT trainee need this year"),
+              heading_text("Drivers of change in PGITT trainee need this year",
+                level = 3, size = "m"
+              ),
               gov_text(
                 "Comparison of the 2025/26 and 2026/27 PGITT trainee need and the ",
                 "estimated drivers behind these changes."
@@ -656,16 +703,53 @@ twm_tab_panel <- function() {
                     ggiraph::girafeOutput("drivers_waterfall_plot",
                       width  = NULL,
                       height = NULL
+                    ),
+                    div(
+                      style = "margin-top: 1.5rem;",
+                      gov_text(
+                        tags$small(
+                          HTML(
+                            paste0(
+                              "This graph shows last year’s PGITT need (left, ",
+                              "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
+                              " bar) and this year’s PGITT need (right, ",
+                              "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
+                              " bar) for the selected school phase and/or secondary subject. ",
+                              "In between these two bars are the estimated respective drivers behind ",
+                              "the change in PGITT need between the two years."
+                            )
+                          )
+                        )
+                      ),
+                      gov_text(
+                        tags$small(
+                          HTML(
+                            paste0(
+                              "<span style='color:#F46A25; font-weight:600;'>Orange</span>",
+                              " bars show drivers that acted to reduce PGITT need this year, and ",
+                              "<span style='color:#28A197; font-weight:600;'>green</span>
+                              bars show drivers that acted to increase it."
+                            )
+                          )
+                        )
+                      )
                     )
                   ),
 
+
                   # Mini tab 2 - table
                   table_output = div(
-                    h4("PGITT trainee need for 2025/26 and 2026/27"),
-                    reactable::reactableOutput("table_pgitt_need_diff"),
+                    uiOutput("drivers_table_1_heading"),
+                    govReactableOutput("table_pgitt_need_diff",
+                      caption = "",
+                      caption_size = "l", heading_level = "h2"
+                    ),
                     tags$hr(),
-                    h4("Drivers of the change"),
-                    reactable::reactableOutput("table_drivers_breakdown")
+                    heading_text("Drivers of change in PGITT trainee need", level = 4, size = "s"),
+                    govReactableOutput("table_drivers_breakdown",
+                      caption = "",
+                      caption_size = "l", heading_level = "h2"
+                    )
                   ),
 
                   # Mini tab 3 - download
@@ -719,30 +803,22 @@ twm_tab_panel <- function() {
 
                   # About this graph box
                   bslib::card(
-                    bslib::card_header("About this graph"),
+                    bslib::card_header("About this data"),
                     bslib::card_body(
-                      gov_text(
-                        "This graph shows last year’s PGITT need (left, dark blue bar) and this year’s PGITT need ",
-                        "(right, dark blue bar) for the selected school phase and/or secondary subject. In ",
-                        "between these two bars are the estimated respective drivers behind the change in PGITT ",
-                        "need between the two years."
-                      ),
-                      gov_text(
-                        "All numbers are unrounded as they relate to figures used to calculate the PGITT need ",
-                        "before rounding is applied. For this reason, the PGITT need figures quoted may differ ",
-                        "slightly to those published elsewhere."
-                      ),
-                      gov_text(
-                        "Orange bars show drivers that acted to reduce PGITT need this year, and green bars ",
-                        "show drivers that acted to increase it."
-                      ),
                       gov_text(
                         "The scale of each driver is its estimated impact upon PGITT need, and not the amount ",
                         "that the driver itself changed. For example, returners did not increase/fall by ‘x’ returners ",
                         "this year, rather returners acted to increase/decrease PGITT need this year by ‘x’ PGITT ",
                         "trainees this year."
                       ),
-                      gov_text("As the graph shows, not all drivers have acted upon PGITT need this year in the same direction.")
+                      gov_text(
+                        "As the graph shows, not all drivers have acted upon PGITT need this year in the same direction."
+                      ),
+                      gov_text(
+                        "All numbers are unrounded as they relate to figures used to calculate the PGITT need ",
+                        "before rounding is applied. For this reason, the PGITT need figures quoted may differ ",
+                        "slightly to those published elsewhere."
+                      )
                     )
                   )
                 )
@@ -752,16 +828,16 @@ twm_tab_panel <- function() {
               bslib::card(
                 bslib::card_header("Definitions"),
                 bslib::card_body(
-                  tags$ul(
-                    tags$li(
+                  tagList(
+                    gov_text(
                       strong("Sector: "),
                       "State-funded primary or secondary schools in England."
                     ),
-                    tags$li(
+                    gov_text(
                       strong("2025/26 PGITT need: "),
                       "Last year’s PGITT trainee need as estimated by the teacher workforce model."
                     ),
-                    tags$li(
+                    gov_text(
                       strong("Demand growth YOY: "),
                       "Change in teacher demand YOY relating to pupil number change rates based on national pupil projections. ",
                       em(
@@ -769,7 +845,7 @@ twm_tab_panel <- function() {
                         "This is a consequence of projected pupil numbers falling more rapidly than they were in last year’s projections."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("Leavers: "),
                       "Teachers leaving service between years. ",
                       em(
@@ -777,7 +853,7 @@ twm_tab_panel <- function() {
                         "leading to lower PGITT need, whilst a positive number suggests more leavers are expected."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("Working hour losses: "),
                       "Losses of teachers through individual teachers reducing their working hours between years. ",
                       em(
@@ -785,7 +861,7 @@ twm_tab_panel <- function() {
                         "leading to lower PGITT need, whilst positive numbers suggest more forecasted working hour losses."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("Returners: "),
                       "Teachers who enter service having been employed as a regular teacher in the state-funded sector previously. ",
                       em(
@@ -793,19 +869,19 @@ twm_tab_panel <- function() {
                         "whilst positive numbers suggest fewer expected returners."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("NTSF: new to state-funded sector entrants. "),
                       "Teachers who enter service having not been employed as a regular teacher in the sector ",
                       "previously and are not newly qualified entrants (NQEs). This includes newly qualified teachers ",
                       "that defer entry into service by 4 to 16 months. ",
                       em(
                         "Negative numbers suggest more NTSF entrants are expected leading to ",
-                        "lower PGITT need, whilst positive numbers suggest fewer expected NTSFs. "
+                        "lower PGITT need, whilst positive numbers suggest fewer expected NTSFs."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("NQEs from other sources: "),
-                      "newly qualified entrants (NQE) sourced from routes other ",
+                      "Newly qualified entrants (NQE) sourced from routes other ",
                       "than PGITT courses, including undergraduate ITT, assessment only, Scotland/Wales, ",
                       "and recognition of overseas qualified status. ",
                       em(
@@ -813,33 +889,32 @@ twm_tab_panel <- function() {
                         "acting to reduce PGITT need, whilst positive numbers suggest fewer are expected."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("ITT–NQE conversion rate: "),
-                      "this rate is applied to reflect that not all NQEs start in full-time roles, ",
+                      "This rate is applied to reflect that not all NQEs start in full-time roles, ",
                       "there are some trainees that do not complete ITT, ",
                       "and there are those that do not immediately enter employment after ITT ",
-                      "(i.e. ITT completion and post ITT employment rates).",
+                      "(i.e. ITT completion and post ITT employment rates). ",
                       em(
                         "Negative numbers suggest a higher conversion rate between trainees and NQEs, ",
-                        "acting to reduce PGITT need, the opposite is true for positive numbers."
+                        "acting to reduce PGITT need; the opposite is true for positive numbers."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("Under-supply adjustment: "),
-                      "this accounts for potential supply shortfalls between 2024/25 (the most recent SWC) and 2026/27, ",
+                      "This accounts for potential supply shortfalls between 2024/25 (the most recent SWC) and 2026/27, ",
                       "reflecting recruitment impacts from the two ITT cycles prior to 2026/27. ",
                       "These are ITT cycles that have already occurred but are yet to be reflected in the school workforce census. ",
                       "If a shortfall is estimated, the model assumes additional teachers will need to be recruited via PGITT to correct it. ",
-                      "The model accounts for ITT recruitment, teacher retention, and other recruitment routes (e.g., returners). ",
+                      "The model accounts for ITT recruitment, teacher retention, and other recruitment routes (e.g. returners). ",
                       "This holistic assessment means the impact of missing historical PGITT trainee need may be offset ",
                       "by wider recruitment or retention being better than expected. ",
                       em(
-                        "Negative numbers reflect that the adjustment is smaller than last year ",
-                        "resulting in reduced PGITT need. No bar means no adjustment was needed this year or ",
-                        "last because there was no supply shortfall expected from the two prior ITT cycles.",
+                        "Negative numbers reflect that the adjustment is smaller than last year resulting in reduced PGITT need. ",
+                        "No bar means no adjustment was needed this year or last because there was no supply shortfall expected from the two prior ITT cycles."
                       )
                     ),
-                    tags$li(
+                    gov_text(
                       strong("2026/27 PGITT need: "),
                       "This year’s PGITT trainee need as estimated by the teacher workforce model."
                     )
@@ -857,7 +932,7 @@ twm_tab_panel <- function() {
             tabPanel(
               id = "flow_traj",
               "Flow trajectories",
-              h2("Flow trajectories"),
+              heading_text("Flow trajectories", level = 3, size = "m"),
               gov_text(
                 "Trajectories of inflows and outflows to the teacher workforce as estimated ",
                 "by the teacher workforce model."
@@ -872,18 +947,26 @@ twm_tab_panel <- function() {
                   # Mini tab 1 - chart
                   chart_output = div(
                     style = "margin-top: 3rem;",
+                    uiOutput("flow_traj_title_chart_ui"),
                     ggiraph::girafeOutput(
                       outputId = "flow_timeseries_plot",
                       width = "100%",
-                      height = "600px"
+                      height = "450px"
                     )
                   ),
 
                   # Mini tab 2 - table
                   table_output = div(
-                    gov_text("This table shows the latest data which relates to the April 2026 publication.
-                           This was the latest data availability at this point in time but this data may differ to the latest school workforce census data."),
-                    reactableOutput("table_flow_trajectories")
+                    uiOutput("flow_traj_title_table_ui"),
+                    gov_text(
+                      tags$small("This table shows the latest data which relates to the April 2026 publication.
+                           This was the latest data availability at this point in time but this data may differ
+                             to the latest school workforce census data.")
+                    ),
+                    govReactableOutput("table_flow_trajectories",
+                      caption = "",
+                      caption_size = "l", heading_level = "h2"
+                    )
                   ),
 
                   # Mini tab 3 - download
