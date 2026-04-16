@@ -1,0 +1,24 @@
+{
+  "input": {
+    "file_type_drivers": "JPEG (Up to XXX KB)",
+    "file_type_flows": "JPEG (Up to XXX KB)",
+    "file_type_pgitt_need": "XLSX (Up to X.XX MB)",
+    "file_type_pupil_teacher": "JPEG (Up to XXX KB)",
+    "filter_flow_type": "Returners",
+    "filter_phase": "Primary",
+    "filter_phase_drivers": "Secondary",
+    "filter_phase_flow": "Secondary",
+    "filter_phase_pgitt_need": "Primary",
+    "filter_subject_drivers": "Religious Education",
+    "filter_subject_flow": "Classics",
+    "filter_subject_pgitt_need": "Computing",
+    "main_tabs_drivers_analysis": "Download",
+    "main_tabs_flow_trajectories": "Table",
+    "main_tabs_pgitt_trainee_need": "Download",
+    "main_tabs_pupil_teacher": "Download",
+    "twm_tabsetpanels": "Introduction"
+  },
+  "output": {
+
+  }
+}
