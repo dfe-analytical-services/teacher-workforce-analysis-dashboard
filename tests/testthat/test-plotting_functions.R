@@ -55,6 +55,7 @@ test_that("plot_pgitt_need_timeseries works and returns an interactive ggplot", 
   # Representative minimal dataset
   df <- data.frame(
     start_year = 2020:2025,
+    academic_year = c("2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26"),
     phase = "Secondary",
     subject = rep("Biology", 6),
     pgitt_trainee_need = c(200, 210, 220, 230, 240, 250)
@@ -79,6 +80,8 @@ test_that("plot_pgitt_need_timeseries works and returns an interactive ggplot", 
 test_that("plot_drivers_waterfall works and returns an interactive ggplot", {
   # Minimal but realistic waterfall input
   df <- data.frame(
+    phase = "Secondary",
+    subject = "Biology",
     driver = c(
       "2025/26 PGITT need",
       "Demand growth YOY",
@@ -108,11 +111,16 @@ test_that("plot_drivers_waterfall works and returns an interactive ggplot", {
 test_that("plot_flow_trajectories works and returns an interactive ggplot", {
   # Create minimal dataset for flow trajectories
   df <- data.frame(
-    year = 2020:2025,
+    start_year = 2020:2025,
+    academic_year = c("2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26"),
     phase = "Secondary",
     subject = "Physics",
     type = "Total leaver rate",
     value = c(0.08, 0.09, 0.10, 0.11, 0.12, 0.13),
+    historic_or_trajectory = c(
+      "Historic", "Trajectory", "Trajectory",
+      "Historic", "Historic", "Trajectory"
+    ),
     publication_year = c(
       "2025",
       "2025",

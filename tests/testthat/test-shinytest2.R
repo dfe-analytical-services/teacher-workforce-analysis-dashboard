@@ -32,12 +32,12 @@ all_inputs <- c(
 
 all_outputs <- c(
   # Teacher demand trajectories tab
-  "tablePupilTeacher",
+  "pupil_teacher_table",
   "download_button_ui_pupil_teacher",
   "pt_summary_box",
 
   # PGITT trainee need time series tab
-  "tablePgittNeedTimeseries",
+  "pgitt_need_timeseries_table_ui",
   "download_button_ui_pgitt_need",
 
   # Drivers tab
@@ -66,75 +66,75 @@ test_that("{shinytest2} recording: initial_state", {
     main_tabs_pupil_teacher = "Table"
   )
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(
     filter_phase = "Primary",
     main_tabs_pupil_teacher = "Chart"
   )
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(
     main_tabs_pupil_teacher = "Download",
     file_type_pupil_teacher = "XLSX (Up to X.XX MB)"
   )
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(file_type_pupil_teacher = "JPEG (Up to XXX KB)")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(tabsetpanels = "PGITT trainee need calculation")
   app$set_inputs(tabsetpanels = "PGITT trainee need time series")
   app$set_inputs(filter_phase_pgitt_need = "Secondary")
   app$set_inputs(filter_subject_pgitt_need = "Computing")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_pgitt_trainee_need = "Table")
   app$set_inputs(filter_phase_pgitt_need = "Primary")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_pgitt_trainee_need = "Download")
   app$set_inputs(file_type_pgitt_need = "XLSX (Up to X.XX MB)")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(tabsetpanels = "Drivers of PGITT trainee need changes")
   app$set_inputs(filter_phase_drivers = "Secondary")
   app$set_inputs(filter_subject_drivers = "Physical Education")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_drivers_analysis = "Table")
   app$set_inputs(filter_subject_drivers = "Religious Education")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_drivers_analysis = "Download")
   app$set_inputs(file_type_drivers = "XLSX (Up to X.XX MB)")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(file_type_drivers = "JPEG (Up to XXX KB)")
   app$set_inputs(main_tabs_drivers_analysis = "Chart")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_drivers_analysis = "Table")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_drivers_analysis = "Download")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(tabsetpanels = "Flow trajectories")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(filter_phase_flow = "Secondary")
   app$set_inputs(filter_subject_flow = "Modern Foreign Languages")
@@ -142,7 +142,7 @@ test_that("{shinytest2} recording: initial_state", {
   app$set_inputs(filter_subject_flow = "Physics")
   app$set_inputs(filter_flow_type = "Total leaver rate")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_flow_trajectories = "Table")
   app$set_inputs(filter_phase_flow = "Primary")
@@ -151,22 +151,22 @@ test_that("{shinytest2} recording: initial_state", {
   app$set_inputs(file_type_flows = "XLSX (Up to X.XX MB)")
   app$set_inputs(file_type_flows = "JPEG (Up to XXX KB)")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_flow_trajectories = "Table")
   app$set_inputs(filter_phase_flow = "Secondary")
   app$set_inputs(filter_subject_flow = "Classics")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_flow_trajectories = "Chart")
   app$set_inputs(filter_subject_flow = "Physics")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(navlistPanel = "a11y_panel")
   app$set_inputs(navlistPanel = "cookies_panel_ui")
   app$set_inputs(navlistPanel = "support_panel_ui")
   app$wait_for_idle(500)
-  app$expect_values(input = all_inputs, output = all_outputs, wait_ = FALSE)
+  app$expect_values(input = all_inputs, output = all_outputs)
 })
