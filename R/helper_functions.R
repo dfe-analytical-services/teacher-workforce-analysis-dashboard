@@ -121,9 +121,7 @@ build_pupil_teacher_summary <- function(df_change) {
 #
 # return: A single character string suitable for use as a plot title
 #         or table caption in a Shiny app.
-#
-# example:
-# build_pgitt_title(df)
+
 
 build_pgitt_need_ts_title <- function(df) {
   phase_selected <- unique(df$phase)
@@ -152,6 +150,129 @@ build_pgitt_need_ts_title <- function(df) {
     max_year,
     "/",
     sprintf("%02d", (max_year + 1) %% 100)
+  )
+}
+
+# --------------------------------------------------------------------------------------
+# Build dynamic title for drivers analysis table 1
+# --------------------------------------------------------------------------------------
+#
+# Takes a filtered drivers analysis data frame (by phase and subject)
+# and returns a human-readable title describing the selected phase/subject
+# and academic year range covered by the data.
+#
+# The title is designed for use across multiple outputs, including
+# ggplot chart titles and GOV.UK Reactable table captions, ensuring
+# consistency between visual and tabular views.
+#
+# param: df A drivers analysis data frame with the
+#            following fields:
+#            - phase (e.g. "Primary", "Secondary")
+#            - subject (e.g. "Total", "Maths")
+#            - start_year (numeric or character, e.g. 2025)
+#
+# return: A single character string suitable for use as a plot title
+#         or table caption in a Shiny app.
+# --------------------------------------------------------------------------------------
+
+build_drivers_table_title <- function(df) {
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+
+  phase_val <- if (length(phase_selected) == 1) {
+    phase_selected
+  } else {
+    phase_selected[1]
+  }
+
+  subject_val <- if (length(subject_selected) == 1) {
+    subject_selected
+  } else {
+    subject_selected[1]
+  }
+
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  paste0(
+    title_prefix,
+    " PGITT trainee need: 2026/27 vs 2025/26"
+  )
+}
+
+# --------------------------------------------------------------------------------------
+# Build dynamic title for flow trajectories outputs
+# --------------------------------------------------------------------------------------
+#
+# Takes a filtered flow trajectories data frame and returns a character
+# string describing the selected phase / subject and flow type.
+#
+# Designed for use in downloaded plots, chart titles, or captions to ensure
+# consistent naming across outputs.
+#
+# param: df A data frame containing at least the following columns:
+#           - phase
+#           - subject
+#           - type
+#
+# return: A single character string suitable for use as a plot title
+#
+# --------------------------------------------------------------------------------------
+
+build_flow_traj_title <- function(df) {
+  # Defensive checks ----------------------------------------------------------
+  required_cols <- c("phase", "subject", "type")
+  missing_cols <- setdiff(required_cols, names(df))
+
+  if (length(missing_cols) > 0) {
+    stop(
+      "build_flow_traj_title(): data frame is missing required columns: ",
+      paste(missing_cols, collapse = ", ")
+    )
+  }
+
+  # Extract unique values -----------------------------------------------------
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+  type_selected <- unique(df$type)
+
+  # Pick a single value if filters return more than one ------------------------
+  phase_val <- if (length(phase_selected) == 1) {
+    phase_selected
+  } else {
+    phase_selected[1]
+  }
+
+  subject_val <- if (length(subject_selected) == 1) {
+    subject_selected
+  } else {
+    subject_selected[1]
+  }
+
+  type_val <- if (length(type_selected) == 1) {
+    type_selected
+  } else {
+    type_selected[1]
+  }
+
+  # Build title prefix --------------------------------------------------------
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  # Final title ---------------------------------------------------------------
+  paste0(
+    title_prefix,
+    " ",
+    tolower(type_val),
+    " trajectory"
   )
 }
 
