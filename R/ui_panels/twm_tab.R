@@ -241,8 +241,8 @@ twm_tab_panel <- function() {
                       style = "margin-top: 1.5rem;",
                       ggiraph::girafeOutput(
                         "pupil_teacher_plot",
-                        width  = "100%",
-                        height = "450px"
+                        width  = NULL,
+                        height = NULL
                       ),
                       gov_text(
                         tags$span(
@@ -567,8 +567,8 @@ twm_tab_panel <- function() {
                       style = "margin-top: 3rem;",
                       ggiraph::girafeOutput(
                         "pgitt_need_timeseries_plot",
-                        width  = "100%",
-                        height = "450px"
+                        width  = NULL,
+                        height = NULL
                       )
                     ),
 
@@ -961,8 +961,8 @@ twm_tab_panel <- function() {
                       uiOutput("flow_traj_title_chart_ui"),
                       ggiraph::girafeOutput(
                         outputId = "flow_timeseries_plot",
-                        width = "100%",
-                        height = "450px"
+                        width = NULL,
+                        height = NULL
                       )
                     ),
 
