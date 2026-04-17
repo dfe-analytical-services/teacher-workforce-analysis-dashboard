@@ -15,7 +15,9 @@
 
 # Pupil and teacher numbers data ----------------------------------------------
 
-read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_numbers.parquet") {
+read_pupil_teacher_numbers <- function(
+  file = "data/dummy_1_pupil_teacher_numbers.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
 
@@ -47,7 +49,8 @@ read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_number
       start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
       pupil_numbers = round(pupil_numbers, 0), # round pupil numbers to nearest 0
       teacher_numbers = round(
-        teacher_numbers, 0 # round teachers numbers to nearest 0
+        teacher_numbers,
+        0 # round teachers numbers to nearest 0
       )
     )
   return(df)
@@ -56,7 +59,9 @@ read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_number
 
 # PGITT need time series data --------------------------------------------------
 
-read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timeseries.parquet") {
+read_pgitt_need_timeseries <- function(
+  file = "data/dummy_2_pgitt_targets_timeseries.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
 
@@ -86,7 +91,9 @@ read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timese
     rename(phase = subject_filter_group, ees_subject = subject) %>% # rename columns from pub names
     mutate(
       start_year = as.integer(substr(time_period, 1, 4)), # create start year column
-      subject = if_else(phase == "Primary",
+      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100)),
+      subject = if_else(
+        phase == "Primary",
         "Total",
         ees_subject # if phase is primary set subject as total
       )
@@ -131,13 +138,15 @@ read_drivers_data <- function(file = "data/dummy_3_drivers_analysis.parquet") {
 
 # Flow trajectories data ------------------------------------------------------------------------------------------
 
-read_flows_data <- function(file = "data/dummy_4_flow_trajectories_2025_publication.parquet") {
+read_flows_data <- function(
+  file = "data/dummy_4_flow_trajectories_2025_publication.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() %>% # make r friendly column names
     rename(academic_year = year) %>%
     mutate(
       unit = if_else(str_detect(type, "leaver"), "%", "FTE"), # make a column of unit which is % for leaver rates and FTE for entrants
-      year = as.integer(substr(academic_year, 1, 4)), # create start year column
+      start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
       version = "Last year"
     )
 

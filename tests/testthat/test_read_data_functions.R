@@ -81,7 +81,6 @@ test_that("read_pupil_teacher_numbers throws error when required columns missing
 })
 
 
-
 # 2. Tests for read_pgitt_need_timeseries() -----------------------------------------------------------------------
 
 # Does the function return a dataframe, have the column names expected, extract start year,
@@ -201,7 +200,7 @@ test_that("read_flows_data() derives units, year, and version correctly", {
   expect_equal(out$unit, c("%", "FTE"))
 
   # Extract numeric year
-  expect_equal(out$year, c(2024, 2025))
+  expect_equal(out$start_year, c(2024, 2025))
 
   # Version column injected
   expect_true("version" %in% names(out))

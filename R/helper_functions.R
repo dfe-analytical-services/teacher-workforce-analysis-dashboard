@@ -51,10 +51,10 @@ calc_pt_change_24_to_27 <- function(df) {
     dplyr::arrange(start_year) %>%
     # Calculate absolute and percentage changes
     dplyr::mutate(
-      pupil_diff   = pupil_numbers - dplyr::lag(pupil_numbers),
-      pupil_pct    = (pupil_diff / dplyr::lag(pupil_numbers)) * 100,
+      pupil_diff = pupil_numbers - dplyr::lag(pupil_numbers),
+      pupil_pct = (pupil_diff / dplyr::lag(pupil_numbers)) * 100,
       teacher_diff = teacher_numbers - dplyr::lag(teacher_numbers),
-      teacher_pct  = (teacher_diff / dplyr::lag(teacher_numbers)) * 100
+      teacher_pct = (teacher_diff / dplyr::lag(teacher_numbers)) * 100
     )
 }
 
@@ -83,26 +83,212 @@ build_pupil_teacher_summary <- function(df_change) {
 
   # Construct summary sentence
   glue::glue(
-    "We project ",
-    scales::label_comma()(abs(df_27$pupil_diff)), " ", pupil_dir,
+    "DfE project there will be ",
+    scales::label_comma()(abs(df_27$pupil_diff)),
+    " ",
+    pupil_dir,
     " pupils (",
-    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct), ") ",
+    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct),
+    ") ",
     "and teacher demand to be ",
-    scales::label_comma()(abs(df_27$teacher_diff)), " ", teacher_dir,
+    scales::label_comma()(abs(df_27$teacher_diff)),
+    " ",
+    teacher_dir,
     " (",
-    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct), ") ",
-    "in 2027/28 compared to 2024/25. (dummy)"
+    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct),
+    ") ",
+    "in 2027/28 compared to 2024/25."
   )
 }
 
+# --------------------------------------------------------------------------------------
+# Build dynamic title for PGITT trainee need time series outputs
+# --------------------------------------------------------------------------------------
+
+# Takes a filtered PGITT trainee need data frame (by phase and subject)
+# and returns a human-readable title describing the selected phase/subject
+# and academic year range covered by the data.
+#
+# The title is designed for use across multiple outputs, including
+# ggplot chart titles and GOV.UK Reactable table captions, ensuring
+# consistency between visual and tabular views.
+#
+# param: df A data frame containing PGITT trainee need data with the
+#             following fields:
+#             - phase
+#             - subject
+#             - start_year
+#
+# return: A single character string suitable for use as a plot title
+#         or table caption in a Shiny app.
+
+
+build_pgitt_need_ts_title <- function(df) {
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+
+  phase_val <- phase_selected[1]
+  subject_val <- subject_selected[1]
+
+  min_year <- min(df$start_year, na.rm = TRUE)
+  max_year <- max(df$start_year, na.rm = TRUE)
+
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  paste0(
+    title_prefix,
+    " PGITT trainee need ",
+    min_year,
+    "/",
+    sprintf("%02d", (min_year + 1) %% 100),
+    " to ",
+    max_year,
+    "/",
+    sprintf("%02d", (max_year + 1) %% 100)
+  )
+}
+
+# --------------------------------------------------------------------------------------
+# Build dynamic title for drivers analysis table 1
+# --------------------------------------------------------------------------------------
+#
+# Takes a filtered drivers analysis data frame (by phase and subject)
+# and returns a human-readable title describing the selected phase/subject
+# and academic year range covered by the data.
+#
+# The title is designed for use across multiple outputs, including
+# ggplot chart titles and GOV.UK Reactable table captions, ensuring
+# consistency between visual and tabular views.
+#
+# param: df A drivers analysis data frame with the
+#            following fields:
+#            - phase (e.g. "Primary", "Secondary")
+#            - subject (e.g. "Total", "Maths")
+#            - start_year (numeric or character, e.g. 2025)
+#
+# return: A single character string suitable for use as a plot title
+#         or table caption in a Shiny app.
+# --------------------------------------------------------------------------------------
+
+build_drivers_table_title <- function(df) {
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+
+  phase_val <- if (length(phase_selected) == 1) {
+    phase_selected
+  } else {
+    phase_selected[1]
+  }
+
+  subject_val <- if (length(subject_selected) == 1) {
+    subject_selected
+  } else {
+    subject_selected[1]
+  }
+
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  paste0(
+    title_prefix,
+    " PGITT trainee need: 2026/27 vs 2025/26"
+  )
+}
+
+# --------------------------------------------------------------------------------------
+# Build dynamic title for flow trajectories outputs
+# --------------------------------------------------------------------------------------
+#
+# Takes a filtered flow trajectories data frame and returns a character
+# string describing the selected phase / subject and flow type.
+#
+# Designed for use in downloaded plots, chart titles, or captions to ensure
+# consistent naming across outputs.
+#
+# param: df A data frame containing at least the following columns:
+#           - phase
+#           - subject
+#           - type
+#
+# return: A single character string suitable for use as a plot title
+#
+# --------------------------------------------------------------------------------------
+
+build_flow_traj_title <- function(df) {
+  # Defensive checks ----------------------------------------------------------
+  required_cols <- c("phase", "subject", "type")
+  missing_cols <- setdiff(required_cols, names(df))
+
+  if (length(missing_cols) > 0) {
+    stop(
+      "build_flow_traj_title(): data frame is missing required columns: ",
+      paste(missing_cols, collapse = ", ")
+    )
+  }
+
+  # Extract unique values -----------------------------------------------------
+  phase_selected <- unique(df$phase)
+  subject_selected <- unique(df$subject)
+  type_selected <- unique(df$type)
+
+  # Pick a single value if filters return more than one ------------------------
+  phase_val <- if (length(phase_selected) == 1) {
+    phase_selected
+  } else {
+    phase_selected[1]
+  }
+
+  subject_val <- if (length(subject_selected) == 1) {
+    subject_selected
+  } else {
+    subject_selected[1]
+  }
+
+  type_val <- if (length(type_selected) == 1) {
+    type_selected
+  } else {
+    type_selected[1]
+  }
+
+  # Build title prefix --------------------------------------------------------
+  title_prefix <- dplyr::case_when(
+    phase_val == "Primary" ~ "Primary",
+    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    TRUE ~ subject_val
+  )
+
+  # Final title ---------------------------------------------------------------
+  paste0(
+    title_prefix,
+    " ",
+    tolower(type_val),
+    " trajectory"
+  )
+}
 
 # # FROM TEMPLATE -------------------------------------------------------------------------------------------------
 
 # Value box function ----------------------------------------------------------
 # fontsize: can be small, medium or large
-value_box <- function(value, subtitle, icon = NULL,
-                      color = "blue", width = 4,
-                      href = NULL, fontsize = "medium") {
+value_box <- function(
+  value,
+  subtitle,
+  icon = NULL,
+  color = "blue",
+  width = 4,
+  href = NULL,
+  fontsize = "medium"
+) {
   validate_color(color)
   if (!is.null(icon)) tagAssert(icon, type = "i")
 
@@ -136,8 +322,11 @@ validate_color <- function(color) {
   }
 
   stop(
-    "Invalid color: ", color, ". Valid colors are: ",
-    paste(valid_colors, collapse = ", "), "."
+    "Invalid color: ",
+    color,
+    ". Valid colors are: ",
+    paste(valid_colors, collapse = ", "),
+    "."
   )
 }
 
@@ -148,7 +337,11 @@ validate_color <- function(color) {
 # Note the advice on trying to keep to a maximum of 4 series in a single plot
 # AF colours package guidance here: https://best-practice-and-impact.github.io/afcolours/
 suppressMessages(
-  gss_colour_pallette <- afcolours::af_colours("categorical", colour_format = "hex", n = 4)
+  gss_colour_pallette <- afcolours::af_colours(
+    "categorical",
+    colour_format = "hex",
+    n = 4
+  )
 )
 
 #' Create a Tabset Panel with Optional Tabs
@@ -157,25 +350,29 @@ suppressMessages(
 #' "Table", and "Download".
 #' Only non-NULL inputs will result in corresponding tabs being displayed.
 create_output_tabs <- function(
-    id,
-    chart_output,
-    table_output = NULL,
-    download_output = NULL) {
-  tabs <- Filter(Negate(is.null), list(
-    if (!is.null(chart_output)) tabPanel("Chart", chart_output),
-    if (!is.null(table_output)) {
-      tabPanel(
-        "Table",
-        div(style = "margin-top: 20px;", table_output)
-      )
-    },
-    if (!is.null(download_output)) {
-      tabPanel(
-        "Download",
-        div(style = "margin-top: 40px;", download_output)
-      )
-    }
-  ))
+  id,
+  chart_output,
+  table_output = NULL,
+  download_output = NULL
+) {
+  tabs <- Filter(
+    Negate(is.null),
+    list(
+      if (!is.null(chart_output)) tabPanel("Chart", chart_output),
+      if (!is.null(table_output)) {
+        tabPanel(
+          "Table",
+          div(style = "margin-top: 20px;", table_output)
+        )
+      },
+      if (!is.null(download_output)) {
+        tabPanel(
+          "Download",
+          div(style = "margin-top: 40px;", download_output)
+        )
+      }
+    )
+  )
 
   do.call(tabsetPanel, c(list(id = paste0("main_tabs_", id)), tabs))
 }
