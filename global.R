@@ -57,6 +57,7 @@ shhh(library(shinyalert))
 # them, saving on load time.
 if (FALSE) {
   shhh(library(shinytest2))
+  shhh(library(rsconnect))
   shhh(library(chromote))
   shhh(library(testthat))
 }
