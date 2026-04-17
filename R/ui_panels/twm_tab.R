@@ -958,7 +958,6 @@ twm_tab_panel <- function() {
                     # Mini tab 1 - chart
                     chart_output = div(
                       style = "margin-top: 3rem;",
-                      uiOutput("flow_traj_title_chart_ui"),
                       ggiraph::girafeOutput(
                         outputId = "flow_timeseries_plot",
                         width = NULL,

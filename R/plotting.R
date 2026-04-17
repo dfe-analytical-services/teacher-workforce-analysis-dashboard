@@ -880,4 +880,8 @@ plot_flow_trajectories <- function(df) {
 
     # y scale as computed
     y_scale
+
+  # Apply title
+  p <- p +
+    ggplot2::labs(title = build_flow_traj_title(df))
 }

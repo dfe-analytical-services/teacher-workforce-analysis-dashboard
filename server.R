@@ -1053,16 +1053,10 @@ server <- function(input, output, session) {
   # Render the reactive title as GOV.UK–styled body text
   # uiOutput() is used in the twm_tab UI to allow this to update dynamically
 
-  # For chart
-
-  output$flow_traj_title_chart_ui <- renderUI({
-    gov_text(flow_traj_title())
-  })
-
   # For table
 
   output$flow_traj_title_table_ui <- renderUI({
-    gov_text(flow_traj_title())
+    gov_text(strong(flow_traj_title()))
   })
 
 
