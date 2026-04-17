@@ -166,7 +166,7 @@ user_guide_panel <- function() {
           ),
           heading_text("Data sources and updates", level = 2, size = "m"),
           gov_text(em("'Teacher demand and PGITT need'"), " section:"),
-          reactableOutput("data_sources_updates"),
+          govReactableOutput("data_sources_updates", caption = ""),
           heading_text("User tips", level = 2, size = "m"),
           tags$ul(
             tags$li(

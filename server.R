@@ -94,12 +94,11 @@ server <- function(input, output, session) {
 
   # Data sources and updates table for teacher demand and PGITT need tab
 
-  output$data_sources_updates <- reactable::renderReactable({
-    parent_pub_link <- htmltools::tags$a(
-      href = parent_publication,
-      parent_pub_name,
-      target = "_blank",
-      rel = "noopener noreferrer"
+  output$data_sources_updates <- renderGovReactable({
+    parent_pub_link <- sprintf(
+      '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+      parent_publication,
+      parent_pub_name
     )
 
     df <- tibble::tribble(
@@ -126,19 +125,14 @@ server <- function(input, output, session) {
       "23/4/2026"
     )
 
-    reactable::reactable(
+    govReactable(
       df,
       pagination = FALSE,
       searchable = FALSE,
       sortable = FALSE,
       highlight = TRUE,
-      striped = TRUE,
-      columns = list(
-        "Data from" = reactable::colDef(
-          html = TRUE,
-          cell = function(value) value
-        )
-      )
+      striped = FALSE,
+      defaultColDef = reactable::colDef(html = TRUE)
     )
   })
 
