@@ -120,8 +120,8 @@ server <- function(input, output, session) {
       "23/4/2026",
       "Flow trajectories",
       parent_pub_link,
-      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need
-      and related data’ from this year’s publication (includes data from last year’s publication).",
+      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) ",
+      "trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
       "23/4/2026"
     )
 
@@ -234,40 +234,30 @@ server <- function(input, output, session) {
 
   # Table: pupil/teacher numbers
 
-  output$pupil_teacher_table <- renderReactable({
+  output$pupil_teacher_table <- renderGovReactable({
     df <- pt_data_filtered() %>%
       dplyr::select(
         Phase = phase,
         `Academic year` = academic_year,
-        `Pupil numbers` = pupil_numbers,
-        `Teacher numbers` = teacher_numbers,
+        `Pupil numbers (FTE)` = pupil_numbers,
+        `Teacher numbers (FTE)` = teacher_numbers,
         Projection = projection
       )
 
-    reactable::reactable(
+    govReactable(
       df,
-      defaultPageSize = 10,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
-      striped = TRUE,
+      right_col = c("Pupil numbers (FTE)", "Teacher numbers (FTE)"),
+      striped = FALSE,
       highlight = TRUE,
       defaultColDef = reactable::colDef(
-        headerClass = "bar-sort-header",
-        align = "left"
-      ),
-      columns = list(
-        `Pupil numbers` = reactable::colDef(
-          align = "right",
-          name = "Pupil numbers (FTE)",
-          format = reactable::colFormat(separators = TRUE, digits = 0)
-        ),
-        `Teacher numbers` = reactable::colDef(
-          align = "right",
-          name = "Teacher numbers (FTE)",
-          format = reactable::colFormat(separators = TRUE, digits = 0),
+        format = reactable::colFormat(
+          separators = TRUE,
+          digits = 0
         )
-      ),
+      )
     )
   })
 
@@ -480,7 +470,7 @@ server <- function(input, output, session) {
 
   # Table: PGITT trainee need timeseries table for app (interactive via reactable)
 
-  output$pgitt_need_timeseries_table <- reactable::renderReactable({
+  output$pgitt_need_timeseries_table <- renderGovReactable({
     df <- pgitt_need_filtered() %>%
       dplyr::select(
         `Academic year` = academic_year,
@@ -492,61 +482,28 @@ server <- function(input, output, session) {
           percentage_difference_to_previous_year
       )
 
-    # Highlight if primary or total selected so can remove subject column from table
-
-    is_primary_or_total <- nrow(df) > 0 &&
-      all(df$Phase %in% c("Primary", "Total"))
-
-    # Common column formats
-    right_number <- reactable::colDef(
-      align = "right",
-      format = reactable::colFormat(separators = TRUE, digits = 0)
-    )
-
-    reactable::reactable(
+    govReactable(
       df,
-      defaultPageSize = 10,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
-      striped = TRUE,
+      striped = FALSE,
       highlight = TRUE,
       resizable = TRUE,
-      defaultColDef = reactable::colDef(
-        align = "left",
-        headerClass = "bar-sort-header"
+      right_col = c(
+        "PGITT trainee need",
+        "Difference in need to previous year",
+        "Percentage change in need to previous year"
       ),
-      columns = list(
-        `Academic year` = reactable::colDef(
-          name = "Academic<br>year",
-          html = TRUE,
-          width = 120
-        ),
-        Phase = reactable::colDef(width = 120),
-        Subject = reactable::colDef(
-          show = !is_primary_or_total,
-          width = 120
-        ),
-        `PGITT trainee need` = reactable::colDef(
-          align = "right",
-          format = reactable::colFormat(separators = TRUE, digits = 0)
-        ),
-        `Difference in need to previous year` = reactable::colDef(
-          align = "right",
-          name = "Difference in need<br>to previous year",
-          html = TRUE,
-          format = reactable::colFormat(separators = TRUE, digits = 0)
-        ),
-        `Percentage change in need to previous year` =
-          reactable::colDef(
-            align = "right",
-            name = "Percentage change in<br>need to previous year",
-            html = TRUE,
-            format = reactable::colFormat(suffix = "%", digits = 1)
-          )
+      defaultColDef = reactable::colDef(
+        format = reactable::colFormat(
+          separators = TRUE,
+          digits = 0
+        )
       )
     )
   })
+
 
   # Update table so that it has reactable caption
 
@@ -555,7 +512,7 @@ server <- function(input, output, session) {
       "pgitt_need_timeseries_table",
       caption = pgitt_need_ts_title(),
       caption_size = "1",
-      heading_level = "h5"
+      heading_level = "h3"
     )
   })
 
@@ -767,7 +724,7 @@ server <- function(input, output, session) {
 
   # Table 1: Drivers analysis with last year's PGITT need, this year's PGITT need, overall difference (interactive via reactable)
 
-  output$table_pgitt_need_diff <- reactable::renderReactable({
+  output$table_pgitt_need_diff <- renderGovReactable({
     df_wide <- drivers_filtered() %>%
       dplyr::select(driver, value) %>%
       dplyr::filter(
@@ -787,27 +744,25 @@ server <- function(input, output, session) {
       format = reactable::colFormat(separators = TRUE)
     )
 
-    reactable::reactable(
+    govReactable(
       df_wide,
-      defaultPageSize = 10,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
-      striped = FALSE,
+      right_col = c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"),
       highlight = TRUE,
-      defaultColDef = reactable::colDef(headerClass = "bar-sort-header"),
-      columns = list(
-        `2025/26 PGITT need` = right_num,
-        `2026/27 PGITT need` = right_num,
-        `Overall difference` = right_num
+      defaultColDef = reactable::colDef(
+        format = reactable::colFormat(
+          separators = TRUE,
+          digits = 0
+        )
       )
     )
   })
 
-
   # Table 2: Drivers analysis with drivers breakdown (interactive via reactable)
 
-  output$table_drivers_breakdown <- reactable::renderReactable({
+  output$table_drivers_breakdown <- renderGovReactable({
     df <- drivers_filtered() %>%
       dplyr::filter(
         !driver %in% c(
@@ -823,27 +778,17 @@ server <- function(input, output, session) {
         Value = value
       )
 
-    # highlight if primary selected so can remove subject column from table
-
-    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
-
-    reactable::reactable(
+    govReactable(
       df,
-      defaultPageSize = 10,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
-      striped = TRUE,
       highlight = TRUE,
+      right_col = c("Value"),
       defaultColDef = reactable::colDef(
-        align = "left",
-        headerClass = "bar-sort-header"
-      ),
-      columns = list(
-        Subject = reactable::colDef(show = !is_primary_phase),
-        Value = reactable::colDef(
-          align = "right",
-          format = reactable::colFormat(separators = TRUE)
+        format = reactable::colFormat(
+          separators = TRUE,
+          digits = 0
         )
       )
     )
@@ -996,7 +941,7 @@ server <- function(input, output, session) {
 
       # Add reactive title
 
-      p + ggplot2::labs(title = build_flow_traj_title(df))
+      p <- p + ggplot2::labs(title = build_flow_traj_title(df))
 
       # Increase plot title text size
 
@@ -1057,7 +1002,7 @@ server <- function(input, output, session) {
   # Table: Flow trajectories table for app (interactive via reactable)
   # Abbrev NQEs and NTSFs to help fit in table
 
-  output$table_flow_trajectories <- reactable::renderReactable({
+  output$table_flow_trajectories <- renderGovReactable({
     df <- flow_filtered() %>%
       filter(publication_year == 2026) %>%
       dplyr::mutate(
@@ -1076,13 +1021,7 @@ server <- function(input, output, session) {
         Unit = unit,
         `Historic or trajectory` = historic_or_trajectory
       )
-
-    # highlight if primary selected so can remove subject column from table
-
-    is_primary_phase <- nrow(df) > 0 && all(df$Phase == "Primary")
-
     # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
-
     leaver_types <- c(
       "Total leaver rate",
       "55+ leaver rate",
@@ -1098,34 +1037,14 @@ server <- function(input, output, session) {
       reactable::colFormat(separators = TRUE, digits = 0)
     }
 
-    reactable::reactable(
+    govReactable(
       df,
-      defaultPageSize = 10,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
-      striped = TRUE,
       highlight = TRUE,
-      wrap = TRUE,
       defaultColDef = reactable::colDef(
-        align = "left",
-        headerClass = "bar-sort-header"
-      ),
-      columns = list(
-        Subject = reactable::colDef(show = !is_primary_phase),
-        `Academic year` = reactable::colDef(
-          name = "Academic<br>year",
-          html = TRUE
-        ),
-        DUMMY = reactable::colDef(
-          align = "right",
-          format = value_formatter
-        ),
-        Unit = reactable::colDef(show = !is_leaver_table),
-        `Historic or trajectory` = reactable::colDef(
-          name = "Historic or<br>trajectory",
-          html = TRUE
-        )
+        format = value_formatter
       )
     )
   })
@@ -1286,25 +1205,6 @@ server <- function(input, output, session) {
   observeEvent(input$link_to_support, {
     updateTabsetPanel(session, "navlistPanel", selected = "support_panel_ui")
   })
-
-
-  #### DO I NEED THIS BIT BELOW?
-
-  # Wrap a plot with a larger spinner
-  with_gov_spinner <- function(
-    ui_element,
-    spinner_type = 6,
-    size = 1,
-    color = "#1d70b8"
-  ) {
-    shinycssloaders::withSpinner(
-      ui_element,
-      type = spinner_type,
-      color = color,
-      size = size,
-      proxy.height = paste0(250 * size, "px")
-    )
-  }
 
 
   # footer links -----------------------
