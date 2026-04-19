@@ -120,8 +120,7 @@ server <- function(input, output, session) {
       "23/4/2026",
       "Flow trajectories",
       parent_pub_link,
-      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) ",
-      "trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
+      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
       "23/4/2026"
     )
 
@@ -184,11 +183,13 @@ server <- function(input, output, session) {
     if (for_download) {
       p <- p +
         theme(
-          axis.title.x = element_text(size = 34),
-          axis.title.y = element_text(size = 34),
+          text = element_text(size = 32),
+          axis.title.x = element_text(size = 40),
+          axis.title.y.left = element_text(size = 40),
+          axis.title.y.right = element_text(size = 40),
           axis.text.x = element_text(size = 32),
           axis.text.y = element_text(size = 32),
-          legend.text = element_text(size = 28),
+          legend.text = element_text(size = 32),
 
           # Set white background for downloads - prevents issue
           # with devices not rendering the transparent bg properly
@@ -306,9 +307,10 @@ server <- function(input, output, session) {
   # Define action when user clicks download button
 
   output$download_pupil_teacher <- downloadHandler(
+    # make file name which adds selected phase
     filename = function() {
       phase_clean <- tolower(input$filter_phase)
-      raw_name <- paste0(
+      file_name <- paste0(
         "twm_pupil_teacher_numbers_",
         phase_clean,
         "_",
@@ -321,7 +323,7 @@ server <- function(input, output, session) {
       } else {
         ".jpeg"
       }
-      paste0(raw_name, extension)
+      paste0(file_name, extension)
     },
     ## Generate downloaded file
     content = function(file) {
@@ -340,7 +342,7 @@ server <- function(input, output, session) {
         file.copy(
           ggplot2::ggsave(
             filename = tempfile(paste0(
-              "twm_pupil_teacher_numbers_chart_",
+              "twm_pupil_teacher_numbers_",
               Sys.Date(),
               ".jpeg"
             )),
@@ -482,6 +484,11 @@ server <- function(input, output, session) {
           percentage_difference_to_previous_year
       )
 
+    # Drop subject column from dataset if primary selected
+    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+      df <- dplyr::select(df, -Subject)
+    }
+
     govReactable(
       df,
       pagination = FALSE,
@@ -522,15 +529,15 @@ server <- function(input, output, session) {
   download_table_pgitt_need_data <- reactive({
     df <- pgitt_need_filtered() %>%
       dplyr::select(
-        `Academic year`,
+        `Academic year` = academic_year,
         Phase = phase,
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need,
         `Difference in need to previous year` = difference_to_previous_year,
-        `Percentage difference in need to previous year` =
+        `Percentage change in need to previous year` =
           percentage_difference_to_previous_year
       )
-    # Drop column subject from dataset if phase is primary
+    # Drop subject column from dataset if phase is primary
     if (nrow(df) > 0 && all(df$Phase == "Primary")) {
       df <- dplyr::select(df, -Subject)
     }
@@ -557,8 +564,20 @@ server <- function(input, output, session) {
   # Download handler (CSV/XLSX/JPEG)
 
   output$download_pgitt_need <- downloadHandler(
+    # make file name which adds selected
+    # phase and subject (if not primary)
     filename = function() {
-      raw_name <- paste0("twm_pgitt_need_timeseries_", Sys.Date())
+      phase_lower <- tolower(input$filter_phase_pgitt_need)
+      subject_lower <- tolower(input$filter_subject_pgitt_need)
+
+      filter_select <- dplyr::case_when(
+        phase_lower == "primary" ~ "primary",
+        phase_lower == "secondary" & subject_lower == "total" ~ "secondary",
+        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower,
+        TRUE ~ subject_lower
+      )
+
+      file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", Sys.Date())
 
       # Keep mapping identical to your earlier block for consistency
       extension <- if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
@@ -568,7 +587,7 @@ server <- function(input, output, session) {
       } else {
         ".jpeg"
       }
-      paste0(raw_name, extension)
+      paste0(file_name, extension)
     },
     content = function(file) {
       if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
@@ -589,7 +608,7 @@ server <- function(input, output, session) {
       } else {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
-          "twm_pgitt_need_timeseries_chart_",
+          "twm_pgitt_need_timeseries_",
           Sys.Date(),
           ".jpeg"
         ))
@@ -778,6 +797,11 @@ server <- function(input, output, session) {
         Value = value
       )
 
+    # Drop subject column from dataset if primary selected
+    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+      df <- dplyr::select(df, -Subject)
+    }
+
     govReactable(
       df,
       pagination = FALSE,
@@ -801,7 +825,7 @@ server <- function(input, output, session) {
   # Reorder columns to match app
 
   download_table_drivers_data <- reactive({
-    drivers_filtered() %>%
+    df <- drivers_filtered() %>%
       dplyr::mutate(
         driver = dplyr::recode(
           driver,
@@ -814,7 +838,13 @@ server <- function(input, output, session) {
         )
       ) %>%
       dplyr::rename_with(~ tools::toTitleCase(.x)) %>%
-      dplyr::select(Phase, Subject, everything())
+      dplyr::select(Phase, Subject, Driver, Value)
+
+    # Drop subject column from dataset if primary selected
+    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+      df <- dplyr::select(df, -Subject)
+    }
+    df
   })
 
   # Create download chart (static ggplot for export with title and larger text)
@@ -835,8 +865,21 @@ server <- function(input, output, session) {
 
   # Download handler (CSV / XLSX / JPEG) --------------------------------
   output$download_drivers <- downloadHandler(
+    # make file name which adds selected
+    # phase and subject (if not primary)
     filename = function() {
-      raw_name <- paste0("twm_drivers_", Sys.Date())
+      phase_lower <- tolower(input$filter_phase_drivers)
+      subject_lower <- tolower(input$filter_subject_drivers)
+
+      filter_select <- dplyr::case_when(
+        phase_lower == "primary" ~ "primary",
+        phase_lower == "secondary" & subject_lower == "total" ~ "secondary",
+        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower,
+        TRUE ~ subject_lower
+      )
+
+      file_name <- paste0("twm_drivers_", filter_select, "_", Sys.Date())
+
       extension <- if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
         ".csv"
       } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
@@ -844,7 +887,7 @@ server <- function(input, output, session) {
       } else {
         ".jpeg"
       }
-      paste0(raw_name, extension)
+      paste0(file_name, extension)
     },
     content = function(file) {
       if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
@@ -859,7 +902,7 @@ server <- function(input, output, session) {
         )
       } else {
         # JPEG: save static ggplot (interactive tooltips are not present in static export)
-        tmp_file <- tempfile(paste0("twm_drivers_chart_", Sys.Date(), ".jpeg"))
+        tmp_file <- tempfile(paste0("twm_drivers_", Sys.Date(), ".jpeg"))
         ggplot2::ggsave(
           filename = tmp_file,
           plot = download_drivers_waterfall_plot(),
@@ -1016,11 +1059,16 @@ server <- function(input, output, session) {
         Phase = phase,
         Subject = subject,
         `Academic year` = academic_year,
-        Type,
-        DUMMY = value,
-        Unit = unit,
+        `Flow type` = Type,
+        Value = value,
         `Historic or trajectory` = historic_or_trajectory
       )
+
+    # Drop subject column from dataset if primary selected
+    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+      df <- dplyr::select(df, -Subject)
+    }
+
     # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
     leaver_types <- c(
       "Total leaver rate",
@@ -1028,8 +1076,14 @@ server <- function(input, output, session) {
       "Under 55 leaver rate"
     )
 
-    is_leaver_table <- nrow(df) > 0 && all(df$Type %in% leaver_types)
+    is_leaver_table <- nrow(df) > 0 && all(df$`Flow type` %in% leaver_types)
 
+    # rename value column to include (FTE) if entrant type
+    # if a leaver type it will be formatted with a %
+
+    if (!is_leaver_table) {
+      df <- dplyr::rename(df, `Value (FTE)` = Value)
+    }
 
     value_formatter <- if (is_leaver_table) {
       reactable::colFormat(digits = 1, percent = TRUE)
@@ -1059,13 +1113,13 @@ server <- function(input, output, session) {
         Phase = phase,
         Subject = subject,
         `Academic year` = academic_year,
-        Type,
-        DUMMY = value,
+        `Flow type` = type,
+        Value = value,
         Unit = unit,
         `Historic or trajectory` = historic_or_trajectory
       )
 
-    # Drop column subject from dataset if primary selected
+    # Drop subject column from dataset if primary selected
     if (nrow(df) > 0 && all(df$Phase == "Primary")) {
       df <- dplyr::select(df, -Subject)
     }
@@ -1076,14 +1130,14 @@ server <- function(input, output, session) {
       "55+ leaver rate",
       "Under 55 leaver rate"
     )
-    is_leaver_table <- nrow(df) > 0 && all(df$Type %in% leaver_types)
+    is_leaver_table <- nrow(df) > 0 && all(df$`Flow type` %in% leaver_types)
 
     df <- df %>%
       dplyr::mutate(
-        DUMMY = if (is_leaver_table) {
-          round(DUMMY * 100, 1) # 0.056 → 5.6
+        Value = if (is_leaver_table) {
+          round(Value * 100, 1) # 0.056 → 5.6
         } else {
-          round(DUMMY, 0) # 1234 → 1234
+          round(Value, 0) # 1234 → 1234
         }
       )
 
@@ -1111,7 +1165,24 @@ server <- function(input, output, session) {
 
   output$download_flow_data <- downloadHandler(
     filename = function() {
-      raw_name <- paste0("twm_flow_trajectories_", Sys.Date())
+      # make file name which adds selected
+      # phase, subject (if not primary) and flow type
+      phase_lower <- tolower(input$filter_phase_flow)
+      subject_lower <- tolower(input$filter_subject_flow)
+      flow_type_lower <- tolower(input$filter_flow_type) %>%
+        stringr::str_replace_all(" ", "_")
+
+      filter_select <- dplyr::case_when(
+        phase_lower == "primary" ~ "primary",
+        phase_lower == "secondary" & subject_lower == "total" ~ "secondary",
+        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower,
+        TRUE ~ subject_lower
+      )
+
+      file_name <- paste0(
+        "twm_flow_trajectories_", filter_select, "_",
+        flow_type_lower, "_", Sys.Date()
+      )
 
       # Keep mapping identical to your earlier block for consistency
       extension <- if (input$file_type_flows == "CSV (Up to X.XX MB)") {
@@ -1121,7 +1192,7 @@ server <- function(input, output, session) {
       } else {
         ".jpeg"
       }
-      paste0(raw_name, extension)
+      paste0(file_name, extension)
     },
     content = function(file) {
       if (input$file_type_flows == "CSV (Up to X.XX MB)") {
@@ -1142,7 +1213,7 @@ server <- function(input, output, session) {
       } else {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
-          "twm_flow_trajectories_chart_",
+          "twm_flow_trajectories_",
           Sys.Date(),
           ".jpeg"
         ))
