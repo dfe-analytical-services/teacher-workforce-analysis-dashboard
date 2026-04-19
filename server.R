@@ -120,7 +120,7 @@ server <- function(input, output, session) {
       "23/4/2026",
       "Flow trajectories",
       parent_pub_link,
-      "Supporting information data files ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
+      "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
       "23/4/2026"
     )
 
