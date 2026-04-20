@@ -77,7 +77,7 @@ twm_tab_panel <- function() {
                       ),
                       tags$li(
                         gov_text(
-                          actionLink("link_to_drivers_change", "Drivers of change in PGITT trainee need"),
+                          actionLink("link_to_drivers_change_1", "Drivers of change in PGITT trainee need"),
                           " compares the 2025/26 and 2026/27 PGITT trainee need and the estimated drivers ",
                           "behind these changes."
                         )
@@ -382,7 +382,8 @@ twm_tab_panel <- function() {
                       "other factors)."
                     ),
                     gov_text(
-                      "The expected growth of secondary teacher demand represents the minimum ",
+                      "The expected growth of secondary teacher demand (teacher demand trajectory) ",
+                      "between 2023/24 and 2027/28 represents the minimum ",
                       "contribution we expect from secondary schools to meet the 6,500 additional teachers ",
                       "pledge (alongside the contribution we expect from special schools and the further ",
                       "education sector which are not in scope of this publication)."
@@ -673,7 +674,7 @@ twm_tab_panel <- function() {
                     gov_text(
                       "Changes in individual subjects have been driven by individual circumstances, with ",
                       "further information available on the ",
-                      actionLink("link_to_drivers", "Drivers of change in PGITT trainee need"),
+                      actionLink("link_to_drivers_change_2", "Drivers of change in PGITT trainee need"),
                       " tab."
                     )
                   )

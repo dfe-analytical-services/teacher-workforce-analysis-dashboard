@@ -1242,10 +1242,17 @@ server <- function(input, output, session) {
   })
 
   # Drivers analysis link
+  # Two IDs as link used twice in app (intro tab + PGITT need time series tab)
 
-  observeEvent(input$link_to_drivers_change, {
-    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Drivers of change in PGITT trainee need")
-  })
+  observeEvent(
+    list(
+      input$link_to_drivers_change_1,
+      input$link_to_drivers_change_2
+    ),
+    {
+      updateTabsetPanel(session, "twm_tabsetpanels", selected = "Drivers of change in PGITT trainee need")
+    }
+  )
 
   # Flow trajectories link
 
