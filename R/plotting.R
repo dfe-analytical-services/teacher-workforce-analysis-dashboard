@@ -468,16 +468,16 @@ plot_drivers_waterfall <- function(df_raw) {
 
   # Definitions for each driver (shown inside tooltip)
   defs <- c(
-    "2025/26 PGITT need" = "Last year's PGITT trainee need.",
+    "2025/26 PGITT need" = "Last year’s PGITT trainee need.",
     "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
-    "Leavers" = "Teachers leaving the sector between years. Orange = fewer leavers; Green = more leavers.",
-    "Working hour losses" = "Reduction in working hours for individual teachers between years. Orange = fewer hours lost; Green = more hours lost.",
-    "Returners" = "Teachers re-entering service after previously working in the state-funded sector. Orange = more returners expected; Green = fewer returners expected.",
+    "Leavers" = "Teachers leaving the sector between years. Fewer forecasted leavers this year means fewer PGITT trainees needed to replace them, i.e. lower PGITT trainee need. Orange = fewer leavers; Green = more leavers.",
+    "Working hour losses" = "Reduction in working hours for individual teachers between years. Fewer forecasted working hour losses means fewer PGITT trainees needed to replace them, i.e. lower PGITT trainee need.  Orange = fewer hours lost; Green = more hours lost.",
+    "Returners" = "Teachers re entering service after previously working in the state funded sector. Orange = more returners expected; Green = fewer returners expected.",
     "NTSF" = "Teachers new to the state-funded sector (including deferrer NQEs). Orange = more NTSF expected; Green = fewer NTSF expected.",
     "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
-    "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
+    "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, not entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
     "Under-supply adjustment" = "Adjustment countering estimated undersupply where relevant resulting from previous two ITT cycles.  Orange = smaller adjustment. Green = larger adjustment. No bar = no adjustment needed.",
-    "2026/27 PGITT need" = "This year's PGITT trainee need."
+    "2026/27 PGITT need" = "This year’s PGITT trainee need."
   )
 
   # Data preparation
@@ -880,4 +880,8 @@ plot_flow_trajectories <- function(df) {
 
     # y scale as computed
     y_scale
+
+  # Apply title
+  p <- p +
+    ggplot2::labs(title = build_flow_traj_title(df))
 }

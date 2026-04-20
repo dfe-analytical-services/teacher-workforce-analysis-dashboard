@@ -16,7 +16,7 @@ user_guide_panel <- function() {
           heading_text("Introduction", level = 2, size = "m"),
           gov_text(
             "The Department for Education (DfE) has developed the ",
-            em("Teacher workforce analysis dashboard "),
+            em("'Teacher workforce analysis dashboard' "),
             "to provide clear, accessible insight into how postgraduate initial teacher ",
             "training (PGITT) trainee need is estimated using the teacher workforce model."
           ),
@@ -44,9 +44,9 @@ user_guide_panel <- function() {
           heading_text("Context and purpose", level = 2, size = "m"),
           gov_text(
             "The ",
-            em("‘teacher demand and PGITT need’"),
+            em("‘Teacher demand and PGITT need’"),
             " section of the dashboard supports analysis of ",
-            "teacher demand and supply and trainee demand by visualising several components of the teacher ",
+            "teacher demand and supply, and trainee demand by visualising several components of the teacher ",
             "workforce model. It enables users to:"
           ),
           tags$ul(
@@ -78,20 +78,20 @@ user_guide_panel <- function() {
             tags$li(
               gov_text(
                 "The inputs to the teacher workforce model are the most timely data available as ",
-                "of February 2026. It has been presented within the ",
-                em("'teacher demand and PGITT need'"),
-                " part of the dashboard as it was data used to estimate 2026/27 PGITT need."
+                "of February 2026. They have been presented within the ",
+                em("'Teacher demand and PGITT need'"),
+                " part of the dashboard as the data used to estimate 2026/27 PGITT trainee need."
               ),
               tags$ul(
                 tags$li(
                   gov_text(
-                    "2026/27 PGITT need will not be retrospectively updated in future. "
+                    "2026/27 PGITT trainee need will not be retrospectively updated in future. "
                   )
                 ),
                 tags$li(
                   gov_text(
                     "As a consequence, the ",
-                    em("'teacher demand and PGITT need'"),
+                    em("'Teacher demand and PGITT need'"),
                     " part of the dashboard will not be updated after publication."
                   )
                 ),
@@ -106,7 +106,7 @@ user_guide_panel <- function() {
             ),
             tags$li(
               gov_text(
-                "Note – next year PGITT need will be calculated for 2027/28 and will reflect any ",
+                "Note – next year PGITT trainee need will be calculated for 2027/28 and will reflect any ",
                 "data updates."
               )
             ),
@@ -124,7 +124,7 @@ user_guide_panel <- function() {
                 tags$li(
                   gov_text(
                     "A teacher that leaves service between the November 2023 and November ",
-                    "2024 SWC is classified as being a 2023/24 leaver in the School Workforce ",
+                    "2024 SWC is classified as being a 2023/24 leaver in the school workforce ",
                     "publication. By contrast, in the TWM, such leavers are classified as being ",
                     "leavers in the 2024/25 academic year."
                   )
@@ -166,14 +166,14 @@ user_guide_panel <- function() {
           ),
           heading_text("Data sources and updates", level = 2, size = "m"),
           gov_text(em("'Teacher demand and PGITT need'"), " section:"),
-          reactableOutput("data_sources_updates"),
+          govReactableOutput("data_sources_updates", caption = ""),
           heading_text("User tips", level = 2, size = "m"),
           tags$ul(
             tags$li(
               gov_text(
                 "This dashboard is built over multiple tabs that can be moved through using ",
                 "either the navigation buttons (up and down or left and right) or by selecting the ",
-                "tab in the list in the top left-hand side of the page. The currently selected view ",
+                "tab from the navigation list on the top left of the page. The currently selected view ",
                 "will be highlighted in blue."
               )
             ),
@@ -183,7 +183,7 @@ user_guide_panel <- function() {
                 em("'Teacher demand and PGITT need' "),
                 "tab contains several charts, diagrams and tables. These are organised into tabbed ",
                 "panels, and users can move between them by clicking the chart titles displayed ",
-                "above the chart space. The active chart tab will be highlighted in yellow. "
+                "above the chart space."
               )
             ),
             tags$li(
@@ -196,15 +196,14 @@ user_guide_panel <- function() {
             tags$li(
               gov_text(
                 "Many pages include dropdown menus that allow users to filter results by school ",
-                "phase or secondary subject. Changing a selection will automatically update all ",
-                "charts on the page. "
+                "phase or secondary subject. Changing a selection will automatically update the ",
+                "chart or table on the page."
               )
             ),
             tags$li(
               gov_text(
-                "Most pages also provide tabs which allow users to switch between examining ",
-                "data in chart or table form, and provides users with a tab to download the table ",
-                "or chart image."
+                "Most pages also provide tabs that allow users to switch between data shown in a chart",
+                "or table, as well as a tab to download the data or chart image."
               )
             )
           )

@@ -25,7 +25,8 @@
       "NeedsCompilation": "no",
       "Author": "Dirk Eddelbuettel [aut, cre] (<https://orcid.org/0000-0001-6419-907X>), Christopher M. Kohlhoff [aut] (Author of Asio)",
       "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "DBI": {
       "Package": "DBI",
@@ -354,7 +355,8 @@
       "Description": "Provides color schemes for maps (and other graphics) designed by Cynthia Brewer as described at http://colorbrewer2.org.",
       "License": "Apache License 2.0",
       "NeedsCompilation": "no",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "Rcpp": {
       "Package": "Rcpp",
@@ -508,33 +510,6 @@
       "Maintainer": "Olivia Box Power <Olivia.BoxPower@dhsc.gov.uk>",
       "Repository": "CRAN"
     },
-    "afcolours": {
-      "Package": "afcolours",
-      "Version": "1.0.0",
-      "Source": "Repository",
-      "Title": "Government Analysis Function Recommended Accessible Colour Palette",
-      "Authors@R": "c( person(\"Luke\", \"Davies\", , \"Luke.Davies@ons.gov.uk\", role = c(\"aut\", \"cre\")), person(\"Charlotte\", \"Rowley\", , \"Charlotte.Rowley@ons.gov.uk\", role = \"aut\"), person(\"The Office for National Statistics\", role = \"cph\"))",
-      "Description": "Government Analysis Function recommended colours for use in charts on gov.uk to help meet accessibility guidance.",
-      "License": "MIT + file LICENSE",
-      "Depends": [
-        "R (>= 2.10)"
-      ],
-      "Imports": [
-        "dplyr",
-        "grDevices"
-      ],
-      "Suggests": [
-        "ggplot2",
-        "testthat (>= 3.0.0)"
-      ],
-      "Config/testthat/edition": "3",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.2.3",
-      "NeedsCompilation": "no",
-      "Author": "Luke Davies [aut, cre], Charlotte Rowley [aut], The Office for National Statistics [cph]",
-      "Maintainer": "Luke Davies <Luke.Davies@ons.gov.uk>",
-      "Repository": "CRAN"
-    },
     "arrow": {
       "Package": "arrow",
       "Version": "23.0.1.2",
@@ -648,7 +623,8 @@
       "NeedsCompilation": "no",
       "Author": "Hadley Wickham [aut, cre]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "backports": {
       "Package": "backports",
@@ -691,7 +667,8 @@
       "URL": "https://www.rforge.net/base64enc",
       "BugReports": "https://github.com/s-u/base64enc/issues",
       "NeedsCompilation": "yes",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "bit": {
       "Package": "bit",
@@ -1542,12 +1519,12 @@
       "Author": "Rich Bielby [aut, cre] (ORCID: <https://orcid.org/0000-0001-9070-9969>), Charlotte Foster [aut], Cam Race [aut]",
       "Maintainer": "Rich Bielby <richard.bielby@education.gov.uk>",
       "RemoteType": "github",
+      "Remotes": "dfe-analytical-services/shinyGovstyle",
       "RemoteUsername": "dfe-analytical-services",
       "RemoteRepo": "dfeshiny",
       "RemoteRef": "main",
       "RemoteSha": "8393337050c184f7f59d5698b68aea4d88083160",
-      "RemoteHost": "api.github.com",
-      "Remotes": "dfe-analytical-services/shinyGovstyle"
+      "RemoteHost": "api.github.com"
     },
     "diffobj": {
       "Package": "diffobj",
@@ -2737,7 +2714,8 @@
         "testthat"
       ],
       "NeedsCompilation": "no",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "isoband": {
       "Package": "isoband",
@@ -2993,7 +2971,8 @@
         "stats",
         "graphics"
       ],
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "later": {
       "Package": "later",
@@ -3795,7 +3774,8 @@
       "URL": "https://www.rforge.net/png/",
       "BugReports": "https://github.com/s-u/png/issues/",
       "NeedsCompilation": "yes",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "praise": {
       "Package": "praise",
@@ -3814,7 +3794,8 @@
       ],
       "Collate": "'adjective.R' 'adverb.R' 'exclamation.R' 'verb.R' 'rpackage.R' 'package.R'",
       "NeedsCompilation": "no",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "prettyunits": {
       "Package": "prettyunits",
@@ -5104,11 +5085,11 @@
       "Author": "Ross Wyatt [aut], Cam Race [aut, cre], Sarah Wong [aut], Richard Bielby [ctb], Charlotte Foster [ctb], Jeni Martin [ctb], Andrew Baker [ctb]",
       "Maintainer": "Cam Race <camrace8@gmail.com>",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "dfe-analytical-services",
       "RemoteRepo": "shinyGovstyle",
       "RemoteRef": "main",
-      "RemoteSha": "be3dfec7073256101c6a861cbc391890a2c9df21",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "be3dfec7073256101c6a861cbc391890a2c9df21"
     },
     "shinyalert": {
       "Package": "shinyalert",
@@ -5138,38 +5119,6 @@
       "Author": "Dean Attali [aut, cre] (<https://orcid.org/0000-0002-5645-3493>, R interface), Tristan Edwards [aut] (sweetalert library), Zhengjia Wang [ctb]",
       "Maintainer": "Dean Attali <daattali@gmail.com>",
       "Repository": "CRAN"
-    },
-    "shinycssloaders": {
-      "Package": "shinycssloaders",
-      "Version": "1.1.0",
-      "Source": "Repository",
-      "Title": "Add Loading Animations to a 'shiny' Output While It's Recalculating",
-      "Authors@R": "c( person(\"Dean\",\"Attali\",email=\"daattali@gmail.com\",role=c(\"aut\",\"cre\"), comment = c(\"Maintainer/developer of shinycssloaders since 2019\", ORCID=\"0000-0002-5645-3493\")), person(\"Andras\",\"Sali\",email=\"andras.sali@alphacruncher.hu\",role=c(\"aut\"),comment=\"Original creator of shinycssloaders package\"), person(\"Luke\",\"Hass\",role=c(\"ctb\",\"cph\"),comment=\"Author of included CSS loader code\") )",
-      "Description": "When a 'Shiny' output (such as a plot, table, map, etc.) is recalculating, it remains  visible but gets greyed out. Using 'shinycssloaders', you can add a loading animation (\"spinner\") to outputs instead. By wrapping a 'Shiny' output in 'withSpinner()', a spinner will automatically appear while the output is recalculating. You can also manually show and hide the spinner, or add a full-page spinner to cover the entire page. See the demo online at <https://daattali.com/shiny/shinycssloaders-demo/>.",
-      "License": "MIT + file LICENSE",
-      "URL": "https://github.com/daattali/shinycssloaders, https://daattali.com/shiny/shinycssloaders-demo/",
-      "BugReports": "https://github.com/daattali/shinycssloaders/issues",
-      "Depends": [
-        "R (>= 3.1)"
-      ],
-      "Imports": [
-        "digest",
-        "glue",
-        "grDevices",
-        "htmltools (>= 0.3.5)",
-        "shiny"
-      ],
-      "Suggests": [
-        "knitr",
-        "shinydisconnect",
-        "shinyjs"
-      ],
-      "RoxygenNote": "7.2.3",
-      "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Author": "Dean Attali [aut, cre] (Maintainer/developer of shinycssloaders since 2019, <https://orcid.org/0000-0002-5645-3493>), Andras Sali [aut] (Original creator of shinycssloaders package), Luke Hass [ctb, cph] (Author of included CSS loader code)",
-      "Maintainer": "Dean Attali <daattali@gmail.com>",
-      "Repository": "RSPM"
     },
     "shinyjs": {
       "Package": "shinyjs",
@@ -5486,7 +5435,8 @@
       "NeedsCompilation": "yes",
       "Author": "Edzer Pebesma [aut, cre], Roger Bivand [aut], Barry Rowlingson [ctb], Virgilio Gomez-Rubio [ctb], Robert Hijmans [ctb], Michael Sumner [ctb], Don MacQueen [ctb], Jim Lemon [ctb], Finn Lindgren [ctb], Josh O'Brien [ctb], Joseph O'Rourke [ctb], Patrick Hausmann [ctb], Sebastian Meyer [ctb]",
       "Maintainer": "Edzer Pebesma <edzer.pebesma@uni-muenster.de>",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "stringi": {
       "Package": "stringi",
@@ -6297,7 +6247,8 @@
       "URL": "https://www.rforge.net/uuid",
       "BugReports": "https://github.com/s-u/uuid/issues",
       "NeedsCompilation": "yes",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "vctrs": {
       "Package": "vctrs",
@@ -6537,7 +6488,8 @@
       ],
       "RoxygenNote": "6.1.1",
       "NeedsCompilation": "no",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "withr": {
       "Package": "withr",
@@ -6750,7 +6702,8 @@
       "License": "GPL (>= 2)",
       "Repository": "CRAN",
       "NeedsCompilation": "no",
-      "Author": "David B. Dahl [aut], David Scott [aut, cre], Charles Roosen [aut], Arni Magnusson [aut], Jonathan Swinton [aut], Ajay Shah [ctb], Arne Henningsen [ctb], Benno Puetz [ctb], Bernhard Pfaff [ctb], Claudio Agostinelli [ctb], Claudius Loehnert [ctb], David Mitchell [ctb], David Whiting [ctb], Fernando da Rosa [ctb], Guido Gay [ctb], Guido Schulz [ctb], Ian Fellows [ctb], Jeff Laake [ctb], John Walker [ctb], Jun Yan [ctb], Liviu Andronic [ctb], Markus Loecher [ctb], Martin Gubri [ctb], Matthieu Stigler [ctb], Robert Castelo [ctb], Seth Falcon [ctb], Stefan Edwards [ctb], Sven Garbade [ctb], Uwe Ligges [ctb]"
+      "Author": "David B. Dahl [aut], David Scott [aut, cre], Charles Roosen [aut], Arni Magnusson [aut], Jonathan Swinton [aut], Ajay Shah [ctb], Arne Henningsen [ctb], Benno Puetz [ctb], Bernhard Pfaff [ctb], Claudio Agostinelli [ctb], Claudius Loehnert [ctb], David Mitchell [ctb], David Whiting [ctb], Fernando da Rosa [ctb], Guido Gay [ctb], Guido Schulz [ctb], Ian Fellows [ctb], Jeff Laake [ctb], John Walker [ctb], Jun Yan [ctb], Liviu Andronic [ctb], Markus Loecher [ctb], Martin Gubri [ctb], Matthieu Stigler [ctb], Robert Castelo [ctb], Seth Falcon [ctb], Stefan Edwards [ctb], Sven Garbade [ctb], Uwe Ligges [ctb]",
+      "Encoding": "UTF-8"
     },
     "yaml": {
       "Package": "yaml",
