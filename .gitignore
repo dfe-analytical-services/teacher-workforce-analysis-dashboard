@@ -8,6 +8,8 @@ README.html
 *_.new.png
 *unpublished*
 *dummy*
-data/publication_files/Test1.xlsx
-data/publication_files/Test2.csv
-
+data/1_pupil_teacher_numbers_2026-04-23.parquet
+data/2_pgitt_need_timeseries_2026-04-23.parquet
+data/3_drivers_analysis_2026-04-23.parquet
+data/4_flow_trajectories_2025_publication_2026-04-23.parquet
+data/5_flow_trajectories_2026_publication_2026-04-23.parquet
