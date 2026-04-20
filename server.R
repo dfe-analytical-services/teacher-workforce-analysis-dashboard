@@ -19,63 +19,51 @@
 # -----------------------------------------------------------------------------
 server <- function(input, output, session) {
   # Bookmarking ---------------------------------------------------------------
-  # The template uses bookmarking to store input choices in the url. You can
-  # exclude specific inputs (for example extra info created for a datatable
-  # or plotly chart) using the list below, but it will need updating to match
-  # any entries in your own dashboard's bookmarking url that you don't want
-  # including.
-  setBookmarkExclude(c(
-    "cookies",
-    "link_to_app_content_tab",
-    "tabBenchmark_rows_current",
-    "tabBenchmark_rows_all",
-    "tabBenchmark_columns_selected",
-    "tabBenchmark_cell_clicked",
-    "tabBenchmark_cells_selected",
-    "tabBenchmark_search",
-    "tabBenchmark_rows_selected",
-    "tabBenchmark_row_last_clicked",
-    "tabBenchmark_state",
-    "plotly_relayout-A",
-    "plotly_click-A",
-    "plotly_hover-A",
-    "plotly_afterplot-A",
-    ".clientValue-default-plotlyCrosstalkOpts"
-  ))
 
+  # This section manages URL-based bookmarking to:
+  # - keep URLs short and readable
+  # - avoid bookmarking irrelevant / noisy inputs
+  # - ensure nested UI state (e.g. tabset panel) does not leak across navlist panels
+
+  # Register which inputs are allowed to appear in the bookmark (URL).
+  # The allowlist (set in global) is applied dynamically depending on the active navlist panel
   observe({
-    # Trigger this observer every time an input changes
-    reactiveValuesToList(input)
+    set_bookmark_include(input, bookmarking_allowlist)
+  })
+
+
+  # Automatically update the bookmarked state whenever inputs change
+  # This triggers Shiny's bookmarking mechanism without requiring user action
+  shiny::observe({
+    shiny::reactiveValuesToList(input)
     session$doBookmark()
   })
 
-  onBookmarked(function(url) {
-    updateQueryString(url)
+
+  # Replace the browser URL with the generated bookmark, without reloading
+  # the page or showing the default Shiny bookmark popup
+  shiny::onBookmarked(function(url) {
+    shiny::updateQueryString(url, mode = "replace")
   })
 
+
+  # Nested tabsets should only be bookmarked when they are relevant.
+  # When the user is not on the Teacher demand panel, we exclude the
+  # twm_tabsetpanels input to avoid restoring stale tab state across panels.
   observe({
-    if (input$navlistPanel == "Example tab 1") {
-      change_window_title(
-        session,
-        paste0(
-          site_title,
-          " - ",
-          input$selectPhase,
-          ", ",
-          input$selectArea
-        )
+    if (input$navlistPanel == "Teacher demand and PGITT need") {
+      set_bookmark_include(
+        input,
+        c("navlistPanel", "twm_tabsetpanels")
       )
     } else {
-      change_window_title(
-        session,
-        paste0(
-          site_title,
-          " - ",
-          input$navlistPanel
-        )
+      set_bookmark_include(
+        input,
+        c("navlistPanel")
       )
     }
   })
+
 
   # Cookies logic -------------------------------------------------------------
   output$cookies_status <- dfeshiny::cookies_banner_server(
