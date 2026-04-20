@@ -88,7 +88,7 @@ parent_publication <- # link to source publication
   "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27"
 
 # Set the URLs that the site will be published to
-site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # TO ADD
+site_primary <- "https://department-for-education.shinyapps.io/teacher-workforce-analysis-dashboard/"
 
 # Combine URLs into list for disconnect function
 # We can add further mirrors where necessary. Each one can generally handle
@@ -102,6 +102,9 @@ google_analytics_key <- "437MHW92CL"
 
 # Enable bookmarking so that input choices are shown in the url ---------------
 enableBookmarking("url")
+
+# Bookmark allow list
+bookmarking_allowlist <- c("navlistPanel", "twm_tabsetpanels")
 
 # Fonts for charts ------------------------------------------------------------
 font_add("dejavu", "www/fonts/DejaVuSans.ttf")
