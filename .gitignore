@@ -8,6 +8,7 @@ README.html
 *_.new.png
 *unpublished*
 *dummy*
+data/*.parquet
 data/1_pupil_teacher_numbers_2026-04-23.parquet
 data/2_pgitt_need_timeseries_2026-04-23.parquet
 data/3_drivers_analysis_2026-04-23.parquet
