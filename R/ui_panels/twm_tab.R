@@ -288,15 +288,11 @@ twm_tab_panel <- function() {
                     bslib::card(
                       bslib::card_header("Filter"),
                       bslib::card_body(
-                        selectizeInput(
-                          "filter_phase",
-                          "Select a school phase:",
-                          choices = choices_pupil_teacher_phase,
-                          multiple = FALSE,
-                          selected = "Primary",
-                          options = list(
-                            dropdownParent = "body"
-                          )
+                        shinyGovstyle::select_Input(
+                          inputId = "filter_phase",
+                          label = "Select a school phase:",
+                          select_text = choices_pupil_teacher_phase,
+                          select_value = choices_pupil_teacher_phase
                         )
                       )
                     ),
@@ -613,25 +609,19 @@ twm_tab_panel <- function() {
                     bslib::card(
                       bslib::card_header("Filters"),
                       bslib::card_body(
-                        selectizeInput(
-                          "filter_phase_pgitt_need", "Select a school phase:",
-                          choices = choices_pgitt_need_phase,
-                          multiple = FALSE,
-                          selected = "Total",
-                          options = list(
-                            dropdownParent = "body"
-                          )
+                        shinyGovstyle::select_Input(
+                          inputId = "filter_phase_pgitt_need",
+                          label = "Select a school phase:",
+                          select_text = choices_pgitt_need_phase,
+                          select_value = choices_pgitt_need_phase
                         ),
                         conditionalPanel(
                           condition = "input.filter_phase_pgitt_need == 'Secondary'",
-                          selectizeInput(
-                            "filter_subject_pgitt_need", "Subject",
-                            choices = choices_pgitt_need_subject,
-                            multiple = FALSE,
-                            selected = "Total",
-                            options = list(
-                              dropdownParent = "body"
-                            )
+                          shinyGovstyle::select_Input(
+                            inputId = "filter_subject_pgitt_need",
+                            label = "Subject",
+                            select_text = choices_pgitt_need_subject,
+                            select_value = choices_pgitt_need_subject
                           )
                         )
                       )
@@ -795,25 +785,19 @@ twm_tab_panel <- function() {
                     bslib::card(
                       bslib::card_header("Filters"),
                       bslib::card_body(
-                        selectizeInput(
-                          "filter_phase_drivers", "Select a school phase:",
-                          choices = choices_drivers_phase,
-                          multiple = FALSE,
-                          selected = "Primary",
-                          options = list(
-                            dropdownParent = "body"
-                          )
+                        shinyGovstyle::select_Input(
+                          inputId = "filter_phase_drivers",
+                          label = "Select a school phase:",
+                          select_text = choices_drivers_phase,
+                          select_value = choices_drivers_phase
                         ),
                         conditionalPanel(
                           condition = "input.filter_phase_drivers == 'Secondary'",
-                          selectizeInput(
-                            "filter_subject_drivers", "Subject",
-                            choices = choices_drivers_subject,
-                            multiple = FALSE,
-                            selected = "Total",
-                            options = list(
-                              dropdownParent = "body"
-                            )
+                          shinyGovstyle::select_Input(
+                            inputId = "filter_subject_drivers",
+                            label = "Subject",
+                            select_text = choices_drivers_subject,
+                            select_value = choices_drivers_subject
                           )
                         )
                       )
@@ -1014,38 +998,26 @@ twm_tab_panel <- function() {
                     bslib::card(
                       bslib::card_header("Filters"),
                       bslib::card_body(
-                        selectizeInput(
-                          "filter_phase_flow", "Select a school phase:",
-                          choices = choices_flow_phase,
-                          width = "100%",
-                          multiple = FALSE,
-                          selected = "Primary",
-                          options = list(
-                            dropdownParent = "body"
-                          )
+                        shinyGovstyle::select_Input(
+                          inputId = "filter_phase_flow",
+                          label = "Select a school phase:",
+                          select_text = choices_flow_phase,
+                          select_value = choices_flow_phase
                         ),
                         conditionalPanel(
                           condition = "input.filter_phase_flow == 'Secondary'",
-                          selectizeInput(
-                            "filter_subject_flow", "Select a secondary subject:",
-                            choices = choices_flow_subject,
-                            width = "100%",
-                            multiple = FALSE,
-                            selected = "Total",
-                            options = list(
-                              dropdownParent = "body"
-                            )
+                          shinyGovstyle::select_Input(
+                            inputId = "filter_subject_flow",
+                            label = "Select a secondary subject:",
+                            select_text = choices_flow_subject,
+                            select_value = choices_flow_subject
                           )
                         ),
-                        selectizeInput(
-                          "filter_flow_type", "Select entrant or leaver flow type:",
-                          choices = choices_flow_type,
-                          width = "100%",
-                          multiple = FALSE,
-                          selected = "Total leaver rate",
-                          options = list(
-                            dropdownParent = "body"
-                          )
+                        shinyGovstyle::select_Input(
+                          inputId = "filter_flow_type",
+                          label = "Select entrant or leaver flow type:",
+                          select_text = choices_flow_type,
+                          select_value = choices_flow_type
                         )
                       )
                     ),
