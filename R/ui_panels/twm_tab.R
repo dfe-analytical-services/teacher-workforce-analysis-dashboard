@@ -557,7 +557,7 @@ twm_tab_panel <- function() {
                   level = 2, size = "m"
                 ),
                 gov_text(
-                  "PGITT trainee need by phase and secondary subject, ",
+                  "PGITT trainee need by phase and secondary subject, and how this has changed over time from ",
                   "2021/22 to 2026/27, as estimated by the teacher workforce model."
                 ),
                 bslib::layout_columns(
@@ -619,7 +619,7 @@ twm_tab_panel <- function() {
                           condition = "input.filter_phase_pgitt_need == 'Secondary'",
                           shinyGovstyle::select_Input(
                             inputId = "filter_subject_pgitt_need",
-                            label = "Subject",
+                            label = "Select a secondary subject:",
                             select_text = choices_pgitt_need_subject,
                             select_value = choices_pgitt_need_subject
                           )
@@ -629,10 +629,10 @@ twm_tab_panel <- function() {
 
                     # About this graph text box
                     bslib::card(
-                      bslib::card_header("User guide"),
+                      bslib::card_header("About this graph"),
                       bslib::card_body(
                         gov_text(
-                          "Select a school phase or secondary subject to view its data and hover over the columns ",
+                          "Select a school phase or secondary subject to view its data and hover over the bars ",
                           "to see the value."
                         ),
                         gov_text("Footnotes:"),
@@ -718,9 +718,9 @@ twm_tab_panel <- function() {
                           tags$small(
                             HTML(
                               paste0(
-                                "This graph shows last year’s PGITT need (left, ",
+                                "This graph shows last year’s PGITT trainee need (left, ",
                                 "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
-                                " bar) and this year’s PGITT need (right, ",
+                                " bar) and this year’s PGITT trainee need (right, ",
                                 "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
                                 " bar) for the selected school phase and/or secondary subject. ",
                                 "In between these two bars are the estimated respective drivers behind ",
@@ -734,7 +734,8 @@ twm_tab_panel <- function() {
                             HTML(
                               paste0(
                                 "<span style='color:#F46A25; font-weight:600;'>Orange</span>",
-                                " bars show drivers that acted to reduce PGITT need this year, and ",
+                                " bars show drivers that acted to reduce PGITT trainee need this year (often ",
+                                "because forecasts are more optimistic than those produced last year), and ",
                                 "<span style='color:#28A197; font-weight:600;'>green</span>
                                 bars show drivers that acted to increase it."
                               )
@@ -795,7 +796,7 @@ twm_tab_panel <- function() {
                           condition = "input.filter_phase_drivers == 'Secondary'",
                           shinyGovstyle::select_Input(
                             inputId = "filter_subject_drivers",
-                            label = "Subject",
+                            label = "Select a secondary subject:",
                             select_text = choices_drivers_subject,
                             select_value = choices_drivers_subject
                           )
@@ -805,20 +806,20 @@ twm_tab_panel <- function() {
 
                     # About this graph box
                     bslib::card(
-                      bslib::card_header("About this data"),
+                      bslib::card_header("About this graph"),
                       bslib::card_body(
                         gov_text(
-                          "The scale of each driver is its estimated impact upon PGITT need, and not the amount ",
+                          "The scale of each driver is its estimated impact upon PGITT trainee need, and not the amount ",
                           "that the driver itself changed. For example, returners did not increase/fall by ‘x’ returners ",
-                          "this year, rather returners acted to increase/decrease PGITT need this year by ‘x’ PGITT ",
+                          "this year, instead returners acted to increase/decrease PGITT trainee need by ‘x’ PGITT ",
                           "trainees this year."
                         ),
                         gov_text(
-                          "As the graph shows, not all drivers have acted upon PGITT need this year in the same direction."
+                          "As the graph shows, not all drivers have acted upon PGITT trainee need this year in the same direction."
                         ),
                         gov_text(
-                          "All numbers are unrounded as they relate to figures used to calculate the PGITT need ",
-                          "before rounding is applied. For this reason, the PGITT need figures quoted may differ ",
+                          "All numbers are unrounded as they relate to figures used to calculate the PGITT trainee need ",
+                          "before rounding is applied. For this reason, the PGITT trainee need figures quoted may differ ",
                           "slightly to those published elsewhere."
                         )
                       )
@@ -843,52 +844,56 @@ twm_tab_panel <- function() {
                         strong("Demand growth YOY: "),
                         "Change in teacher demand YOY relating to pupil number change rates based on national pupil projections. ",
                         em(
-                          "This year, negative values suggest teacher demand is falling more rapidly year-on-year (YOY) reducing PGITT need. ",
-                          "This is a consequence of projected pupil numbers falling more rapidly than they were in last year’s projections."
+                          "This year, negative values suggest teacher demand is falling more rapidly year-on-year (YOY) compared to projections ",
+                          "last year which reduces PGITT trainee need. This is a consequence of projected pupil numbers falling ",
+                          "more rapidly than they were in last year’s projections."
                         )
                       ),
                       gov_text(
                         strong("Leavers: "),
                         "Teachers leaving service between years. ",
                         em(
-                          "Negative numbers suggest there will be fewer leavers expected that will require replacement, ",
-                          "leading to lower PGITT need, whilst a positive number suggests more leavers are expected."
+                          "Negative numbers suggest a more optimistic forecast than the equivalent forecast produced last year, ",
+                          "with fewer leavers expected that require replacement, leading to lower PGITT trainee need. ",
+                          "A positive number suggests more leavers are expected leading to higher PGITT trainee need. "
                         )
                       ),
                       gov_text(
                         strong("Working hour losses: "),
                         "Losses of teachers through individual teachers reducing their working hours between years. ",
                         em(
-                          "Negative numbers suggest fewer forecasted working hour losses that will require replacement ",
-                          "leading to lower PGITT need, whilst positive numbers suggest more forecasted working hour losses."
+                          "Negative numbers suggest a more optimistic forecast than the equivalent forecast produced last year, ",
+                          "with fewer forecasted working hour losses that require replacement, leading to lower PGITT trainee need this year. ",
+                          "Positive numbers suggest more forecasted working hour losses, and higher PGITT trainee need."
                         )
                       ),
                       gov_text(
                         strong("Returners: "),
                         "Teachers who enter service having been employed as a regular teacher in the state-funded sector previously. ",
                         em(
-                          "Negative numbers suggest more returners are expected acting to reduce PGITT need, ",
+                          "Negative numbers suggest a more optimistic forecast than the equivalent forecast produced last year, ",
+                          "with more returners being expected that acts to reduce PGITT trainee need, ",
                           "whilst positive numbers suggest fewer expected returners."
                         )
                       ),
                       gov_text(
-                        strong("NTSF: new to state-funded sector entrants. "),
-                        "Teachers who enter service having not been employed as a regular teacher in the sector ",
-                        "previously and are not newly qualified entrants (NQEs). This includes newly qualified teachers ",
-                        "that defer entry into service by 4 to 16 months. ",
+                        strong("NTSF: "),
+                        "New to state-funded sector entrants. ",
+                        "Teachers who enter service having not been employed as a regular teacher in the sector previously and are not ",
+                        "newly qualified entrants (NQEs). This includes newly qualified teachers that defer entry into service by 4 to 16 months. ",
                         em(
-                          "Negative numbers suggest more NTSF entrants are expected leading to ",
-                          "lower PGITT need, whilst positive numbers suggest fewer expected NTSFs."
+                          "Negative numbers suggest a more optimistic forecast than the equivalent forecasts produced last year, with more ",
+                          "NTSF entrants being expected leading to lower PGITT trainee need, whilst positive numbers suggest fewer expected NTSF entrants."
                         )
                       ),
                       gov_text(
                         strong("NQEs from other sources: "),
-                        "Newly qualified entrants (NQE) sourced from routes other ",
-                        "than PGITT courses, including undergraduate ITT, assessment only, Scotland/Wales, ",
-                        "and recognition of overseas qualified status. ",
+                        "Newly qualified entrants (NQE) sourced from routes other than PGITT courses, including undergraduate ITT, ",
+                        "assessment only, Scotland/Wales, and recognition of overseas qualified status. ",
                         em(
-                          "Negative numbers suggest more NQEs from other sources are expected, ",
-                          "acting to reduce PGITT need, whilst positive numbers suggest fewer are expected."
+                          "Negative numbers suggest a more optimistic forecast than the equivalent forecast produced last year, ",
+                          "with more NQEs from other sources expected, acting to reduce PGITT trainee need, ",
+                          "whilst positive numbers suggest fewer are expected."
                         )
                       ),
                       gov_text(
@@ -898,8 +903,8 @@ twm_tab_panel <- function() {
                         "and there are those that do not immediately enter employment after ITT ",
                         "(i.e. ITT completion and post ITT employment rates). ",
                         em(
-                          "Negative numbers suggest a higher conversion rate between trainees and NQEs, ",
-                          "acting to reduce PGITT need; the opposite is true for positive numbers."
+                          "Negative numbers suggest a higher conversion rate between trainees and NQEs  ",
+                          "than that used last year, acting to reduce PGITT trainee need, the opposite is true for positive numbers. "
                         )
                       ),
                       gov_text(
@@ -908,12 +913,12 @@ twm_tab_panel <- function() {
                         "reflecting recruitment impacts from the two ITT cycles prior to 2026/27. ",
                         "These are ITT cycles that have already occurred but are yet to be reflected in the school workforce census. ",
                         "If a shortfall is estimated, the model assumes additional teachers will need to be recruited via PGITT to correct it. ",
-                        "The model accounts for ITT recruitment, teacher retention, and other recruitment routes (e.g. returners). ",
-                        "This holistic assessment means the impact of missing historical PGITT trainee need may be offset ",
-                        "by wider recruitment or retention being better than expected. ",
+                        "The model accounts for ITT recruitment, teacher retention, and other recruitment routes (e.g., returners). ",
+                        "This holistic assessment means the impact of missing historical PGITT trainee need may be offset by wider ",
+                        "recruitment or retention being better than expected. ",
                         em(
-                          "Negative numbers reflect that the adjustment is smaller than last year resulting in reduced PGITT need. ",
-                          "No bar means no adjustment was needed this year or last because there was no supply shortfall expected from the two prior ITT cycles."
+                          "Negative numbers reflect that the adjustment is smaller than last year resulting in reduced PGITT need. No bar means ",
+                          "no adjustment was needed this year or last because there was no supply shortfall expected from the two prior ITT cycles."
                         )
                       ),
                       gov_text(
@@ -1059,7 +1064,7 @@ twm_tab_panel <- function() {
                     ),
                     gov_text(
                       "The higher the teacher leaver rates are expected to be, the more PGITT newly qualified ",
-                      "entrants (NQEs) may be needed to replace teacher leavers which will lead to higher ",
+                      "entrants (NQEs) may be needed to replace teachers leaving service which will lead to higher ",
                       "PGITT trainee need (all else being equal)."
                     ),
                     gov_text(
@@ -1072,8 +1077,8 @@ twm_tab_panel <- function() {
                     gov_text(strong("Entrant types")),
                     gov_text(
                       "Newly qualified entrants (NQEs) are teachers who gain qualified teacher status and will ",
-                      "be recorded as entering service in the English state-funded schools sector (primary and ",
-                      "secondary schools only). "
+                      "be recorded as entering service in the English state-funded schools sector ",
+                      "immediately after training (primary and secondary schools only)"
                     ),
                     gov_text(
                       "New to state-funded sector entrants (NTSF) are teachers who enter service having not ",
