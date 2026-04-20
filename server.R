@@ -25,13 +25,6 @@ server <- function(input, output, session) {
   # - avoid bookmarking irrelevant / noisy inputs
   # - ensure nested UI state (e.g. tabset panel) does not leak across navlist panels
 
-  # Register which inputs are allowed to appear in the bookmark (URL).
-  # The allowlist (set in global) is applied dynamically depending on the active navlist panel
-  observe({
-    set_bookmark_include(input, bookmarking_allowlist)
-  })
-
-
   # Automatically update the bookmarked state whenever inputs change
   # This triggers Shiny's bookmarking mechanism without requiring user action
   shiny::observe({
@@ -39,17 +32,14 @@ server <- function(input, output, session) {
     session$doBookmark()
   })
 
-
   # Replace the browser URL with the generated bookmark, without reloading
   # the page or showing the default Shiny bookmark popup
   shiny::onBookmarked(function(url) {
     shiny::updateQueryString(url, mode = "replace")
   })
 
-
-  # Nested tabsets should only be bookmarked when they are relevant.
-  # When the user is not on the Teacher demand panel, we exclude the
-  # twm_tabsetpanels input to avoid restoring stale tab state across panels.
+  # Dynamically control which inputs are included in the URL bookmark.
+  # Nested tabsets are only included when relevant to the active navlist panel
   observe({
     if (input$navlistPanel == "Teacher demand and PGITT need") {
       set_bookmark_include(
@@ -63,6 +53,19 @@ server <- function(input, output, session) {
       )
     }
   })
+
+  # Force a consistent default tab on initial app load.
+  # Shiny restores bookmarked input state from the URL before the UI is flushed,
+  # which can cause the app to open on a previously viewed nested tab.
+  # This runs once, after the UI has fully rendered, to ensure a predictable
+  # starting tab regardless of bookmarked state.
+  session$onFlushed(function() {
+    updateTabsetPanel(
+      session,
+      inputId = "twm_tabsetpanels",
+      selected = "Introduction"
+    )
+  }, once = TRUE)
 
 
   # Cookies logic -------------------------------------------------------------

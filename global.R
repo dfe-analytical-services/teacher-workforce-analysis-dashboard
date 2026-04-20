@@ -103,9 +103,6 @@ google_analytics_key <- "437MHW92CL"
 # Enable bookmarking so that input choices are shown in the url ---------------
 enableBookmarking("url")
 
-# Bookmark allow list
-bookmarking_allowlist <- c("navlistPanel", "twm_tabsetpanels")
-
 # Fonts for charts ------------------------------------------------------------
 font_add("dejavu", "www/fonts/DejaVuSans.ttf")
 register_font(
