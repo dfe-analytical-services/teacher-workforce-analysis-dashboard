@@ -328,11 +328,10 @@ twm_tab_panel <- function() {
                 ),
 
                 # Reactive text box
-                bslib::value_box(
-                  title = NULL,
+                shinyGovstyle::value_box(
                   value = textOutput("pt_summary_box"),
-                  theme = bslib::value_box_theme(bg = "#1d70b8", fg = "white"),
-                  max_height = "115px"
+                  text = NA,
+                  colour = "blue"
                 ),
 
                 # Text boxes below graph
