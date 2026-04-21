@@ -91,8 +91,8 @@ test_that("read_pgitt_need_timeseries() renames and derives subject correctly", 
     time_period = c("2019/20", "2020/21", "2020/21"),
     subject_filter_group = c("Primary", "Secondary", "Secondary"),
     subject = c("English", "Maths", "Biology"),
-    pgitt_trainee_need = c("6", "6", "6"),
-    percentage_difference_to_previous_year = c("6", "6", "6")
+    pgitt_trainee_need_count = c("6", "6", "6"),
+    difference_to_previous_year_percent = c("6", "6", "6")
   )
 
   file <- write_test_parquet(input)
@@ -120,9 +120,9 @@ test_that("read_pgitt_need_timeseries throws error when required columns missing
   bad_df <- tibble::tibble(
     time_period = "2020/21",
     subject = "English",
-    pgitt_trainee_need = 200,
-    percentage_difference_to_previous_year = 0.1
-    # subject_filter_group missing
+    pgitt_trainee_need_count = 200,
+    difference_to_previous_year_percent = 0.1
+    # education_phase missing
   )
 
   tmp <- tempfile(fileext = ".parquet")
