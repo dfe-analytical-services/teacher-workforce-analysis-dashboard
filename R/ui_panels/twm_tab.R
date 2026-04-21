@@ -268,11 +268,11 @@ twm_tab_panel <- function() {
                         inputId = "file_type_pupil_teacher",
                         label = "Choose download file format",
                         choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
+                          "CSV (Up to 1 MB)",
+                          "XLSX (Up to 1 MB)",
+                          "JPEG (Up to 500 KB)"
                         ),
-                        selected = "CSV (Up to X.XX MB)"
+                        selected = "CSV (Up to 1 MB)"
                       ),
                       uiOutput("download_button_ui_pupil_teacher")
                     )
@@ -588,11 +588,11 @@ twm_tab_panel <- function() {
                         inputId = "file_type_pgitt_need",
                         label = "Choose download file format",
                         choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
+                          "CSV (Up to 1 MB)",
+                          "XLSX (Up to 1 MB)",
+                          "JPEG (Up to 500 KB)"
                         ),
-                        selected = "CSV (Up to X.XX MB)"
+                        selected = "CSV (Up to 1 MB)"
                       ),
                       uiOutput("download_button_ui_pgitt_need")
                     )
@@ -767,11 +767,11 @@ twm_tab_panel <- function() {
                         inputId = "file_type_drivers",
                         label = "Choose download file format",
                         choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
+                          "CSV (Up to 1 MB)",
+                          "XLSX (Up to 1 MB)",
+                          "JPEG (Up to 500 KB)"
                         ),
-                        selected = "CSV (Up to X.XX MB)"
+                        selected = "CSV (Up to 1 MB)"
                       ),
                       uiOutput("download_button_ui_drivers")
                     )
@@ -983,11 +983,11 @@ twm_tab_panel <- function() {
                         inputId = "file_type_flows",
                         label = "Choose download file format",
                         choices = c(
-                          "CSV (Up to X.XX MB)",
-                          "XLSX (Up to X.XX MB)",
-                          "JPEG (Up to XXX KB)"
+                          "CSV (Up to 1 MB)",
+                          "XLSX (Up to 1 MB)",
+                          "JPEG (Up to 500 KB)"
                         ),
-                        selected = "CSV (Up to X.XX MB)"
+                        selected = "CSV (Up to 1 MB)"
                       ),
                       uiOutput("download_button_ui_flows")
                     )

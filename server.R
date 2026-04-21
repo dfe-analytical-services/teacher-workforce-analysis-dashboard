@@ -307,9 +307,9 @@ server <- function(input, output, session) {
         "_",
         Sys.Date()
       )
-      extension <- if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_pupil_teacher == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_pupil_teacher == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -318,9 +318,9 @@ server <- function(input, output, session) {
     },
     ## Generate downloaded file
     content = function(file) {
-      if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
+      if (input$file_type_pupil_teacher == "CSV (Up to 1 MB)") {
         write.csv(download_table_pupil_teacher_data(), file, row.names = FALSE)
-      } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_pupil_teacher == "XLSX (Up to 1 MB)") {
         # Added a basic pop up notification as the Excel file can take time to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         openxlsx::write.xlsx(
@@ -571,9 +571,9 @@ server <- function(input, output, session) {
       file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", Sys.Date())
 
       # Keep mapping identical to your earlier block for consistency
-      extension <- if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_pgitt_need == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_pgitt_need == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -581,13 +581,13 @@ server <- function(input, output, session) {
       paste0(file_name, extension)
     },
     content = function(file) {
-      if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
+      if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
         utils::write.csv(
           download_table_pgitt_need_data(),
           file,
           row.names = FALSE
         )
-      } else if (input$file_type_pgitt_need == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_pgitt_need == "XLSX (Up to 1 MB)") {
         # Optional: notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
@@ -871,9 +871,9 @@ server <- function(input, output, session) {
 
       file_name <- paste0("twm_drivers_", filter_select, "_", Sys.Date())
 
-      extension <- if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_drivers == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_drivers == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -881,9 +881,9 @@ server <- function(input, output, session) {
       paste0(file_name, extension)
     },
     content = function(file) {
-      if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
+      if (input$file_type_drivers == "CSV (Up to 1 MB)") {
         utils::write.csv(download_table_drivers_data(), file, row.names = FALSE)
-      } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_drivers == "XLSX (Up to 1 MB)") {
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
         openxlsx::write.xlsx(
@@ -1176,9 +1176,9 @@ server <- function(input, output, session) {
       )
 
       # Keep mapping identical to your earlier block for consistency
-      extension <- if (input$file_type_flows == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_flows == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_flows == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -1186,13 +1186,13 @@ server <- function(input, output, session) {
       paste0(file_name, extension)
     },
     content = function(file) {
-      if (input$file_type_flows == "CSV (Up to X.XX MB)") {
+      if (input$file_type_flows == "CSV (Up to 1 MB)") {
         utils::write.csv(
           download_table_flow_trajectories(),
           file,
           row.names = FALSE
         )
-      } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_flows == "XLSX (Up to 1 MB)") {
         # Optional: notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
