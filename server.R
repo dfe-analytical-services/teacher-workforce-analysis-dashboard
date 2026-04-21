@@ -246,8 +246,7 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )

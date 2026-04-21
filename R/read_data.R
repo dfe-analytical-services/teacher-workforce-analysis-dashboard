@@ -47,11 +47,9 @@ read_pupil_teacher_numbers <- function(
   df <- df %>%
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
-      pupil_numbers = round(pupil_numbers, 0), # round pupil numbers to 0 dp
-      teacher_numbers = round(
-        teacher_numbers,
-        0 # round teacher numbers to 0 dp
-      )
+      # update to floor() because round() uses "round to even" (banker's rounding) on x.5 values by default
+      teacher_numbers = floor(teacher_numbers + 0.5),
+      pupil_numbers = floor(pupil_numbers + 0.5)
     )
   return(df)
 }
