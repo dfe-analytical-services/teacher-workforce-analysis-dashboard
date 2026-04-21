@@ -1266,6 +1266,9 @@ server <- function(input, output, session) {
 
   observeEvent(input$link_to_user_guide, {
     updateTabsetPanel(session, "navlistPanel", selected = "User guide")
+
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # Support and feedback link
