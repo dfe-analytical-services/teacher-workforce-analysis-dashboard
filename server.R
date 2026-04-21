@@ -469,10 +469,10 @@ server <- function(input, output, session) {
         `Academic year` = academic_year,
         Phase = phase,
         Subject = subject,
-        `PGITT trainee need` = pgitt_trainee_need,
-        `Difference in need to previous year` = difference_to_previous_year,
+        `PGITT trainee need` = pgitt_trainee_need_count,
+        `Difference in need to previous year` = difference_to_previous_year_count,
         `Percentage change in need to previous year` =
-          percentage_difference_to_previous_year
+          difference_to_previous_year_percent
       )
 
     # Drop subject column from dataset if primary selected
@@ -523,10 +523,10 @@ server <- function(input, output, session) {
         `Academic year` = academic_year,
         Phase = phase,
         Subject = subject,
-        `PGITT trainee need` = pgitt_trainee_need,
-        `Difference in need to previous year` = difference_to_previous_year,
+        `PGITT trainee need` = pgitt_trainee_need_count,
+        `Difference in need to previous year` = difference_to_previous_year_count,
         `Percentage change in need to previous year` =
-          percentage_difference_to_previous_year
+          difference_to_previous_year_percent
       )
     # Drop subject column from dataset if phase is primary
     if (nrow(df) > 0 && all(df$Phase == "Primary")) {

@@ -382,7 +382,7 @@ plot_pgitt_need_timeseries <- function(df) {
         "</p>",
         subject_line,
         "<p><b>PGITT trainee need:</b> ",
-        scales::comma(pgitt_trainee_need),
+        scales::comma(pgitt_trainee_need_count),
         "</p>"
       )
     )
@@ -407,7 +407,7 @@ plot_pgitt_need_timeseries <- function(df) {
     aes(
       # What is plotted
       x = start_year,
-      y = pgitt_trainee_need
+      y = pgitt_trainee_need_count
     )
   ) +
     # Draw an interactive bar chart
@@ -870,8 +870,8 @@ plot_flow_trajectories <- function(df) {
         "2025" = "#28A197"
       ),
       labels = c(
-        "2026" = "2026 publication DUMMY data (dotted line = trajectory)",
-        "2025" = "2025 publication DUMMY data (dotted line = trajectory)"
+        "2026" = "2026 publication data (dotted line = trajectory)",
+        "2025" = "2025 publication data (dotted line = trajectory)"
       )
     ) +
     guides(
