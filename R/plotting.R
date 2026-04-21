@@ -605,7 +605,7 @@ plot_drivers_waterfall <- function(df_raw) {
         x = as.numeric(driver),
         # Place label on top of each bar
         y = ifelse(type == "delta", pmax(ymin, ymax), ymax),
-        label = scales::comma(value) # Value data label
+        label = scales::label_number(accuracy = 0.1, big.mark = ",")(value) # Value data label
       ),
       vjust = -0.25,
       size = 4

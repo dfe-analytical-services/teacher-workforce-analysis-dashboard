@@ -623,7 +623,8 @@ server <- function(input, output, session) {
 
   drivers_filtered <- reactive({
     df <- drivers_data %>%
-      filter(phase == input$filter_phase_drivers)
+      filter(phase == input$filter_phase_drivers) %>%
+      mutate(value = round(value, 1))
 
     # If primary force subject = Total
     if (input$filter_phase_drivers == "Primary") {
@@ -763,8 +764,7 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )
@@ -802,8 +802,7 @@ server <- function(input, output, session) {
       right_col = c("Value"),
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )
@@ -826,7 +825,8 @@ server <- function(input, output, session) {
           "NQEs from other sources" = "Newly qualified entrants from other sources",
           "ITT-NQE conversion rate" = "Initial teacher training - newly qualified entrant conversion rate",
           "2026/27 PGITT need" = "2026/27 PGITT trainee need"
-        )
+        ),
+        value = round(value, 1)
       ) %>%
       dplyr::rename_with(~ tools::toTitleCase(.x)) %>%
       dplyr::select(Phase, Subject, Driver, Value)
