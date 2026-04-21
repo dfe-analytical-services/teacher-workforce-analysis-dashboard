@@ -556,8 +556,8 @@ plot_drivers_waterfall <- function(df_raw) {
   }
 
   title_prefix <- dplyr::case_when(
-    phase_val == "Primary" ~ "Primary",
-    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
+    phase_val == "Primary" ~ "primary",
+    phase_val == "Secondary" && subject_val == "Total" ~ "secondary",
     phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
     TRUE ~ subject_val
   )
@@ -565,7 +565,7 @@ plot_drivers_waterfall <- function(df_raw) {
   # Fixed comparison phrase as requested
   plot_title <- paste0(
     "Drivers of change in ",
-    tolower(title_prefix),
+    title_prefix,
     " PGITT need: 2026/27 vs 2025/26"
   )
 
