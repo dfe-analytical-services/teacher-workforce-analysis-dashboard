@@ -1229,18 +1229,24 @@ server <- function(input, output, session) {
 
   observeEvent(input$link_to_teacher_demand_traj, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "Teacher demand trajectories")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # PGITT trainee need calculation link
 
   observeEvent(input$link_to_pgitt_need_calc, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need calculation")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # PGITT trainee need time series link
 
   observeEvent(input$link_to_pgitt_need_ts, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need time series")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # Drivers analysis link
@@ -1253,6 +1259,8 @@ server <- function(input, output, session) {
     ),
     {
       updateTabsetPanel(session, "twm_tabsetpanels", selected = "Drivers of change in PGITT trainee need")
+      # Force scroll to top
+      shinyjs::runjs("window.scrollTo(0, 0);")
     }
   )
 
@@ -1260,13 +1268,14 @@ server <- function(input, output, session) {
 
   observeEvent(input$link_to_flow_traj, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "Flow trajectories")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # User guide link
 
   observeEvent(input$link_to_user_guide, {
     updateTabsetPanel(session, "navlistPanel", selected = "User guide")
-
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
