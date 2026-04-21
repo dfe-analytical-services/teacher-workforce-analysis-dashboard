@@ -8,15 +8,6 @@
 twm_tab_panel <- function() {
   tabPanel(
     "Teacher demand and PGITT need",
-
-    # Dummy data warning
-    div(
-      style = "margin-bottom: 5px;",
-      shinyGovstyle::warning_text(
-        inputId = "warn1",
-        text = "This dashboard is being developed using dummy data."
-      )
-    ),
     gov_main_layout(
       gov_row(
         # Header --------------------------------------------------------------
