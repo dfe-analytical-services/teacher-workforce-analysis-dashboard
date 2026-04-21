@@ -558,13 +558,14 @@ server <- function(input, output, session) {
     # phase and subject (if not primary)
     filename = function() {
       phase_lower <- tolower(input$filter_phase_pgitt_need)
-      subject_lower <- tolower(input$filter_subject_pgitt_need)
+      subject_lower <- tolower(input$filter_subject_pgitt_need) %>%
+        stringr::str_replace_all(" ", "_")
 
       filter_select <- dplyr::case_when(
         phase_lower == "primary" ~ "primary",
+        phase_lower == "total" ~ "total",
         phase_lower == "secondary" & subject_lower == "total" ~ "secondary",
-        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower,
-        TRUE ~ subject_lower
+        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower
       )
 
       file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", Sys.Date())
@@ -859,7 +860,8 @@ server <- function(input, output, session) {
     # phase and subject (if not primary)
     filename = function() {
       phase_lower <- tolower(input$filter_phase_drivers)
-      subject_lower <- tolower(input$filter_subject_drivers)
+      subject_lower <- tolower(input$filter_subject_drivers) %>%
+        stringr::str_replace_all(" ", "_")
 
       filter_select <- dplyr::case_when(
         phase_lower == "primary" ~ "primary",
@@ -1158,7 +1160,8 @@ server <- function(input, output, session) {
       # make file name which adds selected
       # phase, subject (if not primary) and flow type
       phase_lower <- tolower(input$filter_phase_flow)
-      subject_lower <- tolower(input$filter_subject_flow)
+      subject_lower <- tolower(input$filter_subject_flow) %>%
+        stringr::str_replace_all(" ", "_")
       flow_type_lower <- tolower(input$filter_flow_type) %>%
         stringr::str_replace_all(" ", "_")
 
