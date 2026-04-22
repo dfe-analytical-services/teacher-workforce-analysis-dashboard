@@ -142,7 +142,11 @@ read_flows_2025_publication_data <- function(
     clean_names() %>% # make r friendly column names
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)) # create start year column
-    )
+    ) %>%
+    # NQE trajectories are only for two years ahead
+    # remove 3rd year row which has NA data
+    # to prevent the table/downloads having an NA row
+    filter(!is.na(value))
 
   # required columns
   required_cols <- c(
@@ -182,7 +186,11 @@ read_flows_2026_publication_data <- function(
     clean_names() %>% # make r friendly column names
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)) # create start year column
-    )
+    ) %>%
+    # NQE trajectories are only for two years ahead
+    # remove 3rd year row which has NA data
+    # to prevent the table/downloads having an NA row
+    filter(!is.na(value))
 
   # required columns
   required_cols <- c(
