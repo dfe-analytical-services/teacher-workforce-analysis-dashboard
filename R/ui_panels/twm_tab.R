@@ -240,8 +240,8 @@ twm_tab_panel <- function() {
                     # Mini tab 2 - table
                     table_output = govReactableOutput("pupil_teacher_table",
                       caption = "",
-                      caption_size = "1",
-                      heading_level = "h5"
+                      caption_size = "s",
+                      heading_level = "h3"
                     ),
 
                     # Mini tab 3 - download
@@ -561,8 +561,12 @@ twm_tab_panel <- function() {
                     ),
 
                     # Mini tab 2 - table
-                    table_output = uiOutput(
-                      "pgitt_need_timeseries_table_ui"
+                    table_output = div(
+                      uiOutput("pgitt_need_ts_title_ui"),
+                      govReactableOutput("pgitt_need_timeseries_table",
+                        caption = "",
+                        caption_size = "s", heading_level = "h3"
+                      )
                     ),
 
                     # Mini tab 3 - download
@@ -731,16 +735,15 @@ twm_tab_panel <- function() {
 
                     # Mini tab 2 - table
                     table_output = div(
+                      # Reactive table title
                       uiOutput("drivers_table_1_heading"),
                       govReactableOutput("table_pgitt_need_diff",
                         caption = "",
-                        caption_size = "l", heading_level = "h2"
+                        caption_size = "s", heading_level = "h3"
                       ),
-                      tags$hr(),
-                      heading_text("Drivers of change in PGITT trainee need", level = 4, size = "s"),
                       govReactableOutput("table_drivers_breakdown",
-                        caption = "",
-                        caption_size = "l", heading_level = "h2"
+                        caption = "Drivers of change in PGITT trainee need",
+                        caption_size = "s", heading_level = "h3"
                       )
                     ),
 
@@ -956,7 +959,7 @@ twm_tab_panel <- function() {
                       ),
                       govReactableOutput("table_flow_trajectories",
                         caption = "",
-                        caption_size = "l", heading_level = "h2"
+                        caption_size = "s", heading_level = "h3"
                       )
                     ),
 

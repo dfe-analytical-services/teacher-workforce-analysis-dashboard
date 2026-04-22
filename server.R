@@ -157,12 +157,12 @@ server <- function(input, output, session) {
     for_download = FALSE,
     axis_lock = NULL
   ) {
-    # dynamic labels (used inside plot function already, but keeping here is fine)
+    # dynamic labels
     phase_title <- if (tolower(phase) == "primary") "Primary" else "Secondary"
     left_title <- paste0(phase_title, " pupils")
     right_title <- paste0(phase_title, " teachers")
 
-    # Let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
+    # plot_pupil_teacher_timeseries() handles y scales & sec.axis,
     # including the manual lock (breaks and matching).
     p <- plot_pupil_teacher_timeseries(
       df,
@@ -191,7 +191,7 @@ server <- function(input, output, session) {
     p
   }
 
-  # create the ggiraph plot to display on the app
+  # Create the ggiraph plot to display on the app
 
   output$pupil_teacher_plot <- ggiraph::renderGirafe({
     df <- pt_data_filtered() # filtered data
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table: pupil/teacher numbers
+  # Table: pupil/teacher numbers - interactive via govReactable
 
   output$pupil_teacher_table <- renderGovReactable({
     df <- pt_data_filtered() %>%
@@ -320,7 +320,7 @@ server <- function(input, output, session) {
       if (input$file_type_pupil_teacher == "CSV (Up to 1 MB)") {
         write.csv(download_table_pupil_teacher_data(), file, row.names = FALSE)
       } else if (input$file_type_pupil_teacher == "XLSX (Up to 1 MB)") {
-        # Added a basic pop up notification as the Excel file can take time to generate
+        # Basic pop up notification as the Excel file can take time to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         openxlsx::write.xlsx(
           download_table_pupil_teacher_data(),
@@ -460,7 +460,16 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table: PGITT trainee need timeseries table for app (interactive via reactable)
+  # Render reactive table title as GOV.UK–styled text
+  # uiOutput() is used in the twm_tab UI to allow this to update dynamically
+
+  # For table
+
+  output$pgitt_need_ts_title_ui <- renderUI({
+    heading_text(pgitt_need_ts_title(), level = 3, size = "s")
+  })
+
+  # Table: PGITT trainee need timeseries table for app (interactive via govReactable)
 
   output$pgitt_need_timeseries_table <- renderGovReactable({
     df <- pgitt_need_filtered() %>%
@@ -475,7 +484,7 @@ server <- function(input, output, session) {
       )
 
     # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+    if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
       df <- dplyr::select(df, -Subject)
     }
 
@@ -502,18 +511,6 @@ server <- function(input, output, session) {
   })
 
 
-  # Update table so that it has reactable caption
-
-  output$pgitt_need_timeseries_table_ui <- renderUI({
-    govReactableOutput(
-      "pgitt_need_timeseries_table",
-      caption = pgitt_need_ts_title(),
-      caption_size = "1",
-      heading_level = "h3"
-    )
-  })
-
-
   # Create download dataset (matches table)
 
   download_table_pgitt_need_data <- reactive({
@@ -528,7 +525,7 @@ server <- function(input, output, session) {
           difference_to_previous_year_percent
       )
     # Drop subject column from dataset if phase is primary
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+    if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
       df <- dplyr::select(df, -Subject)
     }
     df
@@ -570,7 +567,7 @@ server <- function(input, output, session) {
 
       file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", "2026-04-23")
 
-      # Keep mapping identical to your earlier block for consistency
+      # Keep mapping identical to earlier block for consistency
       extension <- if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
         ".csv"
       } else if (input$file_type_pgitt_need == "XLSX (Up to 1 MB)") {
@@ -588,7 +585,7 @@ server <- function(input, output, session) {
           row.names = FALSE
         )
       } else if (input$file_type_pgitt_need == "XLSX (Up to 1 MB)") {
-        # Optional: notify because Excel can take a little while to generate
+        # Notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
         openxlsx::write.xlsx(
@@ -646,24 +643,17 @@ server <- function(input, output, session) {
   })
 
 
-  # Export the reactive title as plain text for use in table 1 header
-
-  output$drivers_title <- renderText({
-    drivers_title()
-  })
-
-
   # Render the text in heading_text format
 
   output$drivers_table_1_heading <- renderUI({
-    heading_text(drivers_title(), level = 4, size = "s")
+    heading_text(drivers_title(), level = 3, size = "s")
   })
 
 
   # Plot builder for drivers analysis which adds title & larger text for downloads
 
   build_drivers_waterfall_plot <- function(df, for_download = FALSE) {
-    p <- plot_drivers_waterfall(df) # your existing ggplot builder
+    p <- plot_drivers_waterfall(df) # existing ggplot builder
 
     if (for_download) {
       # Increase size of existing data labels
@@ -733,7 +723,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table 1: Drivers analysis with last year's PGITT need, this year's PGITT need, overall difference (interactive via reactable)
+  # Table 1: Drivers analysis with last year's PGITT need, this year's PGITT need, overall difference (interactive via govReactable)
 
   output$table_pgitt_need_diff <- renderGovReactable({
     df_wide <- drivers_filtered() %>%
@@ -770,7 +760,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table 2: Drivers analysis with drivers breakdown (interactive via reactable)
+  # Table 2: Drivers analysis with drivers breakdown (interactive via govReactable)
 
   output$table_drivers_breakdown <- renderGovReactable({
     df <- drivers_filtered() %>%
@@ -844,7 +834,7 @@ server <- function(input, output, session) {
     build_drivers_waterfall_plot(drivers_filtered(), for_download = TRUE)
   })
 
-  # Download button UI (
+  # Download button UI
   output$download_button_ui_drivers <- renderUI({
     shinyGovstyle::download_button(
       "download_drivers",
@@ -893,7 +883,7 @@ server <- function(input, output, session) {
           colWidths = "Auto"
         )
       } else {
-        # JPEG: save static ggplot (interactive tooltips are not present in static export)
+        # JPEG: save static ggplot
         tmp_file <- tempfile(paste0("twm_drivers_", "2026-04-23", ".jpeg"))
         ggplot2::ggsave(
           filename = tmp_file,
@@ -1030,7 +1020,7 @@ server <- function(input, output, session) {
   # For table
 
   output$flow_traj_title_table_ui <- renderUI({
-    gov_text(strong(flow_traj_title()))
+    heading_text(flow_traj_title(), level = 3, size = "s")
   })
 
 
@@ -1129,7 +1119,7 @@ server <- function(input, output, session) {
         Value = if (is_leaver_table) {
           round(Value * 100, 1) # 0.056 → 5.6
         } else {
-          round(Value, 0) # 1234 → 1234
+          round(Value, 0)
         }
       )
 
@@ -1177,7 +1167,6 @@ server <- function(input, output, session) {
         flow_type_lower, "_", "2026-04-23"
       )
 
-      # Keep mapping identical to your earlier block for consistency
       extension <- if (input$file_type_flows == "CSV (Up to 1 MB)") {
         ".csv"
       } else if (input$file_type_flows == "XLSX (Up to 1 MB)") {
@@ -1195,7 +1184,7 @@ server <- function(input, output, session) {
           row.names = FALSE
         )
       } else if (input$file_type_flows == "XLSX (Up to 1 MB)") {
-        # Optional: notify because Excel can take a little while to generate
+        # Notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
         openxlsx::write.xlsx(
