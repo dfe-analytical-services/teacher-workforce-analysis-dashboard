@@ -4,8 +4,6 @@
 
 ## Introduction 
 
-> ⚠️ **Warning:** This dashboard is being developed using dummy data.
-
 This dashboard provides an accessible explanation of how postgraduate initial teacher training (PGITT)
 trainee need is estimated using the Department for Education’s teacher workforce model. 
 It allows users to explore how projections of pupil numbers influence the future teacher demand trajectory 
@@ -14,9 +12,7 @@ inflows and outflows to the teacher workforce, both historical and forecast, and
 
 This application is deployed in the following places:
 
-- ...
-- ...
-- ...
+https://department-for-education.shinyapps.io/teacher-workforce-analysis-dashboard/
 
 ---
 
@@ -26,11 +22,11 @@ The following requirements are necessary for running the application yourself or
 
 ### i. Software requirements (for running locally)
 
-- Installation of R Studio 2024.04.2+764 "Chocolate Cosmos" or higher
+- Installation of R Studio 2026.01.2 "Apple Blossom" or higher
 
-- Installation of R 4.4.1 or higher
+- Installation of R 4.5.3 or higher
 
-- Installation of RTools44 or higher
+- Installation of RTools45 or higher
 
 ### ii. Programming skills required (for editing or troubleshooting)
 
@@ -46,8 +42,6 @@ There are no access requirements as all data is available in the repository.
 
 ## How to use
 
-...
-
 ### Running the app locally
 
 1. Clone or download the repo. 
@@ -61,8 +55,6 @@ There are no access requirements as all data is available in the repository.
 ### Folder structure
 
 All R code outside of the core `global.R`, `server.R`, and `ui.R` files is stored in the `R/` folder. There is a `R/helper_functions.R` file for common custom functions, and scripts for the different UI panels in the `R/ui_panels/` folder.
-
-...
 
 ### Packages
 
@@ -95,8 +87,6 @@ You should also run `lintr::lint_dir()` regularly as lintr will check all pull r
 ---
 
 ## How to contribute
-
-...
 
 ### Flagging issues
 
