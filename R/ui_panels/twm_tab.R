@@ -269,7 +269,7 @@ twm_tab_panel <- function() {
 
                     # Filter
                     bslib::card(
-                      bslib::card_header("Filter"),
+                      bslib::card_header(gov_text("Filter")),
                       bslib::card_body(
                         shinyGovstyle::select_Input(
                           inputId = "filter_phase",
@@ -282,7 +282,7 @@ twm_tab_panel <- function() {
 
                     # About this graph text box
                     bslib::card(
-                      bslib::card_header("About this graph"),
+                      bslib::card_header(gov_text("About this graph")),
                       bslib::card_body(
                         gov_text(
                           HTML(
@@ -320,7 +320,7 @@ twm_tab_panel <- function() {
                 # Text boxes below graph
                 bslib::card(
                   style = "margin-top: 1rem;",
-                  bslib::card_header("Pupil numbers and teacher demand"),
+                  bslib::card_header(gov_text("Pupil numbers and teacher demand")),
                   bslib::card_body(
                     gov_text(strong("Historic trends")),
                     gov_text(
@@ -398,7 +398,7 @@ twm_tab_panel <- function() {
                 # Top box: flow chart
 
                 bslib::card(
-                  bslib::card_header("Estimating PGITT trainee need for 2026/27"),
+                  bslib::card_header(gov_text("Estimating PGITT trainee need for 2026/27")),
                   bslib::card_body(
                     tags$img(
                       src   = "pgitt_trainee_need_26_27_calculation_flow_chart.svg",
@@ -412,7 +412,7 @@ twm_tab_panel <- function() {
                 # Bottom box: flow chart text guide
 
                 bslib::card(
-                  bslib::card_header("Estimating PGITT trainee need for 2026/27"),
+                  bslib::card_header(gov_text("Estimating PGITT trainee need for 2026/27")),
                   bslib::card_body(
                     # Intro paragraph
                     gov_text(
@@ -590,7 +590,7 @@ twm_tab_panel <- function() {
 
                     # Filters
                     bslib::card(
-                      bslib::card_header("Filters"),
+                      bslib::card_header(gov_text("Filters")),
                       bslib::card_body(
                         shinyGovstyle::select_Input(
                           inputId = "filter_phase_pgitt_need",
@@ -612,7 +612,7 @@ twm_tab_panel <- function() {
 
                     # About this graph text box
                     bslib::card(
-                      bslib::card_header("About this graph"),
+                      bslib::card_header(gov_text("About this graph")),
                       bslib::card_body(
                         gov_text(
                           "Select a school phase or secondary subject to view its data and hover over the bars ",
@@ -637,7 +637,7 @@ twm_tab_panel <- function() {
                 # Trends in PGITT trainee need over time text box below chart
                 bslib::card(
                   style = "margin-top: 1rem;",
-                  bslib::card_header("Trends in PGITT trainee need over time"),
+                  bslib::card_header(gov_text("Trends in PGITT trainee need over time")),
                   bslib::card_body(
                     gov_text(
                       "Overall PGITT trainee need (primary and secondary combined) peaked in 2023/24 with ",
@@ -767,7 +767,7 @@ twm_tab_panel <- function() {
 
                     # Filters
                     bslib::card(
-                      bslib::card_header("Filters"),
+                      bslib::card_header(gov_text("Filters")),
                       bslib::card_body(
                         shinyGovstyle::select_Input(
                           inputId = "filter_phase_drivers",
@@ -789,7 +789,7 @@ twm_tab_panel <- function() {
 
                     # About this graph box
                     bslib::card(
-                      bslib::card_header("About this graph"),
+                      bslib::card_header(gov_text("About this graph")),
                       bslib::card_body(
                         gov_text(
                           "The scale of each driver is its estimated impact upon PGITT trainee need, and not the amount ",
@@ -812,7 +812,7 @@ twm_tab_panel <- function() {
 
                 # Text box with definitions below chart
                 bslib::card(
-                  bslib::card_header("Definitions"),
+                  bslib::card_header(gov_text("Definitions")),
                   bslib::card_body(
                     tagList(
                       gov_text(
@@ -984,7 +984,7 @@ twm_tab_panel <- function() {
 
                     # Filters
                     bslib::card(
-                      bslib::card_header("Filters"),
+                      bslib::card_header(gov_text("Filters")),
                       bslib::card_body(
                         shinyGovstyle::select_Input(
                           inputId = "filter_phase_flow",
@@ -1012,7 +1012,7 @@ twm_tab_panel <- function() {
 
                     # About this graph text box
                     bslib::card(
-                      bslib::card_header("About this graph"),
+                      bslib::card_header(gov_text("About this graph")),
                       bslib::card_body(
                         gov_text(
                           "The teacher workforce model uses trajectories of inflows into and outflows from the ",
@@ -1030,7 +1030,7 @@ twm_tab_panel <- function() {
 
                 # Text box below graph with definitions
                 bslib::card(
-                  bslib::card_header("Definitions"),
+                  bslib::card_header(gov_text("Definitions")),
                   bslib::card_body(
                     gov_text(strong("Leaver rates")),
                     gov_text(
