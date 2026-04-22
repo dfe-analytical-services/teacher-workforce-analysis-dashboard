@@ -304,7 +304,7 @@ server <- function(input, output, session) {
         "twm_pupil_teacher_numbers_",
         phase_clean,
         "_",
-        Sys.Date()
+        "2026-04-23"
       )
       extension <- if (input$file_type_pupil_teacher == "CSV (Up to 1 MB)") {
         ".csv"
@@ -333,7 +333,7 @@ server <- function(input, output, session) {
           ggplot2::ggsave(
             filename = tempfile(paste0(
               "twm_pupil_teacher_numbers_",
-              Sys.Date(),
+              "2026-04-23",
               ".jpeg"
             )),
             plot = download_chart_pupil_teacher_data(),
@@ -568,7 +568,7 @@ server <- function(input, output, session) {
         phase_lower == "secondary" & subject_lower != "total" ~ subject_lower
       )
 
-      file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", Sys.Date())
+      file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", "2026-04-23")
 
       # Keep mapping identical to your earlier block for consistency
       extension <- if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
@@ -600,7 +600,7 @@ server <- function(input, output, session) {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
           "twm_pgitt_need_timeseries_",
-          Sys.Date(),
+          "2026-04-23",
           ".jpeg"
         ))
         ggplot2::ggsave(
@@ -870,7 +870,7 @@ server <- function(input, output, session) {
         TRUE ~ subject_lower
       )
 
-      file_name <- paste0("twm_drivers_", filter_select, "_", Sys.Date())
+      file_name <- paste0("twm_drivers_", filter_select, "_", "2026-04-23")
 
       extension <- if (input$file_type_drivers == "CSV (Up to 1 MB)") {
         ".csv"
@@ -894,7 +894,7 @@ server <- function(input, output, session) {
         )
       } else {
         # JPEG: save static ggplot (interactive tooltips are not present in static export)
-        tmp_file <- tempfile(paste0("twm_drivers_", Sys.Date(), ".jpeg"))
+        tmp_file <- tempfile(paste0("twm_drivers_", "2026-04-23", ".jpeg"))
         ggplot2::ggsave(
           filename = tmp_file,
           plot = download_drivers_waterfall_plot(),
@@ -1174,7 +1174,7 @@ server <- function(input, output, session) {
 
       file_name <- paste0(
         "twm_flow_trajectories_", filter_select, "_",
-        flow_type_lower, "_", Sys.Date()
+        flow_type_lower, "_", "2026-04-23"
       )
 
       # Keep mapping identical to your earlier block for consistency
@@ -1207,7 +1207,7 @@ server <- function(input, output, session) {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
           "twm_flow_trajectories_",
-          Sys.Date(),
+          "2026-04-23",
           ".jpeg"
         ))
         ggplot2::ggsave(
