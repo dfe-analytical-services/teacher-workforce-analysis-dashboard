@@ -50,10 +50,7 @@ plot_pupil_teacher_timeseries <- function(
   phase = NULL,
   axis_lock = NULL
 ) {
-  #--------------------------
   # Set y axis name, projection years, legend position
-  #--------------------------
-
   pupils_axis_name <- paste(phase, "pupil numbers (FTE)")
   teachers_axis_name <- paste(phase, "teacher numbers (FTE)")
 
@@ -61,9 +58,7 @@ plot_pupil_teacher_timeseries <- function(
 
   legend_pos <- if (phase == "Secondary") c(0.4, 0.4) else c(0.4, 0.15)
 
-  #--------------------------
   # Axis-lock settings
-  #--------------------------
   use_axis_lock <- !is.null(axis_lock)
 
   if (use_axis_lock) {
@@ -75,15 +70,13 @@ plot_pupil_teacher_timeseries <- function(
     t_max <- axis_lock$t_max
     force_lim <- isTRUE(axis_lock$force_limits)
 
-    r <- pup_step / teach_step # pupil scalar per teacher step
+    r <- pup_step / teach_step # pupil scaler per teacher step
   } else {
     r <- max(df$pupil_numbers, na.rm = TRUE) /
       max(df$teacher_numbers, na.rm = TRUE)
   }
 
-  #--------------------------
   # Prepare data
-  #--------------------------
   df2 <- df %>%
     dplyr::mutate(
       is_projection = projection == "Yes",
@@ -123,9 +116,7 @@ plot_pupil_teacher_timeseries <- function(
       hover_id = paste0("year-", start_year)
     )
 
-  #--------------------------
   # Long format for segment plotting
-  #--------------------------
   df_long <- df2 %>%
     tidyr::pivot_longer(
       cols = c(pupil_numbers, teacher_numbers),
@@ -159,9 +150,7 @@ plot_pupil_teacher_timeseries <- function(
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(next_year))
 
-  #--------------------------
   # Axis breaks
-  #--------------------------
   year_breaks <- df2$start_year[df2$start_year %% 2 == 0]
 
   primary_limits <- NULL
@@ -171,7 +160,7 @@ plot_pupil_teacher_timeseries <- function(
       secondary_breaks <- seq(t0, t_max, by = teach_step)
       primary_limits <- c(p0, p_max)
     } else {
-      # fallback auto behaviour (never used in your use-case)
+      # fallback auto behaviour
       transformed_teacher <- (df2$teacher_numbers - t0) * r + p0
       y_min <- min(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
       y_max <- max(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
@@ -183,9 +172,7 @@ plot_pupil_teacher_timeseries <- function(
     }
   }
 
-  #--------------------------
   # Build plot
-  #--------------------------
   p <- ggplot(df2, aes(x = start_year)) +
     ggiraph::geom_vline_interactive(
       aes(xintercept = start_year, tooltip = tooltip, data_id = hover_id),
@@ -250,9 +237,7 @@ plot_pupil_teacher_timeseries <- function(
       )
     ) +
 
-    #--------------------------
     # Conditional Y‑axis using list()
-    #--------------------------
     (if (use_axis_lock) {
       list(
         scale_y_continuous(
@@ -360,7 +345,7 @@ plot_pgitt_need_timeseries <- function(df) {
     dplyr::mutate(
       # Build a subject line for the tooltip
       # Only show subject if secondary is selected
-      # For other phaes, we return an empty string
+      # For other phases, we return an empty string
       subject_line = ifelse(
         phase == "Secondary",
         paste0("<p><b>Subject:</b> ", subject, "</p>"),
@@ -562,7 +547,7 @@ plot_drivers_waterfall <- function(df_raw) {
     TRUE ~ subject_val
   )
 
-  # Fixed comparison phrase as requested
+  # Reactive title based on filter selection
   plot_title <- paste0(
     "Drivers of change in ",
     title_prefix,
@@ -586,7 +571,7 @@ plot_drivers_waterfall <- function(df_raw) {
       linewidth = 0.3
     ) +
 
-    # Large invisible hover points improve tooltip reliability
+    # Large invisible hover points to improve tooltip reliability
     ggiraph::geom_point_interactive(
       data = df,
       inherit.aes = FALSE,
@@ -676,7 +661,7 @@ plot_flow_trajectories <- function(df) {
     )
 
   # Build labels and tooltips for interactivity
-  # This is presentation-only logic: it does not affect the plot data,
+  # It does not affect the plot data,
   # only what users see when hovering
   df <- df %>%
     dplyr::mutate(
