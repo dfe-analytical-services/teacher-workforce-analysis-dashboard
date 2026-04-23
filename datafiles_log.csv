@@ -1,6 +1,6 @@
 filename,status
-data/1_pupil_teacher_numbers_2026-04-23.parquet,unpublished
-data/2_pgitt_need_timeseries_2026-04-23.parquet,unpublished
-data/3_drivers_analysis_2026-04-23.parquet,unpublished
-data/4_flow_trajectories_2025_publication_2026-04-23.parquet,unpublished
-data/5_flow_trajectories_2026_publication_2026-04-23.parquet,unpublished
+data/1_pupil_teacher_numbers_2026-04-23.parquet,published
+data/2_pgitt_need_timeseries_2026-04-23.parquet,published
+data/3_drivers_analysis_2026-04-23.parquet,published
+data/4_flow_trajectories_2025_publication_2026-04-23.parquet,published
+data/5_flow_trajectories_2026_publication_2026-04-23.parquet,published
