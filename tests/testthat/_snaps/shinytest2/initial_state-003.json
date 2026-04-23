@@ -1,9 +1,9 @@
 {
   "input": {
-    "file_type_drivers": "CSV (Up to X.XX MB)",
-    "file_type_flows": "CSV (Up to X.XX MB)",
-    "file_type_pgitt_need": "CSV (Up to X.XX MB)",
-    "file_type_pupil_teacher": "XLSX (Up to X.XX MB)",
+    "file_type_drivers": "CSV (Up to 1 MB)",
+    "file_type_flows": "CSV (Up to 1 MB)",
+    "file_type_pgitt_need": "CSV (Up to 1 MB)",
+    "file_type_pupil_teacher": "XLSX (Up to 1 MB)",
     "filter_flow_type": "Total leaver rate",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Primary",
