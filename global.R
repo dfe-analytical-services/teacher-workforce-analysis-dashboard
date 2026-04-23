@@ -144,20 +144,9 @@ choices_pgitt_need_subject <- c(
   sort(setdiff(unique(pgitt_need_timeseries$subject), "Total"))
 )
 
-
 # Add data for drivers ----------------------------------------------------------
 
-# rename last year's/this year's need to 2025/26 PGITT need and 2026/27
-# to be consistent with final dataset - TO DELETE
-
-drivers_data <- read_drivers_data() %>%
-  mutate(
-    driver = recode(
-      driver,
-      "Last year's need" = "2025/26 PGITT need",
-      "This year's need" = "2026/27 PGITT need"
-    )
-  )
+drivers_data <- read_drivers_data()
 
 # phase and subject list for drivers tab
 
@@ -171,7 +160,6 @@ choices_drivers_subject <- c(
   "Total",
   sort(setdiff(unique(drivers_data$subject), "Total"))
 )
-
 
 # Add data for flow trajectories  ---------------------------------------------------
 
