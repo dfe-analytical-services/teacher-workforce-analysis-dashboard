@@ -157,12 +157,12 @@ server <- function(input, output, session) {
     for_download = FALSE,
     axis_lock = NULL
   ) {
-    # dynamic labels (used inside plot function already, but keeping here is fine)
+    # dynamic labels
     phase_title <- if (tolower(phase) == "primary") "Primary" else "Secondary"
     left_title <- paste0(phase_title, " pupils")
     right_title <- paste0(phase_title, " teachers")
 
-    # Let plot_pupil_teacher_timeseries() handle y scales & sec.axis,
+    # plot_pupil_teacher_timeseries() handles y scales & sec.axis,
     # including the manual lock (breaks and matching).
     p <- plot_pupil_teacher_timeseries(
       df,
@@ -191,7 +191,7 @@ server <- function(input, output, session) {
     p
   }
 
-  # create the ggiraph plot to display on the app
+  # Create the ggiraph plot to display on the app
 
   output$pupil_teacher_plot <- ggiraph::renderGirafe({
     df <- pt_data_filtered() # filtered data
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table: pupil/teacher numbers
+  # Table: pupil/teacher numbers - interactive via govReactable
 
   output$pupil_teacher_table <- renderGovReactable({
     df <- pt_data_filtered() %>%
@@ -246,8 +246,7 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )
@@ -305,11 +304,11 @@ server <- function(input, output, session) {
         "twm_pupil_teacher_numbers_",
         phase_clean,
         "_",
-        Sys.Date()
+        "2026-04-23"
       )
-      extension <- if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_pupil_teacher == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_pupil_teacher == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -318,10 +317,10 @@ server <- function(input, output, session) {
     },
     ## Generate downloaded file
     content = function(file) {
-      if (input$file_type_pupil_teacher == "CSV (Up to X.XX MB)") {
+      if (input$file_type_pupil_teacher == "CSV (Up to 1 MB)") {
         write.csv(download_table_pupil_teacher_data(), file, row.names = FALSE)
-      } else if (input$file_type_pupil_teacher == "XLSX (Up to X.XX MB)") {
-        # Added a basic pop up notification as the Excel file can take time to generate
+      } else if (input$file_type_pupil_teacher == "XLSX (Up to 1 MB)") {
+        # Basic pop up notification as the Excel file can take time to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         openxlsx::write.xlsx(
           download_table_pupil_teacher_data(),
@@ -334,7 +333,7 @@ server <- function(input, output, session) {
           ggplot2::ggsave(
             filename = tempfile(paste0(
               "twm_pupil_teacher_numbers_",
-              Sys.Date(),
+              "2026-04-23",
               ".jpeg"
             )),
             plot = download_chart_pupil_teacher_data(),
@@ -461,7 +460,16 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table: PGITT trainee need timeseries table for app (interactive via reactable)
+  # Render reactive table title as GOV.UK–styled text
+  # uiOutput() is used in the twm_tab UI to allow this to update dynamically
+
+  # For table
+
+  output$pgitt_need_ts_title_ui <- renderUI({
+    heading_text(pgitt_need_ts_title(), level = 3, size = "s")
+  })
+
+  # Table: PGITT trainee need timeseries table for app (interactive via govReactable)
 
   output$pgitt_need_timeseries_table <- renderGovReactable({
     df <- pgitt_need_filtered() %>%
@@ -469,14 +477,14 @@ server <- function(input, output, session) {
         `Academic year` = academic_year,
         Phase = phase,
         Subject = subject,
-        `PGITT trainee need` = pgitt_trainee_need,
-        `Difference in need to previous year` = difference_to_previous_year,
+        `PGITT trainee need` = pgitt_trainee_need_count,
+        `Difference in need to previous year` = difference_to_previous_year_count,
         `Percentage change in need to previous year` =
-          percentage_difference_to_previous_year
+          difference_to_previous_year_percent
       )
 
     # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+    if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
       df <- dplyr::select(df, -Subject)
     }
 
@@ -503,18 +511,6 @@ server <- function(input, output, session) {
   })
 
 
-  # Update table so that it has reactable caption
-
-  output$pgitt_need_timeseries_table_ui <- renderUI({
-    govReactableOutput(
-      "pgitt_need_timeseries_table",
-      caption = pgitt_need_ts_title(),
-      caption_size = "1",
-      heading_level = "h3"
-    )
-  })
-
-
   # Create download dataset (matches table)
 
   download_table_pgitt_need_data <- reactive({
@@ -523,13 +519,13 @@ server <- function(input, output, session) {
         `Academic year` = academic_year,
         Phase = phase,
         Subject = subject,
-        `PGITT trainee need` = pgitt_trainee_need,
-        `Difference in need to previous year` = difference_to_previous_year,
+        `PGITT trainee need` = pgitt_trainee_need_count,
+        `Difference in need to previous year` = difference_to_previous_year_count,
         `Percentage change in need to previous year` =
-          percentage_difference_to_previous_year
+          difference_to_previous_year_percent
       )
     # Drop subject column from dataset if phase is primary
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
+    if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
       df <- dplyr::select(df, -Subject)
     }
     df
@@ -559,21 +555,22 @@ server <- function(input, output, session) {
     # phase and subject (if not primary)
     filename = function() {
       phase_lower <- tolower(input$filter_phase_pgitt_need)
-      subject_lower <- tolower(input$filter_subject_pgitt_need)
+      subject_lower <- tolower(input$filter_subject_pgitt_need) %>%
+        stringr::str_replace_all(" ", "_")
 
       filter_select <- dplyr::case_when(
         phase_lower == "primary" ~ "primary",
+        phase_lower == "total" ~ "total",
         phase_lower == "secondary" & subject_lower == "total" ~ "secondary",
-        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower,
-        TRUE ~ subject_lower
+        phase_lower == "secondary" & subject_lower != "total" ~ subject_lower
       )
 
-      file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", Sys.Date())
+      file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", "2026-04-23")
 
-      # Keep mapping identical to your earlier block for consistency
-      extension <- if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
+      # Keep mapping identical to earlier block for consistency
+      extension <- if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_pgitt_need == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_pgitt_need == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -581,14 +578,14 @@ server <- function(input, output, session) {
       paste0(file_name, extension)
     },
     content = function(file) {
-      if (input$file_type_pgitt_need == "CSV (Up to X.XX MB)") {
+      if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
         utils::write.csv(
           download_table_pgitt_need_data(),
           file,
           row.names = FALSE
         )
-      } else if (input$file_type_pgitt_need == "XLSX (Up to X.XX MB)") {
-        # Optional: notify because Excel can take a little while to generate
+      } else if (input$file_type_pgitt_need == "XLSX (Up to 1 MB)") {
+        # Notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
         openxlsx::write.xlsx(
@@ -600,7 +597,7 @@ server <- function(input, output, session) {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
           "twm_pgitt_need_timeseries_",
-          Sys.Date(),
+          "2026-04-23",
           ".jpeg"
         ))
         ggplot2::ggsave(
@@ -623,7 +620,8 @@ server <- function(input, output, session) {
 
   drivers_filtered <- reactive({
     df <- drivers_data %>%
-      filter(phase == input$filter_phase_drivers)
+      filter(phase == input$filter_phase_drivers) %>%
+      mutate(value = round(value, 1))
 
     # If primary force subject = Total
     if (input$filter_phase_drivers == "Primary") {
@@ -645,24 +643,17 @@ server <- function(input, output, session) {
   })
 
 
-  # Export the reactive title as plain text for use in table 1 header
-
-  output$drivers_title <- renderText({
-    drivers_title()
-  })
-
-
   # Render the text in heading_text format
 
   output$drivers_table_1_heading <- renderUI({
-    heading_text(drivers_title(), level = 4, size = "s")
+    heading_text(drivers_title(), level = 3, size = "s")
   })
 
 
   # Plot builder for drivers analysis which adds title & larger text for downloads
 
   build_drivers_waterfall_plot <- function(df, for_download = FALSE) {
-    p <- plot_drivers_waterfall(df) # your existing ggplot builder
+    p <- plot_drivers_waterfall(df) # existing ggplot builder
 
     if (for_download) {
       # Increase size of existing data labels
@@ -732,7 +723,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # Table 1: Drivers analysis with last year's PGITT need, this year's PGITT need, overall difference (interactive via reactable)
+  # Table 1: Drivers analysis with last year's PGITT need, this year's PGITT need, overall difference (interactive via govReactable)
 
   output$table_pgitt_need_diff <- renderGovReactable({
     df_wide <- drivers_filtered() %>%
@@ -763,14 +754,13 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )
   })
 
-  # Table 2: Drivers analysis with drivers breakdown (interactive via reactable)
+  # Table 2: Drivers analysis with drivers breakdown (interactive via govReactable)
 
   output$table_drivers_breakdown <- renderGovReactable({
     df <- drivers_filtered() %>%
@@ -802,8 +792,7 @@ server <- function(input, output, session) {
       right_col = c("Value"),
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )
@@ -826,7 +815,8 @@ server <- function(input, output, session) {
           "NQEs from other sources" = "Newly qualified entrants from other sources",
           "ITT-NQE conversion rate" = "Initial teacher training - newly qualified entrant conversion rate",
           "2026/27 PGITT need" = "2026/27 PGITT trainee need"
-        )
+        ),
+        value = round(value, 1)
       ) %>%
       dplyr::rename_with(~ tools::toTitleCase(.x)) %>%
       dplyr::select(Phase, Subject, Driver, Value)
@@ -844,7 +834,7 @@ server <- function(input, output, session) {
     build_drivers_waterfall_plot(drivers_filtered(), for_download = TRUE)
   })
 
-  # Download button UI (
+  # Download button UI
   output$download_button_ui_drivers <- renderUI({
     shinyGovstyle::download_button(
       "download_drivers",
@@ -860,7 +850,8 @@ server <- function(input, output, session) {
     # phase and subject (if not primary)
     filename = function() {
       phase_lower <- tolower(input$filter_phase_drivers)
-      subject_lower <- tolower(input$filter_subject_drivers)
+      subject_lower <- tolower(input$filter_subject_drivers) %>%
+        stringr::str_replace_all(" ", "_")
 
       filter_select <- dplyr::case_when(
         phase_lower == "primary" ~ "primary",
@@ -869,11 +860,11 @@ server <- function(input, output, session) {
         TRUE ~ subject_lower
       )
 
-      file_name <- paste0("twm_drivers_", filter_select, "_", Sys.Date())
+      file_name <- paste0("twm_drivers_", filter_select, "_", "2026-04-23")
 
-      extension <- if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_drivers == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_drivers == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -881,9 +872,9 @@ server <- function(input, output, session) {
       paste0(file_name, extension)
     },
     content = function(file) {
-      if (input$file_type_drivers == "CSV (Up to X.XX MB)") {
+      if (input$file_type_drivers == "CSV (Up to 1 MB)") {
         utils::write.csv(download_table_drivers_data(), file, row.names = FALSE)
-      } else if (input$file_type_drivers == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_drivers == "XLSX (Up to 1 MB)") {
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
         openxlsx::write.xlsx(
@@ -892,8 +883,8 @@ server <- function(input, output, session) {
           colWidths = "Auto"
         )
       } else {
-        # JPEG: save static ggplot (interactive tooltips are not present in static export)
-        tmp_file <- tempfile(paste0("twm_drivers_", Sys.Date(), ".jpeg"))
+        # JPEG: save static ggplot
+        tmp_file <- tempfile(paste0("twm_drivers_", "2026-04-23", ".jpeg"))
         ggplot2::ggsave(
           filename = tmp_file,
           plot = download_drivers_waterfall_plot(),
@@ -1029,7 +1020,7 @@ server <- function(input, output, session) {
   # For table
 
   output$flow_traj_title_table_ui <- renderUI({
-    gov_text(strong(flow_traj_title()))
+    heading_text(flow_traj_title(), level = 3, size = "s")
   })
 
 
@@ -1128,7 +1119,7 @@ server <- function(input, output, session) {
         Value = if (is_leaver_table) {
           round(Value * 100, 1) # 0.056 → 5.6
         } else {
-          round(Value, 0) # 1234 → 1234
+          round(Value, 0)
         }
       )
 
@@ -1159,7 +1150,8 @@ server <- function(input, output, session) {
       # make file name which adds selected
       # phase, subject (if not primary) and flow type
       phase_lower <- tolower(input$filter_phase_flow)
-      subject_lower <- tolower(input$filter_subject_flow)
+      subject_lower <- tolower(input$filter_subject_flow) %>%
+        stringr::str_replace_all(" ", "_")
       flow_type_lower <- tolower(input$filter_flow_type) %>%
         stringr::str_replace_all(" ", "_")
 
@@ -1172,13 +1164,12 @@ server <- function(input, output, session) {
 
       file_name <- paste0(
         "twm_flow_trajectories_", filter_select, "_",
-        flow_type_lower, "_", Sys.Date()
+        flow_type_lower, "_", "2026-04-23"
       )
 
-      # Keep mapping identical to your earlier block for consistency
-      extension <- if (input$file_type_flows == "CSV (Up to X.XX MB)") {
+      extension <- if (input$file_type_flows == "CSV (Up to 1 MB)") {
         ".csv"
-      } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
+      } else if (input$file_type_flows == "XLSX (Up to 1 MB)") {
         ".xlsx"
       } else {
         ".jpeg"
@@ -1186,14 +1177,14 @@ server <- function(input, output, session) {
       paste0(file_name, extension)
     },
     content = function(file) {
-      if (input$file_type_flows == "CSV (Up to X.XX MB)") {
+      if (input$file_type_flows == "CSV (Up to 1 MB)") {
         utils::write.csv(
           download_table_flow_trajectories(),
           file,
           row.names = FALSE
         )
-      } else if (input$file_type_flows == "XLSX (Up to X.XX MB)") {
-        # Optional: notify because Excel can take a little while to generate
+      } else if (input$file_type_flows == "XLSX (Up to 1 MB)") {
+        # Notify because Excel can take a little while to generate
         pop_up <- showNotification("Generating download file", duration = NULL)
         on.exit(removeNotification(pop_up), add = TRUE)
         openxlsx::write.xlsx(
@@ -1205,7 +1196,7 @@ server <- function(input, output, session) {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
           "twm_flow_trajectories_",
-          Sys.Date(),
+          "2026-04-23",
           ".jpeg"
         ))
         ggplot2::ggsave(
@@ -1230,18 +1221,24 @@ server <- function(input, output, session) {
 
   observeEvent(input$link_to_teacher_demand_traj, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "Teacher demand trajectories")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # PGITT trainee need calculation link
 
   observeEvent(input$link_to_pgitt_need_calc, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need calculation")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # PGITT trainee need time series link
 
   observeEvent(input$link_to_pgitt_need_ts, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need time series")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # Drivers analysis link
@@ -1254,6 +1251,8 @@ server <- function(input, output, session) {
     ),
     {
       updateTabsetPanel(session, "twm_tabsetpanels", selected = "Drivers of change in PGITT trainee need")
+      # Force scroll to top
+      shinyjs::runjs("window.scrollTo(0, 0);")
     }
   )
 
@@ -1261,12 +1260,16 @@ server <- function(input, output, session) {
 
   observeEvent(input$link_to_flow_traj, {
     updateTabsetPanel(session, "twm_tabsetpanels", selected = "Flow trajectories")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # User guide link
 
   observeEvent(input$link_to_user_guide, {
     updateTabsetPanel(session, "navlistPanel", selected = "User guide")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   # Support and feedback link

@@ -58,7 +58,7 @@ test_that("plot_pgitt_need_timeseries works and returns an interactive ggplot", 
     academic_year = c("2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26"),
     phase = "Secondary",
     subject = rep("Biology", 6),
-    pgitt_trainee_need = c(200, 210, 220, 230, 240, 250)
+    pgitt_trainee_need_count = c(200, 210, 220, 230, 240, 250)
   )
 
   # Call plot function

@@ -77,9 +77,15 @@ ui <- function(input, output, session) {
 
     # Beta banner -------------------------------------------------------------
     shinyGovstyle::banner(
-      "beta banner",
-      "Beta",
-      "This dashboard is in beta phase and we are still reviewing performance and reliability."
+      inputId = "beta-banner",
+      type = "Beta",
+      label = paste0(
+        "This dashboard is in beta phase and we are still reviewing performance and reliability. ",
+        'Use this <a href="https://forms.cloud.microsoft/e/NZ5fLvCyBX" ',
+        'target="_blank" rel="noopener noreferrer">',
+        "feedback form (opens in new tab)</a> ",
+        "or email ittstatistics.publications@education.gov.uk with general queries."
+      )
     ),
 
     # Nav panels --------------------------------------------------------------

@@ -77,12 +77,12 @@ test_that("{shinytest2} recording: initial_state", {
 
   app$set_inputs(
     main_tabs_pupil_teacher = "Download",
-    file_type_pupil_teacher = "XLSX (Up to X.XX MB)"
+    file_type_pupil_teacher = "XLSX (Up to 1 MB)"
   )
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 
-  app$set_inputs(file_type_pupil_teacher = "JPEG (Up to XXX KB)")
+  app$set_inputs(file_type_pupil_teacher = "JPEG (Up to 500 KB)")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 
@@ -99,7 +99,7 @@ test_that("{shinytest2} recording: initial_state", {
   app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_pgitt_trainee_need = "Download")
-  app$set_inputs(file_type_pgitt_need = "XLSX (Up to X.XX MB)")
+  app$set_inputs(file_type_pgitt_need = "XLSX (Up to 1 MB)")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 
@@ -115,11 +115,11 @@ test_that("{shinytest2} recording: initial_state", {
   app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(main_tabs_drivers_analysis = "Download")
-  app$set_inputs(file_type_drivers = "XLSX (Up to X.XX MB)")
+  app$set_inputs(file_type_drivers = "XLSX (Up to 1 MB)")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 
-  app$set_inputs(file_type_drivers = "JPEG (Up to XXX KB)")
+  app$set_inputs(file_type_drivers = "JPEG (Up to 500 KB)")
   app$set_inputs(main_tabs_drivers_analysis = "Chart")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
@@ -148,8 +148,8 @@ test_that("{shinytest2} recording: initial_state", {
   app$set_inputs(filter_phase_flow = "Primary")
   app$set_inputs(filter_flow_type = "Returners")
   app$set_inputs(main_tabs_flow_trajectories = "Download")
-  app$set_inputs(file_type_flows = "XLSX (Up to X.XX MB)")
-  app$set_inputs(file_type_flows = "JPEG (Up to XXX KB)")
+  app$set_inputs(file_type_flows = "XLSX (Up to 1 MB)")
+  app$set_inputs(file_type_flows = "JPEG (Up to 500 KB)")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 
