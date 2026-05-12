@@ -57,6 +57,7 @@ shhh(library(shinyalert))
 # them, saving on load time.
 if (FALSE) {
   shhh(library(shinytest2))
+  shhh(library(rsconnect))
   shhh(library(chromote))
   shhh(library(testthat))
 }
@@ -81,13 +82,13 @@ lapply(list.files("R/ui_panels/", full.names = TRUE), source)
 
 # Set global variables --------------------------------------------------------
 
-site_title <- "Teacher Workforce Supply Dashboard (England)" # name of app # UPDATED
-parent_pub_name <- "Statistical publication" # name of source publication # TBC
+site_title <- "Teacher workforce analysis dashboard (England)" # name of app
+parent_pub_name <- "Teacher demand and postgraduate trainee need" # name of source publication
 parent_publication <- # link to source publication
-  "https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships" # TBC
+  "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27"
 
 # Set the URLs that the site will be published to
-site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-template/" # ??
+site_primary <- "https://department-for-education.shinyapps.io/teacher-workforce-analysis-dashboard/"
 
 # Combine URLs into list for disconnect function
 # We can add further mirrors where necessary. Each one can generally handle
@@ -95,7 +96,7 @@ site_primary <- "https://department-for-education.shinyapps.io/dfe-shiny-templat
 sites_list <- c(site_primary)
 
 # Set the key for Google Analytics tracking
-google_analytics_key <- "Z967JJVQQX" # ??
+google_analytics_key <- "437MHW92CL"
 
 # End of global variables -----------------------------------------------------
 
@@ -115,7 +116,6 @@ showtext_auto()
 
 # Read in the data ------------------------------------------------------------
 
-
 # Add data for teacher and pupil numbers ----------------------------------------
 
 pupil_teacher_numbers <- read_pupil_teacher_numbers()
@@ -130,25 +130,23 @@ choices_pupil_teacher_phase <- sort(unique(pupil_teacher_numbers$phase))
 pgitt_need_timeseries <- read_pgitt_need_timeseries()
 
 # phase and subject list for pgitt trainee need tab filter
-# sort phase so primary first
+# sort phase so total first
 
-choices_pgitt_need_phase <- sort(unique(pgitt_need_timeseries$phase))
+choices_pgitt_need_phase <- c(
+  "Total",
+  sort(setdiff(unique(pgitt_need_timeseries$phase), "Total"))
+)
 
 # make a unique subject list but it starts with total
 
-choices_pgitt_need_subject <- c("Total", sort(setdiff(unique(pgitt_need_timeseries$subject), "Total")))
-
+choices_pgitt_need_subject <- c(
+  "Total",
+  sort(setdiff(unique(pgitt_need_timeseries$subject), "Total"))
+)
 
 # Add data for drivers ----------------------------------------------------------
 
-# rename last year's/this year's need to 2025/26 PGITT need and 2026/27
-# to be consistent with final dataset - TO DELETE
-
-drivers_data <- read_drivers_data() %>%
-  mutate(driver = recode(driver,
-    "Last year's need" = "2025/26 PGITT need",
-    "This year's need" = "2026/27 PGITT need"
-  ))
+drivers_data <- read_drivers_data()
 
 # phase and subject list for drivers tab
 
@@ -158,42 +156,24 @@ choices_drivers_phase <- sort(unique(drivers_data$phase))
 
 # make a unique subject list but it starts with total
 
-choices_drivers_subject <- c("Total", sort(setdiff(unique(drivers_data$subject), "Total")))
-
+choices_drivers_subject <- c(
+  "Total",
+  sort(setdiff(unique(drivers_data$subject), "Total"))
+)
 
 # Add data for flow trajectories  ---------------------------------------------------
 
-flow_data_last_year <- read_flows_data()
+# read in 2025 publication data
 
-# make dummy data for this year
+flow_data_2025_publication <- read_flows_2025_publication_data()
 
-# copy values for final year and make them dummy values for 2027/28 - REMOVE ONCE REAL DATA IS PUBLISHED
+# read in 2026 publication data
 
-dummy_27_flow_data_all_bar_NQEs <- flow_data_last_year %>%
-  filter(type != "Newly qualified entrants" & academic_year == "2026/27") %>%
-  mutate(academic_year = "2027/28", year = 2027)
-
-dummy_26_flow_data_NQE <- flow_data_last_year %>%
-  filter(type == "Newly qualified entrants" & academic_year == "2025/26") %>%
-  mutate(academic_year = "2026/27", year = 2026)
-
-# bind to original dataset
-
-dummy_flow_data_this_year <- bind_rows(flow_data_last_year, dummy_27_flow_data_all_bar_NQEs, dummy_26_flow_data_NQE) %>%
-  mutate(
-    historic_or_trajectory = ifelse(year >= 2025, "Trajectory", "Historic"),
-    value = value * 1.1,
-    version = "This year (dummy data)"
-  )
+flow_data_2026_publication <- read_flows_2026_publication_data()
 
 # final dataset
 
-flow_data <- bind_rows(flow_data_last_year, dummy_flow_data_this_year) %>%
-  filter(!is.na(value))
-
-# remove others
-
-rm(flow_data_last_year, dummy_27_flow_data_all_bar_NQEs, dummy_26_flow_data_NQE, dummy_flow_data_this_year)
+flow_data <- bind_rows(flow_data_2025_publication, flow_data_2026_publication)
 
 # save values of phase, subject and flow type
 
@@ -201,13 +181,22 @@ choices_flow_phase <- sort(unique(flow_data$phase))
 
 choices_flow_subject <- sort(unique(flow_data$subject))
 
-choices_flow_type <- c("Total leaver rate", "Under 55 leaver rate", "55+ leaver rate", "Newly qualified entrants", "New to state-funded sector entrants", "Returners")
+choices_flow_type <- c(
+  "Total leaver rate",
+  "Under 55 leaver rate",
+  "55+ leaver rate",
+  "Newly qualified entrants",
+  "New to state-funded sector entrants",
+  "Returners"
+)
 
 # set display labels for flow type to include abbreviations for drop down filter list
 
 flow_type_labels <- dplyr::case_when(
-  choices_flow_type == "Newly qualified entrants" ~ "Newly qualified entrants (NQEs)",
-  choices_flow_type == "New to state-funded sector entrants" ~ "New to state-funded sector (NTSF) entrants",
+  choices_flow_type == "Newly qualified entrants" ~
+    "Newly qualified entrants (NQEs)",
+  choices_flow_type == "New to state-funded sector entrants" ~
+    "New to state-funded sector (NTSF) entrants",
   TRUE ~ choices_flow_type
 )
 

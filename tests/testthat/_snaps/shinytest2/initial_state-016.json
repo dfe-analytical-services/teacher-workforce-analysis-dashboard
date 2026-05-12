@@ -1,10 +1,10 @@
 {
   "input": {
-    "file_type_drivers": "XLSX (Up to 1 MB)",
-    "file_type_flows": "CSV (Up to 1 MB)",
+    "file_type_drivers": "JPEG (Up to 500 KB)",
+    "file_type_flows": "JPEG (Up to 500 KB)",
     "file_type_pgitt_need": "XLSX (Up to 1 MB)",
     "file_type_pupil_teacher": "JPEG (Up to 500 KB)",
-    "filter_flow_type": "Total leaver rate",
+    "filter_flow_type": "Returners",
     "filter_phase": "Primary",
     "filter_phase_drivers": "Secondary",
     "filter_phase_flow": "Primary",
@@ -13,7 +13,7 @@
     "filter_subject_flow": "Total",
     "filter_subject_pgitt_need": "Computing",
     "main_tabs_drivers_analysis": "Download",
-    "main_tabs_flow_trajectories": "Chart",
+    "main_tabs_flow_trajectories": "Download",
     "main_tabs_pgitt_trainee_need": "Download",
     "main_tabs_pupil_teacher": "Download",
     "twm_tabsetpanels": "Introduction"

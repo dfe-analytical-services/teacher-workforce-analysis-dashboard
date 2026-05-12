@@ -21,7 +21,9 @@
 ui <- function(input, output, session) {
   bslib::page_fluid(
     # Set application metadata ------------------------------------------------
-    tags$head(HTML("<title>Teacher Workforce Supply Dashboard (England)</title>")),
+    tags$head(HTML(
+      "<title>Teacher workforce analysis dashboard (England)</title>"
+    )),
     tags$head(tags$link(rel = "shortcut icon", href = "dfefavicon.png")),
     use_shiny_title(),
     useShinyjs(),
@@ -29,8 +31,8 @@ ui <- function(input, output, session) {
     # Add meta description for search engines
     meta() %>%
       meta_general(
-        application_name = "Teacher Workforce Supply Dashboard (England)",
-        description = "Teacher Workforce Supply Dashboard (England)",
+        application_name = "Teacher workforce analysis dashboard (England)",
+        description = "Teacher workforce analysis dashboard (England)",
         robots = "index,follow",
         generator = "R-Shiny",
         subject = "stats development",
@@ -53,7 +55,7 @@ ui <- function(input, output, session) {
     # Setting up cookie consent based on a cookie recording the consent:
     dfeshiny::dfe_cookies_script(),
     dfeshiny::cookies_banner_ui(
-      name = "Teacher Workforce Supply Dashboard (England)"
+      name = "Teacher workforce analysis dashboard (England)"
     ),
 
     # Google analytics --------------------------------------------------------
@@ -67,14 +69,23 @@ ui <- function(input, output, session) {
     shinyGovstyle::skip_to_main(),
     shinyGovstyle::header(
       main_text = "Department for Education",
-      secondary_text = "Teacher Workforce Supply Dashboard"
+      secondary_text = "Teacher workforce analysis dashboard (England)" # This is setting the page header!
     ),
+
+    # Google analytics --------------------------------------------------------
+    tags$head(includeHTML(("google-analytics.html"))),
 
     # Beta banner -------------------------------------------------------------
     shinyGovstyle::banner(
-      "beta banner",
-      "Beta",
-      "This dashboard is in beta phase and we are still reviewing performance and reliability."
+      inputId = "beta-banner",
+      type = "Beta",
+      label = paste0(
+        "This dashboard is in beta phase and we are still reviewing performance and reliability. ",
+        'Use this <a href="https://forms.cloud.microsoft/e/NZ5fLvCyBX" ',
+        'target="_blank" rel="noopener noreferrer">',
+        "feedback form (opens in new tab)</a> ",
+        "or email ittstatistics.publications@education.gov.uk with general queries."
+      )
     ),
 
     # Nav panels --------------------------------------------------------------
@@ -84,8 +95,8 @@ ui <- function(input, output, session) {
       widths = c(2, 8),
       well = FALSE,
       # Content for these panels is defined in the R/ui_panels/ folder
-      user_guide_panel(),
       twm_tab_panel(),
+      user_guide_panel(),
       shiny::tabPanel(
         value = "a11y_panel",
         "Accessibility",
@@ -111,7 +122,7 @@ ui <- function(input, output, session) {
         support_panel(
           team_email = "ittstatistics.publications@education.gov.uk",
           repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
-          form_url = "https://forms.office.com"
+          form_url = "https://forms.cloud.microsoft/e/NZ5fLvCyBX"
         )
       )
     ),

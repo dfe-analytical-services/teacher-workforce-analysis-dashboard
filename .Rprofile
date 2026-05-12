@@ -11,6 +11,8 @@ message("Sourcing .Rprofile...")
 
 source("renv/activate.R")
 
+renv::status()
+
 if (system.file(package = "dfeshiny") != "") {
   library(dfeshiny)
 } else {

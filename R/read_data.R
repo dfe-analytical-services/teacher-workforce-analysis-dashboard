@@ -15,7 +15,9 @@
 
 # Pupil and teacher numbers data ----------------------------------------------
 
-read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_numbers.parquet") {
+read_pupil_teacher_numbers <- function(
+  file = "data/1_pupil_teacher_numbers_2026-04-23.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
 
@@ -45,10 +47,9 @@ read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_number
   df <- df %>%
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
-      pupil_numbers = round(pupil_numbers, 0), # round pupil numbers to nearest 0
-      teacher_numbers = round(
-        teacher_numbers, 0 # round teachers numbers to nearest 0
-      )
+      # update to floor() because round() uses "round to even" (banker's rounding) on x.5 values by default
+      teacher_numbers = floor(teacher_numbers + 0.5),
+      pupil_numbers = floor(pupil_numbers + 0.5)
     )
   return(df)
 }
@@ -56,7 +57,9 @@ read_pupil_teacher_numbers <- function(file = "data/dummy_1_pupil_teacher_number
 
 # PGITT need time series data --------------------------------------------------
 
-read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timeseries.parquet") {
+read_pgitt_need_timeseries <- function(
+  file = "data/2_pgitt_need_timeseries_2026-04-23.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
 
@@ -64,9 +67,10 @@ read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timese
   required_cols <- c(
     "time_period",
     "subject",
-    "subject_filter_group",
-    "pgitt_trainee_need",
-    "percentage_difference_to_previous_year"
+    "education_phase",
+    "pgitt_trainee_need_count",
+    "difference_to_previous_year_count",
+    "difference_to_previous_year_percent"
   )
 
   # check required columns
@@ -83,13 +87,11 @@ read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timese
   }
 
   df <- df %>%
-    rename(phase = subject_filter_group, ees_subject = subject) %>% # rename columns from pub names
+    rename(phase = education_phase) %>% # rename column from pub names
     mutate(
       start_year = as.integer(substr(time_period, 1, 4)), # create start year column
-      subject = if_else(phase == "Primary",
-        "Total",
-        ees_subject # if phase is primary set subject as total
-      )
+      # create academic year column
+      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100))
     )
   return(df)
 }
@@ -97,7 +99,7 @@ read_pgitt_need_timeseries <- function(file = "data/dummy_2_pgitt_targets_timese
 
 # Drivers analysis data -----------------------------------------------------------
 
-read_drivers_data <- function(file = "data/dummy_3_drivers_analysis.parquet") {
+read_drivers_data <- function(file = "data/3_drivers_analysis_2026-04-23.parquet") {
   df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
 
@@ -123,7 +125,7 @@ read_drivers_data <- function(file = "data/dummy_3_drivers_analysis.parquet") {
   }
 
   df <- df %>%
-    mutate(value = round(value, digits = 1))
+    mutate(value = round(value, digits = 1)) # round values to 1 dp
 
   return(df)
 }
@@ -131,15 +133,20 @@ read_drivers_data <- function(file = "data/dummy_3_drivers_analysis.parquet") {
 
 # Flow trajectories data ------------------------------------------------------------------------------------------
 
-read_flows_data <- function(file = "data/dummy_4_flow_trajectories_2025_publication.parquet") {
+# 2025 publication data
+
+read_flows_2025_publication_data <- function(
+  file = "data/4_flow_trajectories_2025_publication_2026-04-23.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() %>% # make r friendly column names
-    rename(academic_year = year) %>%
     mutate(
-      unit = if_else(str_detect(type, "leaver"), "%", "FTE"), # make a column of unit which is % for leaver rates and FTE for entrants
-      year = as.integer(substr(academic_year, 1, 4)), # create start year column
-      version = "Last year"
-    )
+      start_year = as.integer(substr(academic_year, 1, 4)) # create start year column
+    ) %>%
+    # NQE trajectories are only for two years ahead
+    # remove 3rd year row which has NA data
+    # to prevent the table/downloads having an NA row
+    filter(!is.na(value))
 
   # required columns
   required_cols <- c(
@@ -159,7 +166,51 @@ read_flows_data <- function(file = "data/dummy_4_flow_trajectories_2025_publicat
   if (length(missing) > 0) {
     stop(
       paste0(
-        "❌ Missing required columns in flows file: ",
+        "❌ Missing required columns in flows 2025 file: ",
+        paste(missing, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  return(df)
+}
+
+
+# 2026 publication data
+
+read_flows_2026_publication_data <- function(
+  file = "data/5_flow_trajectories_2026_publication_2026-04-23.parquet"
+) {
+  df <- read_parquet(file) %>%
+    clean_names() %>% # make r friendly column names
+    mutate(
+      start_year = as.integer(substr(academic_year, 1, 4)) # create start year column
+    ) %>%
+    # NQE trajectories are only for two years ahead
+    # remove 3rd year row which has NA data
+    # to prevent the table/downloads having an NA row
+    filter(!is.na(value))
+
+  # required columns
+  required_cols <- c(
+    "phase",
+    "subject",
+    "type",
+    "academic_year",
+    "value",
+    "unit",
+    "historic_or_trajectory",
+    "publication_year"
+  )
+
+  # check required columns
+  missing <- setdiff(required_cols, names(df))
+
+  if (length(missing) > 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in flows 2026 file: ",
         paste(missing, collapse = ", ")
       ),
       call. = FALSE
