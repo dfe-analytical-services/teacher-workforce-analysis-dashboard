@@ -108,6 +108,7 @@ ui <- function(input, output, session) {
         "Support and feedback",
         support_panel(
           team_email = "ittstatistics.publications@education.gov.uk",
+          contact_name = "Melissa Cook",
           repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
           form_url = "https://forms.cloud.microsoft/e/NZ5fLvCyBX"
         )
