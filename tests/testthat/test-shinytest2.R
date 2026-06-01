@@ -37,17 +37,20 @@ all_outputs <- c(
   "pt_summary_box",
 
   # PGITT trainee need time series tab
-  "pgitt_need_timeseries_table_ui",
+  "pgitt_need_timeseries_table",
   "download_button_ui_pgitt_need",
+  "pgitt_need_ts_title_ui",
 
   # Drivers tab
   "table_pgitt_need_diff",
   "table_drivers_breakdown",
   "download_button_ui_drivers",
+  "drivers_table_1_heading",
 
   # Flow trajectories tab
   "table_flow_trajectories",
-  "download_button_ui_flows"
+  "download_button_ui_flows",
+  "flow_traj_title_table_ui"
 )
 
 
