@@ -1282,6 +1282,8 @@ server <- function(input, output, session) {
   # footer links -----------------------
   shiny::observeEvent(input$accessibility_footer_link, {
     shiny::updateTabsetPanel(session, "navlistPanel", selected = "a11y_panel")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   shiny::observeEvent(input$cookies_footer_link, {
@@ -1290,6 +1292,8 @@ server <- function(input, output, session) {
       "navlistPanel",
       selected = "cookies_panel_ui"
     )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   shiny::observeEvent(input$support_footer_link, {
@@ -1298,6 +1302,8 @@ server <- function(input, output, session) {
       "navlistPanel",
       selected = "support_panel_ui"
     )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
   shiny::observeEvent(input$privacy_footer_link, {
