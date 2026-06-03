@@ -1280,27 +1280,33 @@ server <- function(input, output, session) {
 
 
   # footer links -----------------------
-  shiny::observeEvent(input$accessibility_statement, {
+  shiny::observeEvent(input$accessibility_footer_link, {
     shiny::updateTabsetPanel(session, "navlistPanel", selected = "a11y_panel")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
-  shiny::observeEvent(input$use_of_cookies, {
+  shiny::observeEvent(input$cookies_footer_link, {
     shiny::updateTabsetPanel(
       session,
       "navlistPanel",
       selected = "cookies_panel_ui"
     )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
-  shiny::observeEvent(input$support_and_feedback, {
+  shiny::observeEvent(input$support_footer_link, {
     shiny::updateTabsetPanel(
       session,
       "navlistPanel",
       selected = "support_panel_ui"
     )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
-  shiny::observeEvent(input$privacy_notice, {
+  shiny::observeEvent(input$privacy_footer_link, {
     showModal(modalDialog(
       external_link(
         "https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter", # nolint
@@ -1327,7 +1333,7 @@ server <- function(input, output, session) {
     )
   })
 
-  shiny::observeEvent(input$external_link, {
+  shiny::observeEvent(input$external_footer_link, {
     showModal(modalDialog(
       external_link(
         "https://shiny.posit.co/",

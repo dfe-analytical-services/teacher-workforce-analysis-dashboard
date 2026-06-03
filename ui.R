@@ -97,20 +97,7 @@ ui <- function(input, output, session) {
       # Content for these panels is defined in the R/ui_panels/ folder
       twm_tab_panel(),
       user_guide_panel(),
-      shiny::tabPanel(
-        value = "a11y_panel",
-        "Accessibility",
-        dfeshiny::a11y_panel(
-          dashboard_title = site_title,
-          dashboard_url = site_primary,
-          date_tested = "12th March 2024",
-          date_prepared = "1st July 2024",
-          date_reviewed = "1st July 2024",
-          issues_contact = "explore.statistics@education.gov.uk",
-          non_accessible_components = c("List non-accessible components here"),
-          specific_issues = c("List specific issues here")
-        )
-      ),
+      dash_a11y_panel(),
       shiny::tabPanel(
         value = "cookies_panel_ui",
         "Cookies",
@@ -121,6 +108,7 @@ ui <- function(input, output, session) {
         "Support and feedback",
         support_panel(
           team_email = "ittstatistics.publications@education.gov.uk",
+          contact_name = "Melissa Cook",
           repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
           form_url = "https://forms.cloud.microsoft/e/NZ5fLvCyBX"
         )
@@ -131,11 +119,11 @@ ui <- function(input, output, session) {
     shinyGovstyle::footer(
       full = TRUE,
       links = c(
-        "Accessibility statement",
-        "Use of cookies",
-        "Support and feedback",
-        "Privacy notice",
-        "External link"
+        "Accessibility statement" = "accessibility_footer_link",
+        "Use of cookies" = "cookies_footer_link",
+        "Support and feedback" = "support_footer_link",
+        "Privacy notice" = "privacy_footer_link",
+        "External link" = "external_footer_link"
       )
     )
   )

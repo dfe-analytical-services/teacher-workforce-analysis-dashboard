@@ -77,8 +77,9 @@ source("R/helper_functions.R")
 
 gbp <- enc2utf8("\u00A3")
 
-# Source all files in the ui_panels folder
+# Source all files in the ui_panels and standard_panels folders
 lapply(list.files("R/ui_panels/", full.names = TRUE), source)
+lapply(list.files("R/standard_panels/", full.names = TRUE), source)
 
 # Set global variables --------------------------------------------------------
 
