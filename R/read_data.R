@@ -47,9 +47,10 @@ read_pupil_teacher_numbers <- function(
   df <- df %>%
     mutate(
       start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
-      # update to floor() because round() uses "round to even" (banker's rounding) on x.5 values by default
-      teacher_numbers = floor(teacher_numbers + 0.5),
-      pupil_numbers = floor(pupil_numbers + 0.5)
+      # use round_five_up() instead of round() to avoid banker's rounding
+      # (round-to-even behaviour for x.5 values).
+      teacher_numbers = dfeR::round_five_up(teacher_numbers, dp = 0),
+      pupil_numbers = dfeR::round_five_up(pupil_numbers, dp = 0)
     )
   return(df)
 }
@@ -91,7 +92,26 @@ read_pgitt_need_timeseries <- function(
     mutate(
       start_year = as.integer(substr(time_period, 1, 4)), # create start year column
       # create academic year column
-      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100))
+      academic_year = paste0(
+        start_year,
+        "/",
+        sprintf("%02d", (start_year + 1) %% 100)
+      ),
+      # format all numeric columns to appropriate number of dps
+      # use round_five_up() instead of round() to avoid banker's rounding
+      # (round-to-even behaviour for x.5 values).
+      pgitt_trainee_need_count = dfeR::round_five_up(
+        pgitt_trainee_need_count,
+        dp = 0
+      ),
+      difference_to_previous_year_count = dfeR::round_five_up(
+        difference_to_previous_year_count,
+        dp = 0
+      ),
+      difference_to_previous_year_percent = dfeR::round_five_up(
+        difference_to_previous_year_percent,
+        dp = 1
+      )
     )
   return(df)
 }
@@ -99,7 +119,9 @@ read_pgitt_need_timeseries <- function(
 
 # Drivers analysis data -----------------------------------------------------------
 
-read_drivers_data <- function(file = "data/3_drivers_analysis_2026-04-23.parquet") {
+read_drivers_data <- function(
+  file = "data/3_drivers_analysis_2026-04-23.parquet"
+) {
   df <- read_parquet(file) %>%
     clean_names() # make r friendly column names
 
@@ -124,8 +146,11 @@ read_drivers_data <- function(file = "data/3_drivers_analysis_2026-04-23.parquet
     )
   }
 
+  # round values to 1 dp
+  # use round_five_up() instead of round() to avoid banker's rounding
+  # (round-to-even behaviour for x.5 values).
   df <- df %>%
-    mutate(value = round(value, digits = 1)) # round values to 1 dp
+    mutate(value = dfeR::round_five_up(value, dp = 1))
 
   return(df)
 }
@@ -146,7 +171,19 @@ read_flows_2025_publication_data <- function(
     # NQE trajectories are only for two years ahead
     # remove 3rd year row which has NA data
     # to prevent the table/downloads having an NA row
-    filter(!is.na(value))
+    filter(!is.na(value)) %>%
+    # round values using round_five_up() because base R's round() uses
+    # banker's rounding (round-to-even) for values ending in .5.
+    # leaver rates are stored as proportions (e.g. 0.056 = 5.6%), so keep 3 dp.
+    # entrant values are counts, so round to 0 dp.
+    mutate(
+      value <- case_when(
+        grepl("leaver", type, ignore.case = TRUE) ~
+          dfeR::round_five_up(value, dp = 3),
+        TRUE ~
+          dfeR::round_five_up(value, dp = 0)
+      )
+    )
 
   # required columns
   required_cols <- c(
@@ -190,7 +227,19 @@ read_flows_2026_publication_data <- function(
     # NQE trajectories are only for two years ahead
     # remove 3rd year row which has NA data
     # to prevent the table/downloads having an NA row
-    filter(!is.na(value))
+    filter(!is.na(value)) %>%
+    # round values using round_five_up() because base R's round() uses
+    # banker's rounding (round-to-even) for values ending in .5.
+    # leaver rates are stored as proportions (e.g. 0.056 = 5.6%), so keep 3 dp.
+    # entrant values are counts, so round to 0 dp.
+    mutate(
+      value <- case_when(
+        grepl("leaver", type, ignore.case = TRUE) ~
+          dfeR::round_five_up(value, dp = 3),
+        TRUE ~
+          dfeR::round_five_up(value, dp = 0)
+      )
+    )
 
   # required columns
   required_cols <- c(
