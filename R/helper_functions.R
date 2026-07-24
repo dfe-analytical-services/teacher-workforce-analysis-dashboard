@@ -88,14 +88,20 @@ build_pupil_teacher_summary <- function(df_change) {
     " ",
     pupil_dir,
     " pupils (",
-    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$pupil_pct),
+    sprintf(
+      "%.1f%%",
+      dfeR::round_five_up(df_27$pupil_pct, dp = 1)
+    ),
     ") ",
     "and teacher demand to be ",
     scales::label_comma()(abs(df_27$teacher_diff)),
     " ",
     teacher_dir,
     " (",
-    scales::label_number(accuracy = 0.1, suffix = "%")(df_27$teacher_pct),
+    sprintf(
+      "%.1f%%",
+      dfeR::round_five_up(df_27$teacher_pct, dp = 1)
+    ),
     ") ",
     "in 2027/28 compared to 2024/25."
   )
@@ -121,7 +127,6 @@ build_pupil_teacher_summary <- function(df_change) {
 #
 # return: A single character string suitable for use as a plot title
 #         or table caption in a Shiny app.
-
 
 build_pgitt_need_ts_title <- function(df) {
   phase_selected <- unique(df$phase)

@@ -177,7 +177,7 @@ read_flows_2025_publication_data <- function(
     # leaver rates are stored as proportions (e.g. 0.056 = 5.6%), so keep 3 dp.
     # entrant values are counts, so round to 0 dp.
     mutate(
-      value <- case_when(
+      value = case_when(
         grepl("leaver", type, ignore.case = TRUE) ~
           dfeR::round_five_up(value, dp = 3),
         TRUE ~
@@ -233,7 +233,7 @@ read_flows_2026_publication_data <- function(
     # leaver rates are stored as proportions (e.g. 0.056 = 5.6%), so keep 3 dp.
     # entrant values are counts, so round to 0 dp.
     mutate(
-      value <- case_when(
+      value = case_when(
         grepl("leaver", type, ignore.case = TRUE) ~
           dfeR::round_five_up(value, dp = 3),
         TRUE ~
