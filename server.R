@@ -59,14 +59,16 @@ server <- function(input, output, session) {
   # which can cause the app to open on a previously viewed nested tab.
   # This runs once, after the UI has fully rendered, to ensure a predictable
   # starting tab regardless of bookmarked state.
-  session$onFlushed(function() {
-    updateTabsetPanel(
-      session,
-      inputId = "twm_tabsetpanels",
-      selected = "Introduction"
-    )
-  }, once = TRUE)
-
+  session$onFlushed(
+    function() {
+      updateTabsetPanel(
+        session,
+        inputId = "twm_tabsetpanels",
+        selected = "Introduction"
+      )
+    },
+    once = TRUE
+  )
 
   # Cookies logic -------------------------------------------------------------
   output$cookies_status <- dfeshiny::cookies_banner_server(
@@ -79,7 +81,6 @@ server <- function(input, output, session) {
     input_cookies = shiny::reactive(input$cookies),
     google_analytics_key = google_analytics_key
   )
-
 
   # User guide ------------------------------------------------------------------------------------------------------
 
@@ -125,7 +126,6 @@ server <- function(input, output, session) {
       defaultColDef = reactable::colDef(html = TRUE)
     )
   })
-
 
   # Teacher demand trajectories tab ------------------------------------------------------------------------------------
 
@@ -376,7 +376,6 @@ server <- function(input, output, session) {
     pupil_teacher_summary()
   })
 
-
   # PGITT trainee need time series tab ----------------------------------------------------------------------------
 
   # Data
@@ -406,14 +405,12 @@ server <- function(input, output, session) {
     }
   })
 
-
   # Reactive title describing selected phase/subject and year range
   # for PGITT trainee need outputs
 
   pgitt_need_ts_title <- reactive({
     build_pgitt_need_ts_title(pgitt_need_filtered())
   })
-
 
   # Builder that can upscale text when graph is downloaded
   # Keep the look on-screen exactly as-is; only enlarge text and add white background if for_download=TRUE.
@@ -479,8 +476,7 @@ server <- function(input, output, session) {
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need_count,
         `Difference in need to previous year` = difference_to_previous_year_count,
-        `Percentage change in need to previous year` =
-          difference_to_previous_year_percent
+        `Percentage change in need to previous year` = difference_to_previous_year_percent
       )
 
     # Drop subject column from dataset if primary selected
@@ -503,13 +499,11 @@ server <- function(input, output, session) {
       ),
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE,
-          digits = 0
+          separators = TRUE
         )
       )
     )
   })
-
 
   # Create download dataset (matches table)
 
@@ -521,8 +515,7 @@ server <- function(input, output, session) {
         Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need_count,
         `Difference in need to previous year` = difference_to_previous_year_count,
-        `Percentage change in need to previous year` =
-          difference_to_previous_year_percent
+        `Percentage change in need to previous year` = difference_to_previous_year_percent
       )
     # Drop subject column from dataset if phase is primary
     if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
@@ -565,7 +558,12 @@ server <- function(input, output, session) {
         phase_lower == "secondary" & subject_lower != "total" ~ subject_lower
       )
 
-      file_name <- paste0("twm_pgitt_need_timeseries_", filter_select, "_", "2026-04-23")
+      file_name <- paste0(
+        "twm_pgitt_need_timeseries_",
+        filter_select,
+        "_",
+        "2026-04-23"
+      )
 
       # Keep mapping identical to earlier block for consistency
       extension <- if (input$file_type_pgitt_need == "CSV (Up to 1 MB)") {
@@ -620,8 +618,7 @@ server <- function(input, output, session) {
 
   drivers_filtered <- reactive({
     df <- drivers_data %>%
-      filter(phase == input$filter_phase_drivers) %>%
-      mutate(value = round(value, 1))
+      filter(phase == input$filter_phase_drivers)
 
     # If primary force subject = Total
     if (input$filter_phase_drivers == "Primary") {
@@ -633,22 +630,18 @@ server <- function(input, output, session) {
     df
   })
 
-
   # Build a reactive title describing the selected school phase/subject
   # and academic year comparison for the drivers table 1 header
-
 
   drivers_title <- reactive({
     build_drivers_table_title(drivers_filtered())
   })
-
 
   # Render the text in heading_text format
 
   output$drivers_table_1_heading <- renderUI({
     heading_text(drivers_title(), level = 3, size = "s")
   })
-
 
   # Plot builder for drivers analysis which adds title & larger text for downloads
 
@@ -750,11 +743,16 @@ server <- function(input, output, session) {
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
-      right_col = c("2025/26 PGITT need", "2026/27 PGITT need", "Overall difference"),
+      right_col = c(
+        "2025/26 PGITT need",
+        "2026/27 PGITT need",
+        "Overall difference"
+      ),
       highlight = TRUE,
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE
+          separators = TRUE,
+          digits = 1
         )
       )
     )
@@ -765,11 +763,12 @@ server <- function(input, output, session) {
   output$table_drivers_breakdown <- renderGovReactable({
     df <- drivers_filtered() %>%
       dplyr::filter(
-        !driver %in% c(
-          "2025/26 PGITT need",
-          "2026/27 PGITT need",
-          "Overall difference"
-        )
+        !driver %in%
+          c(
+            "2025/26 PGITT need",
+            "2026/27 PGITT need",
+            "Overall difference"
+          )
       ) %>%
       dplyr::select(
         Phase = phase,
@@ -792,12 +791,12 @@ server <- function(input, output, session) {
       right_col = c("Value"),
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
-          separators = TRUE
+          separators = TRUE,
+          digits = 1
         )
       )
     )
   })
-
 
   # Create download dataset (matches filtered table so all data in the two tables in the app)
   # Spell out acronyms in download table
@@ -815,8 +814,7 @@ server <- function(input, output, session) {
           "NQEs from other sources" = "Newly qualified entrants from other sources",
           "ITT-NQE conversion rate" = "Initial teacher training - newly qualified entrant conversion rate",
           "2026/27 PGITT need" = "2026/27 PGITT trainee need"
-        ),
-        value = round(value, 1)
+        )
       ) %>%
       dplyr::rename_with(~ tools::toTitleCase(.x)) %>%
       dplyr::select(Phase, Subject, Driver, Value)
@@ -1005,14 +1003,12 @@ server <- function(input, output, session) {
     )
   })
 
-
   # Reactive title for flow trajectories based on current filters
   # Used to keep chart and table titles consistent
 
   flow_traj_title <- reactive({
     build_flow_traj_title(flow_filtered())
   })
-
 
   # Render the reactive title as GOV.UK–styled body text
   # uiOutput() is used in the twm_tab UI to allow this to update dynamically
@@ -1022,7 +1018,6 @@ server <- function(input, output, session) {
   output$flow_traj_title_table_ui <- renderUI({
     heading_text(flow_traj_title(), level = 3, size = "s")
   })
-
 
   # Table: Flow trajectories table for app (interactive via reactable)
   # Abbrev NQEs and NTSFs to help fit in table
@@ -1085,7 +1080,6 @@ server <- function(input, output, session) {
     )
   })
 
-
   # Create download dataset (matches table)
 
   download_table_flow_trajectories <- reactive({
@@ -1117,12 +1111,11 @@ server <- function(input, output, session) {
     df <- df %>%
       dplyr::mutate(
         Value = if (is_leaver_table) {
-          round(Value * 100, 1) # 0.056 → 5.6
+          sprintf("%.1f", Value * 100)
         } else {
-          round(Value, 0)
+          Value
         }
       )
-
     df
   })
 
@@ -1163,8 +1156,12 @@ server <- function(input, output, session) {
       )
 
       file_name <- paste0(
-        "twm_flow_trajectories_", filter_select, "_",
-        flow_type_lower, "_", "2026-04-23"
+        "twm_flow_trajectories_",
+        filter_select,
+        "_",
+        flow_type_lower,
+        "_",
+        "2026-04-23"
       )
 
       extension <- if (input$file_type_flows == "CSV (Up to 1 MB)") {
@@ -1212,7 +1209,6 @@ server <- function(input, output, session) {
     }
   )
 
-
   # Dashboard navigation --------------------------------------------------------------------------------------------
 
   # Adding content navigation for Teacher demand trajectories and PGITT trainee need section
@@ -1220,7 +1216,11 @@ server <- function(input, output, session) {
   # Teacher demand trajectories link
 
   observeEvent(input$link_to_teacher_demand_traj, {
-    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Teacher demand trajectories")
+    updateTabsetPanel(
+      session,
+      "twm_tabsetpanels",
+      selected = "Teacher demand trajectories"
+    )
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
@@ -1228,7 +1228,11 @@ server <- function(input, output, session) {
   # PGITT trainee need calculation link
 
   observeEvent(input$link_to_pgitt_need_calc, {
-    updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need calculation")
+    updateTabsetPanel(
+      session,
+      "twm_tabsetpanels",
+      selected = "PGITT trainee need calculation"
+    )
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
@@ -1236,7 +1240,11 @@ server <- function(input, output, session) {
   # PGITT trainee need time series link
 
   observeEvent(input$link_to_pgitt_need_ts, {
-    updateTabsetPanel(session, "twm_tabsetpanels", selected = "PGITT trainee need time series")
+    updateTabsetPanel(
+      session,
+      "twm_tabsetpanels",
+      selected = "PGITT trainee need time series"
+    )
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
@@ -1250,7 +1258,11 @@ server <- function(input, output, session) {
       input$link_to_drivers_change_2
     ),
     {
-      updateTabsetPanel(session, "twm_tabsetpanels", selected = "Drivers of change in PGITT trainee need")
+      updateTabsetPanel(
+        session,
+        "twm_tabsetpanels",
+        selected = "Drivers of change in PGITT trainee need"
+      )
       # Force scroll to top
       shinyjs::runjs("window.scrollTo(0, 0);")
     }
@@ -1259,7 +1271,11 @@ server <- function(input, output, session) {
   # Flow trajectories link
 
   observeEvent(input$link_to_flow_traj, {
-    updateTabsetPanel(session, "twm_tabsetpanels", selected = "Flow trajectories")
+    updateTabsetPanel(
+      session,
+      "twm_tabsetpanels",
+      selected = "Flow trajectories"
+    )
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
@@ -1277,7 +1293,6 @@ server <- function(input, output, session) {
   observeEvent(input$link_to_support, {
     updateTabsetPanel(session, "navlistPanel", selected = "support_panel_ui")
   })
-
 
   # footer links -----------------------
   shiny::observeEvent(input$accessibility_footer_link, {
