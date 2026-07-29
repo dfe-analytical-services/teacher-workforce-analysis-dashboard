@@ -590,7 +590,7 @@ plot_drivers_waterfall <- function(df_raw) {
         x = as.numeric(driver),
         # Place label on top of each bar
         y = ifelse(type == "delta", pmax(ymin, ymax), ymax),
-        label = scales::label_number(accuracy = 0.1, big.mark = ",")(value) # Value data label
+        label = sprintf("%.1f", value) # Value data label
       ),
       vjust = -0.25,
       size = 4
@@ -673,11 +673,14 @@ plot_flow_trajectories <- function(df) {
         tolower(type)
       ),
       value_formatted = dplyr::case_when(
-        type %in% leaver_types ~ scales::label_percent(accuracy = 0.1)(value),
+        type %in% leaver_types ~ paste0(
+          sprintf("%.1f", value * 100),
+          "%"
+        ),
         TRUE ~
           paste0(
-            scales::label_number(accuracy = 1, big.mark = ",")(value),
-            " (FTE)"
+            scales::comma(value),
+            " FTE"
           )
       ),
       tooltip = ifelse(
@@ -767,7 +770,6 @@ plot_flow_trajectories <- function(df) {
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(next_year))
 
-
   # X-axis breaks are derived entirely from the data,
   # so the plot adapts automatically if years change
   years_available <- df %>%
@@ -807,7 +809,11 @@ plot_flow_trajectories <- function(df) {
 
     # Points remain interactive
     ggiraph::geom_point_interactive(
-      ggplot2::aes(y = value, colour = factor(publication_year), tooltip = tooltip),
+      ggplot2::aes(
+        y = value,
+        colour = factor(publication_year),
+        tooltip = tooltip
+      ),
       shape = 16,
       size = 2.5,
       na.rm = TRUE
