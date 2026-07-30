@@ -95,7 +95,7 @@ read_pgitt_need_timeseries <- function(
     rename(phase = education_phase) %>% # rename column from pub names
     mutate(
       # create start year column
-      start_year = as.integer(substr(time_period, 1, 4)), #
+      start_year = as.integer(substr(time_period, 1, 4)),
       # create academic year column
       academic_year = paste0(
         start_year,
