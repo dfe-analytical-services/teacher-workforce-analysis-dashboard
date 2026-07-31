@@ -590,7 +590,12 @@ plot_drivers_waterfall <- function(df_raw) {
         x = as.numeric(driver),
         # Place label on top of each bar
         y = ifelse(type == "delta", pmax(ymin, ymax), ymax),
-        label = sprintf("%.1f", value) # Value data label
+        label = formatC(
+          value,
+          format = "f",
+          digits = 1,
+          big.mark = ","
+        )
       ),
       vjust = -0.25,
       size = 4
