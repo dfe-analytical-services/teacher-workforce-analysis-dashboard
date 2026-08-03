@@ -19,7 +19,8 @@ read_pupil_teacher_numbers <- function(
   file = "data/1_pupil_teacher_numbers_2026-04-23.parquet"
 ) {
   df <- read_parquet(file) %>%
-    clean_names() # make r friendly column names
+    # convert column names to snake_case
+    clean_names()
 
   # required columns
   required_cols <- c(
@@ -46,12 +47,15 @@ read_pupil_teacher_numbers <- function(
   # transformations
   df <- df %>%
     mutate(
-      start_year = as.integer(substr(academic_year, 1, 4)), # create start year column
-      # update to floor() because round() uses "round to even" (banker's rounding) on x.5 values by default
-      teacher_numbers = floor(teacher_numbers + 0.5),
-      pupil_numbers = floor(pupil_numbers + 0.5)
+      # create start year column
+      start_year = as.integer(substr(academic_year, 1, 4)),
+      # use round_five_up() instead of round() to avoid banker's rounding
+      # (round-to-even behaviour for x.5 values).
+      teacher_numbers = dfeR::round_five_up(teacher_numbers, dp = 0),
+      pupil_numbers = dfeR::round_five_up(pupil_numbers, dp = 0)
     )
-  return(df)
+
+  df
 }
 
 
@@ -61,7 +65,8 @@ read_pgitt_need_timeseries <- function(
   file = "data/2_pgitt_need_timeseries_2026-04-23.parquet"
 ) {
   df <- read_parquet(file) %>%
-    clean_names() # make r friendly column names
+    # convert column names to snake_case
+    clean_names()
 
   # required columns
   required_cols <- c(
@@ -89,19 +94,43 @@ read_pgitt_need_timeseries <- function(
   df <- df %>%
     rename(phase = education_phase) %>% # rename column from pub names
     mutate(
-      start_year = as.integer(substr(time_period, 1, 4)), # create start year column
+      # create start year column
+      start_year = as.integer(substr(time_period, 1, 4)),
       # create academic year column
-      academic_year = paste0(start_year, "/", sprintf("%02d", (start_year + 1) %% 100))
+      academic_year = paste0(
+        start_year,
+        "/",
+        sprintf("%02d", (start_year + 1) %% 100)
+      ),
+      # format all numeric columns to appropriate number of dps
+      # use round_five_up() instead of round() to avoid banker's rounding
+      # (round-to-even behaviour for x.5 values).
+      pgitt_trainee_need_count = dfeR::round_five_up(
+        pgitt_trainee_need_count,
+        dp = 0
+      ),
+      difference_to_previous_year_count = dfeR::round_five_up(
+        difference_to_previous_year_count,
+        dp = 0
+      ),
+      difference_to_previous_year_percent = dfeR::round_five_up(
+        difference_to_previous_year_percent,
+        dp = 1
+      )
     )
-  return(df)
+
+  df
 }
 
 
 # Drivers analysis data -----------------------------------------------------------
 
-read_drivers_data <- function(file = "data/3_drivers_analysis_2026-04-23.parquet") {
+read_drivers_data <- function(
+  file = "data/3_drivers_analysis_2026-04-23.parquet"
+) {
   df <- read_parquet(file) %>%
-    clean_names() # make r friendly column names
+    # convert column names to snake_case
+    clean_names()
 
   # required columns
   required_cols <- c(
@@ -124,98 +153,99 @@ read_drivers_data <- function(file = "data/3_drivers_analysis_2026-04-23.parquet
     )
   }
 
+  # round values to 1 dp
+  # use round_five_up() instead of round() to avoid banker's rounding
+  # (round-to-even behaviour for x.5 values).
   df <- df %>%
-    mutate(value = round(value, digits = 1)) # round values to 1 dp
+    mutate(value = dfeR::round_five_up(value, dp = 1))
 
-  return(df)
+  df
 }
 
 
 # Flow trajectories data ------------------------------------------------------------------------------------------
 
-# 2025 publication data
+# shared helper for reading flow trajectory publication datasets
+# used by both the 2025 and 2026 publication readers because the file
+# structure and processing steps are identical
+
+read_flows_publication_data <- function(file, publication_year) {
+  df <- read_parquet(file) %>%
+    # convert column names to snake_case
+    clean_names()
+
+  # required columns
+
+  required_cols <- c(
+    "phase",
+    "subject",
+    "type",
+    "academic_year",
+    "value",
+    "unit",
+    "historic_or_trajectory",
+    "publication_year"
+  )
+
+  # check required columns
+
+  missing <- setdiff(required_cols, names(df))
+
+  if (length(missing) > 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in flows ",
+        publication_year,
+        " file: ",
+        paste(missing, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  df <- df %>%
+    mutate(
+      # create start year column
+      start_year = as.integer(substr(academic_year, 1, 4))
+    ) %>%
+    # NQE trajectories are only for two years ahead
+    # remove 3rd year row which has NA data
+    # to prevent the table/downloads having an NA row
+    filter(!is.na(value)) %>%
+    # round values using round_five_up() because base R's round() uses
+    # banker's rounding (round-to-even) for values ending in .5.
+    # leaver rates are stored as proportions (e.g. 0.056 = 5.6%), so keep 3 dp.
+    # entrant values are counts, so round to 0 dp.
+    mutate(
+      value = case_when(
+        grepl("leaver", type, ignore.case = TRUE) ~
+          dfeR::round_five_up(value, dp = 3),
+        TRUE ~
+          dfeR::round_five_up(value, dp = 0)
+      )
+    )
+
+  df
+}
+
+# Read 2025 publication flow trajectory dataset
 
 read_flows_2025_publication_data <- function(
   file = "data/4_flow_trajectories_2025_publication_2026-04-23.parquet"
 ) {
-  df <- read_parquet(file) %>%
-    clean_names() %>% # make r friendly column names
-    mutate(
-      start_year = as.integer(substr(academic_year, 1, 4)) # create start year column
-    ) %>%
-    # NQE trajectories are only for two years ahead
-    # remove 3rd year row which has NA data
-    # to prevent the table/downloads having an NA row
-    filter(!is.na(value))
-
-  # required columns
-  required_cols <- c(
-    "phase",
-    "subject",
-    "type",
-    "academic_year",
-    "value",
-    "unit",
-    "historic_or_trajectory",
-    "publication_year"
+  read_flows_publication_data(
+    file = file,
+    publication_year = 2025
   )
-
-  # check required columns
-  missing <- setdiff(required_cols, names(df))
-
-  if (length(missing) > 0) {
-    stop(
-      paste0(
-        "❌ Missing required columns in flows 2025 file: ",
-        paste(missing, collapse = ", ")
-      ),
-      call. = FALSE
-    )
-  }
-
-  return(df)
 }
 
-
-# 2026 publication data
+# Read 2026 publication flow trajectory dataset
 
 read_flows_2026_publication_data <- function(
   file = "data/5_flow_trajectories_2026_publication_2026-04-23.parquet"
 ) {
-  df <- read_parquet(file) %>%
-    clean_names() %>% # make r friendly column names
-    mutate(
-      start_year = as.integer(substr(academic_year, 1, 4)) # create start year column
-    ) %>%
-    # NQE trajectories are only for two years ahead
-    # remove 3rd year row which has NA data
-    # to prevent the table/downloads having an NA row
-    filter(!is.na(value))
-
-  # required columns
-  required_cols <- c(
-    "phase",
-    "subject",
-    "type",
-    "academic_year",
-    "value",
-    "unit",
-    "historic_or_trajectory",
-    "publication_year"
+  read_flows_publication_data(
+    file = file,
+    publication_year = 2026
   )
-
-  # check required columns
-  missing <- setdiff(required_cols, names(df))
-
-  if (length(missing) > 0) {
-    stop(
-      paste0(
-        "❌ Missing required columns in flows 2026 file: ",
-        paste(missing, collapse = ", ")
-      ),
-      call. = FALSE
-    )
-  }
-
-  return(df)
 }
