@@ -1111,7 +1111,7 @@ server <- function(input, output, session) {
     df <- df %>%
       dplyr::mutate(
         Value = if (is_leaver_table) {
-          sprintf("%.1f", Value * 100)
+          Value * 100
         } else {
           Value
         }
