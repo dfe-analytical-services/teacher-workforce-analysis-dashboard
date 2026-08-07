@@ -1026,18 +1026,11 @@ server <- function(input, output, session) {
         )
       ) %>%
       dplyr::select(
-        Phase = phase,
-        Subject = subject,
         `Academic year` = academic_year,
         `Flow type` = Type,
         Value = value,
         `Historic or trajectory` = historic_or_trajectory
       )
-
-    # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
-      df <- dplyr::select(df, -Subject)
-    }
 
     # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
     leaver_types <- c(
