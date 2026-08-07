@@ -1024,29 +1024,32 @@ server <- function(input, output, session) {
           type == "New to state-funded sector entrants" ~ "NTSF entrants",
           TRUE ~ type
         )
-      ) %>%
-      dplyr::select(
-        `Academic year` = academic_year,
-        `Flow type` = Type,
-        Value = value,
-        `Historic or trajectory` = historic_or_trajectory
       )
 
-    # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
+    flow_type_name <- unique(df$Type)
+
     leaver_types <- c(
       "Total leaver rate",
       "55+ leaver rate",
       "Under 55 leaver rate"
     )
 
-    is_leaver_table <- nrow(df) > 0 && all(df$`Flow type` %in% leaver_types)
+    is_leaver_table <- flow_type_name %in% leaver_types
 
-    # rename value column to include (FTE) if entrant type
-    # if a leaver type it will be formatted with a %
-
-    if (!is_leaver_table) {
-      df <- dplyr::rename(df, `Value (FTE)` = Value)
+    # Add (FTE) to column heading if not a leaver type
+    display_name <- if (is_leaver_table) {
+      flow_type_name
+    } else {
+      paste0(flow_type_name, " (FTE)")
     }
+
+    df <- df %>%
+      rename(!!display_name := value) %>%
+      dplyr::select(
+        `Academic year` = academic_year,
+        all_of(display_name),
+        `Historic or trajectory` = historic_or_trajectory
+      )
 
     value_formatter <- if (is_leaver_table) {
       reactable::colFormat(digits = 1, percent = TRUE)
@@ -1065,6 +1068,29 @@ server <- function(input, output, session) {
       )
     )
   })
+
+  # # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
+  # leaver_types <- c(
+  #   "Total leaver rate",
+  #   "55+ leaver rate",
+  #   "Under 55 leaver rate"
+  # )
+  #
+  # is_leaver_table <- nrow(df) > 0 && all(df$`Flow type` %in% leaver_types)
+  #
+  # # rename value column to include (FTE) if entrant type
+  # # if a leaver type it will be formatted with a %
+  #
+  # if (!is_leaver_table) {
+  #   df <- dplyr::rename(df, `Value (FTE)` = Value)
+  # }
+  #
+  # value_formatter <- if (is_leaver_table) {
+  #   reactable::colFormat(digits = 1, percent = TRUE)
+  # } else {
+  #   reactable::colFormat(separators = TRUE, digits = 0)
+  # }
+
 
   # Create download dataset (matches table)
 
