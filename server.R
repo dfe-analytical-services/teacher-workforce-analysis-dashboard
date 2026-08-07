@@ -472,17 +472,10 @@ server <- function(input, output, session) {
     df <- pgitt_need_filtered() %>%
       dplyr::select(
         `Academic year` = academic_year,
-        Phase = phase,
-        Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need_count,
         `Difference in need to previous year` = difference_to_previous_year_count,
         `Percentage change in need to previous year` = difference_to_previous_year_percent
       )
-
-    # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
-      df <- dplyr::select(df, -Subject)
-    }
 
     govReactable(
       df,
