@@ -1059,6 +1059,7 @@ server <- function(input, output, session) {
 
     govReactable(
       df,
+      right_col = display_name,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
