@@ -225,15 +225,7 @@ twm_tab_panel <- function() {
                         "pupil_teacher_plot",
                         width  = NULL,
                         height = NULL
-                      ),
-                      gov_text(
-                        tags$span(
-                          "Please note: pupil and teacher numbers are shown on separate y axes ",
-                          "because they are on very different scales. ",
-                          "The axes start above zero to make trends easier to see.",
-                          style = "font-size: 1rem;"
-                        )
-                      ),
+                      )
                     ),
 
                     # Mini tab 2 - table
@@ -308,6 +300,11 @@ twm_tab_panel <- function() {
                           )
                         ),
                         gov_text("Select a school phase to view its data and hover over the data points to see the value."),
+                        gov_text(
+                          "Please note: pupil and teacher numbers are shown on separate y axes ",
+                          "because they are on very different scales. ",
+                          "The axes start above zero to make trends easier to see."
+                        )
                       )
                     )
                   )
