@@ -224,6 +224,17 @@ server <- function(input, output, session) {
     )
   })
 
+  # Build a reactive title for the selected school phase/subject
+  # for the pupil/teacher numbers table
+
+  output$pupil_teacher_table_title <- renderUI({
+    heading_text(
+      unique(pt_data_filtered()$phase)[1],
+      level = 3,
+      size = "s"
+    )
+  })
+
   # Table: pupil/teacher numbers - interactive via govReactable
 
   output$pupil_teacher_table <- renderGovReactable({
