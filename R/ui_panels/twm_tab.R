@@ -237,10 +237,14 @@ twm_tab_panel <- function() {
                     ),
 
                     # Mini tab 2 - table
-                    table_output = govReactableOutput("pupil_teacher_table",
+                    table_output = div(
+                        # Reactive table title
+                        uiOutput("pupil_teacher_table_title"),
+                        govReactableOutput("pupil_teacher_table",
                       caption = "",
                       caption_size = "s",
                       heading_level = "h3"
+                    )
                     ),
 
                     # Mini tab 3 - download
