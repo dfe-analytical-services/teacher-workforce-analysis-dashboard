@@ -28,6 +28,7 @@ ui <- function(input, output, session) {
     use_shiny_title(),
     useShinyjs(),
     tags$html(lang = "en"),
+
     # Add meta description for search engines
     meta() %>%
       meta_general(
@@ -58,25 +59,29 @@ ui <- function(input, output, session) {
       name = "Teacher workforce analysis dashboard (England)"
     ),
 
+    # Skip_to_main ------------------------------------------------------------
+    # Add a 'Skip to main content' link for keyboard users to bypass navigation.
+    # It stays hidden unless focused via tabbing
+    skip_to_main(),
+
     # Google analytics --------------------------------------------------------
     tags$head(includeHTML(("google-analytics.html"))),
+
 
     # Header ------------------------------------------------------------------
-    shinyGovstyle::full_width_overrides(), # TODO: remove when built in
-
-    # Add a 'Skip to main content' link for keyboard users to bypass navigation.
-    # It stays hidden unless focussed via tabbing.
-    shinyGovstyle::skip_to_main(),
+    shinyGovstyle::full_width_overrides(),
     shinyGovstyle::header(
-      main_text = "Department for Education",
-      secondary_text = "Teacher workforce analysis dashboard (England)" # This is setting the page header!
+      org_name = "Department for Education",
+      service_name = "Teacher workforce analysis dashboard (England)"
     ),
-
-    # Google analytics --------------------------------------------------------
-    tags$head(includeHTML(("google-analytics.html"))),
-
-    # Beta banner -------------------------------------------------------------
-    shinyGovstyle::banner(
+    service_navigation(
+      c(
+        "Teacher demand and PGITT need" = "Teacher demand and PGITT need",
+        "User guide" = "User guide"
+      )
+    ),
+    # Beta banner
+    banner(
       inputId = "beta-banner",
       type = "Beta",
       label = paste0(
@@ -87,30 +92,27 @@ ui <- function(input, output, session) {
         "or email ittstatistics.publications@education.gov.uk with general queries."
       )
     ),
-
-    # Nav panels --------------------------------------------------------------
-    shiny::navlistPanel(
-      "",
-      id = "navlistPanel",
-      widths = c(2, 8),
-      well = FALSE,
-      # Content for these panels is defined in the R/ui_panels/ folder
-      twm_tab_panel(),
-      user_guide_panel(),
-      dash_a11y_panel(),
-      shiny::tabPanel(
-        value = "cookies_panel_ui",
-        "Cookies",
-        cookies_panel_ui(google_analytics_key = google_analytics_key)
-      ),
-      shiny::tabPanel(
-        value = "support_panel_ui",
-        "Support and feedback",
-        support_panel(
-          team_email = "ittstatistics.publications@education.gov.uk",
-          contact_name = "Melissa Cook",
-          repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
-          form_url = "https://forms.cloud.microsoft/e/NZ5fLvCyBX"
+    gov_main_layout(
+      shiny::tabsetPanel(
+        type = "hidden",
+        id = "navlistPanel",
+        twm_tab_panel(),
+        user_guide_panel(),
+        dash_a11y_panel(),
+        shiny::tabPanel(
+          value = "cookies_panel_ui",
+          "Cookies",
+          cookies_panel_ui(google_analytics_key = google_analytics_key)
+        ),
+        shiny::tabPanel(
+          value = "support_panel_ui",
+          "Support and feedback",
+          support_panel(
+            team_email = "ittstatistics.publications@education.gov.uk",
+            contact_name = "Melissa Cook",
+            repo_name = "https://github.com/dfe-analytical-services/teacher-workforce-supply-dashboard",
+            form_url = "https://forms.cloud.microsoft/e/NZ5fLvCyBX"
+          )
         )
       )
     ),
