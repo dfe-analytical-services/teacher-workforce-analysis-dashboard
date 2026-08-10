@@ -291,7 +291,7 @@ twm_tab_panel <- function() {
                           HTML(
                             paste0(
                               "Pupil numbers are shown by the ",
-                              "<span style='color:#F46A25; font-weight:600;'>orange</span>",
+                              "<span style='color:#801650; font-weight:600;'>pink</span>",
                               " line with star markers; with projections shown as the dotted part. ",
                               "Values correspond to the left-hand axis."
                             )
