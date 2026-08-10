@@ -720,7 +720,7 @@ twm_tab_panel <- function() {
                           tags$small(
                             HTML(
                               paste0(
-                                "<span style='color:#F46A25; font-weight:600;'>Orange</span>",
+                                "<span style='color:#801650; font-weight:600;'>Pink</span>",
                                 " bars show drivers that acted to reduce PGITT trainee need this year (often ",
                                 "because forecasts are more optimistic than those produced last year), and ",
                                 "<span style='color:#28A197; font-weight:600;'>green</span>

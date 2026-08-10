@@ -295,7 +295,7 @@ plot_pupil_teacher_timeseries <- function(
         nrow = 1,
         title = NULL,
         override.aes = list(
-          colour = c("#801650", "#12436D"), # orange, blue
+          colour = c("#801650", "#12436D"),
           linetype = c("dotted", "dotted"),
           size = 0.8
         )
@@ -454,14 +454,14 @@ plot_drivers_waterfall <- function(df_raw) {
   # Definitions for each driver (shown inside tooltip)
   defs <- c(
     "2025/26 PGITT need" = "Last year’s PGITT trainee need.",
-    "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Orange = lower demand growth; Green = higher demand growth.",
-    "Leavers" = "Teachers leaving the sector between years. Fewer forecasted leavers this year means fewer PGITT trainees needed to replace them, i.e. lower PGITT trainee need. Orange = fewer leavers; Green = more leavers.",
-    "Working hour losses" = "Reduction in working hours for individual teachers between years. Fewer forecasted working hour losses means fewer PGITT trainees needed to replace them, i.e. lower PGITT trainee need.  Orange = fewer hours lost; Green = more hours lost.",
-    "Returners" = "Teachers re entering service after previously working in the state funded sector. Orange = more returners expected; Green = fewer returners expected.",
-    "NTSF" = "Teachers new to the state-funded sector (including deferrer NQEs). Orange = more NTSF expected; Green = fewer NTSF expected.",
-    "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Orange = more expected; Green = fewer expected.",
-    "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, not entering employment post-ITT, and NQEs that are not employed full-time. Orange = more favourable conversion; Green = less favourable conversion.",
-    "Under-supply adjustment" = "Adjustment countering estimated undersupply where relevant resulting from previous two ITT cycles.  Orange = smaller adjustment. Green = larger adjustment. No bar = no adjustment needed.",
+    "Demand growth YOY" = "Change in teacher demand growth driven by pupil projections. Pink = lower demand growth; Green = higher demand growth.",
+    "Leavers" = "Teachers leaving the sector between years. Fewer forecasted leavers this year means fewer PGITT trainees needed to replace them, i.e. lower PGITT trainee need. Pink = fewer leavers; Green = more leavers.",
+    "Working hour losses" = "Reduction in working hours for individual teachers between years. Fewer forecasted working hour losses means fewer PGITT trainees needed to replace them, i.e. lower PGITT trainee need.  Pink = fewer hours lost; Green = more hours lost.",
+    "Returners" = "Teachers re entering service after previously working in the state funded sector. Pink = more returners expected; Green = fewer returners expected.",
+    "NTSF" = "Teachers new to the state-funded sector (including deferrer NQEs). Pink = more NTSF expected; Green = fewer NTSF expected.",
+    "NQEs from other sources" = "Newly qualified entrants not from PGITT (e.g., UGITT, AO, devolved nations, overseas recognition). Pink = more expected; Green = fewer expected.",
+    "ITT-NQE conversion rate" = "Adjustment accounting for trainees not completing ITT, not entering employment post-ITT, and NQEs that are not employed full-time. Pink = more favourable conversion; Green = less favourable conversion.",
+    "Under-supply adjustment" = "Adjustment countering estimated undersupply where relevant resulting from previous two ITT cycles.  Pink = smaller adjustment. Green = larger adjustment. No bar = no adjustment needed.",
     "2026/27 PGITT need" = "This year’s PGITT trainee need."
   )
 
@@ -602,7 +602,7 @@ plot_drivers_waterfall <- function(df_raw) {
     ) +
     # Colour palette
     scale_fill_manual(
-      values = c(increase = "#28A197", decrease = "#F46A25", total = "#12436D"),
+      values = c(increase = "#28A197", decrease = "#801650", total = "#12436D"),
       guide = "none"
     ) +
     # Y axis formatting
