@@ -240,11 +240,10 @@ server <- function(input, output, session) {
   output$pupil_teacher_table <- renderGovReactable({
     df <- pt_data_filtered() %>%
       dplyr::select(
-        Phase = phase,
         `Academic year` = academic_year,
+        Projection = projection,
         `Pupil numbers (FTE)` = pupil_numbers,
-        `Teacher numbers (FTE)` = teacher_numbers,
-        Projection = projection
+        `Teacher numbers (FTE)` = teacher_numbers
       )
 
     govReactable(
