@@ -764,16 +764,9 @@ server <- function(input, output, session) {
           )
       ) %>%
       dplyr::select(
-        Phase = phase,
-        Subject = subject,
         Driver = driver,
         Value = value
       )
-
-    # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
-      df <- dplyr::select(df, -Subject)
-    }
 
     govReactable(
       df,
@@ -781,7 +774,7 @@ server <- function(input, output, session) {
       searchable = FALSE,
       filterable = FALSE,
       highlight = TRUE,
-      right_col = c("Value"),
+      right_col = "Value",
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
           separators = TRUE,
