@@ -50,13 +50,11 @@ plot_pupil_teacher_timeseries <- function(
   phase = NULL,
   axis_lock = NULL
 ) {
-  # Set y axis name, projection years, legend position
+  # Set y axis labels and projection years
   pupils_axis_name <- paste(phase, "pupil numbers (FTE)")
   teachers_axis_name <- paste(phase, "teacher numbers (FTE)")
 
   last_census_year <- 2024
-
-  legend_pos <- if (phase == "Secondary") c(0.4, 0.4) else c(0.4, 0.15)
 
   # Axis-lock settings
   use_axis_lock <- !is.null(axis_lock)
@@ -306,27 +304,29 @@ plot_pupil_teacher_timeseries <- function(
     afcharts::theme_af() +
     theme(
       axis.title.y.left = element_text(
+        face = "bold",
         size = 14,
         color = "#801650",
         angle = 90,
-        vjust = 0.5
+        vjust = 0.5,
+        margin = margin(r = 20)
       ),
       axis.title.y.right = element_text(
+        face = "bold",
         size = 14,
         color = "#12436D",
         angle = 270,
-        vjust = 0.5
+        vjust = 0.5,
+        margin = margin(l = 20)
       ),
+      axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
       axis.text.y.left = element_text(color = "#801650"),
       axis.text.y.right = element_text(color = "#12436D"),
-      legend.position = "inside",
-      legend.justification = "left",
-      legend.box = "vertical", # stack colour row above projection row
+      legend.text = element_text(size = 11),
+      legend.position = "bottom",
+      legend.margin = margin(t = -5),
+      legend.box = "horizontal",
       legend.direction = "horizontal",
-      legend.box.margin = margin(t = -5, l = 0),
-      legend.position.inside = legend_pos, # dynamic legend pos based on phase
-      legend.spacing.x = unit(0.4, "cm"),
-      legend.spacing.y = unit(0.1, "cm"),
       legend.background = element_rect(fill = "transparent", colour = NA),
       legend.key = element_rect(fill = "transparent", colour = NA)
     )
