@@ -4948,11 +4948,11 @@
       "Author": "Ross Wyatt [aut], Cam Race [aut, cre], Sarah Wong [aut], Richard Bielby [ctb], Charlotte Foster [ctb], Jeni Martin [ctb], Andrew Baker [ctb]",
       "Maintainer": "Cam Race <camrace8@gmail.com>",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "dfe-analytical-services",
       "RemoteRepo": "shinyGovstyle",
       "RemoteRef": "main",
-      "RemoteSha": "72347ad152f2d4b93e91d2e8721206ae58ab0723"
+      "RemoteSha": "112d08089335f8488b5c35d02847cda7f7071406",
+      "RemoteHost": "api.github.com"
     },
     "shinyalert": {
       "Package": "shinyalert",
