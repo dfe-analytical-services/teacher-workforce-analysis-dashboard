@@ -1047,8 +1047,8 @@ server <- function(input, output, session) {
       rename(!!display_name := value) %>%
       dplyr::select(
         `Academic year` = academic_year,
-        all_of(display_name),
-        `Historic or trajectory` = historic_or_trajectory
+        `Historic or trajectory` = historic_or_trajectory,
+        all_of(display_name)
       )
 
     value_formatter <- if (is_leaver_table) {
