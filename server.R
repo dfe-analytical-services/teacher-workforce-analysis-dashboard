@@ -1229,6 +1229,24 @@ server <- function(input, output, session) {
 
   # Adding content navigation for Teacher demand trajectories and PGITT trainee need section
 
+  # Teacher demand and PGITT need - Introduction link
+
+  observeEvent(input$link_to_intro_pgitt_need, {
+    updateTabsetPanel(
+      session,
+      "navlistPanel",
+      selected = "Teacher demand and PGITT need"
+    )
+    updateTabsetPanel(
+      session,
+      "twm_tabsetpanels",
+      selected = "Introduction"
+    )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
+
   # Teacher demand trajectories link
 
   observeEvent(input$link_to_teacher_demand_traj, {
