@@ -201,8 +201,7 @@ twm_tab_panel <- function() {
               id = "teacher_demand_traj",
               "Teacher demand trajectories",
               gov_main_layout(
-                heading_text("Historical pupil and teacher numbers, projected pupil numbers ",
-                  "and teacher demand trajectories",
+                heading_text("Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories",
                   level = 2, size = "m"
                 ),
                 gov_text(
