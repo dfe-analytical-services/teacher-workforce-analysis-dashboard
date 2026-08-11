@@ -80,35 +80,33 @@ plot_pupil_teacher_timeseries <- function(
       is_projection = projection == "Yes",
       tooltip = dplyr::if_else(
         is_projection,
-        paste0(
-          "<p>",
+        paste(
           academic_year,
-          "</p>",
-          "<p><b>Projected ",
-          tolower(phase),
-          " pupil numbers (left):</b> ",
-          scales::comma(pupil_numbers),
-          "</p>",
-          "<p><b>Projected ",
-          tolower(phase),
-          " teacher demand (right):</b> ",
-          scales::comma(teacher_numbers),
-          "</p>"
+          paste0(
+            "Projected ",
+            tolower(phase),
+            " pupil numbers: ",
+            scales::comma(pupil_numbers)
+          ),
+          paste0(
+            "Projected ",
+            tolower(phase),
+            " teacher demand: ",
+            scales::comma(teacher_numbers)
+          ),
+          sep = "\n"
         ),
-        paste0(
-          "<p>",
+        paste(
           academic_year,
-          "</p>",
-          "<p><b>",
-          phase,
-          " pupil numbers (left):</b> ",
-          scales::comma(pupil_numbers),
-          "</p>",
-          "<p><b>",
-          phase,
-          " teacher numbers (right):</b> ",
-          scales::comma(teacher_numbers),
-          "</p>"
+          paste0(
+            phase, " pupil numbers: ",
+            scales::comma(pupil_numbers)
+          ),
+          paste0(
+            phase, " teacher numbers: ",
+            scales::comma(teacher_numbers)
+          ),
+          sep = "\n"
         )
       ),
       hover_id = paste0("year-", start_year)
@@ -342,33 +340,30 @@ plot_pgitt_need_timeseries <- function(df) {
   # Create extra columns that will be used for tooltips
   # and make sure the data is in a sensible order
   df2 <- df %>%
+    # Build a subject line for the tooltip
+    # Only show subject if secondary is selected
+    # For other phases, we return an empty string
+    # Build the full tooltip shown when hovering over a bar
+    # Tooltips include:
+    #  - academic year
+    #  - phase (Primary / Secondary)
+    #  - subject (only for Secondary)
+    #  - PGITT trainee need (formatted with commas)
     dplyr::mutate(
-      # Build a subject line for the tooltip
-      # Only show subject if secondary is selected
-      # For other phases, we return an empty string
-      subject_line = ifelse(
-        phase == "Secondary",
-        paste0("<p><b>Subject:</b> ", subject, "</p>"),
-        ""
+      phase_subject_label = dplyr::case_when(
+        phase == "Total" ~ "Total",
+        phase == "Primary" ~ "Primary",
+        phase == "Secondary" & subject == "Total" ~ "Secondary",
+        phase == "Secondary" ~ subject
       ),
-
-      # Build the full tooltip shown when hovering over a bar
-      # Tooltips include:
-      #  - academic year
-      #  - phase (Primary / Secondary)
-      #  - subject (only for Secondary)
-      #  - PGITT trainee need (formatted with commas)
-      tooltip = paste0(
-        "<p>",
+      tooltip = paste(
         academic_year,
-        "</p>",
-        "<p><b>Phase:</b> ",
-        phase,
-        "</p>",
-        subject_line,
-        "<p><b>PGITT trainee need:</b> ",
-        scales::comma(pgitt_trainee_need_count),
-        "</p>"
+        paste0(
+          phase_subject_label,
+          " PGITT trainee need: ",
+          scales::comma(pgitt_trainee_need_count)
+        ),
+        sep = "\n"
       )
     )
 
@@ -510,11 +505,10 @@ plot_drivers_waterfall <- function(df_raw) {
       driver = factor(driver, levels = driver),
 
       # Tooltip text shown when hovering on each bar
-      tooltip = paste0(
-        "<b>",
+      tooltip = paste(
         as.character(driver),
-        ":</b><br/>",
-        defs[as.character(driver)]
+        defs[as.character(driver)],
+        sep = "\n"
       ),
 
       # Required by ggiraph for hover behaviour.
