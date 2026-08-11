@@ -681,47 +681,59 @@ plot_flow_trajectories <- function(df) {
             scales::comma(value),
             " FTE"
           )
-      ),
-      tooltip = ifelse(
-        is_trajectory,
+      )
+    )
+
+  tooltip_df <- df %>%
+    dplyr::select(
+      academic_year,
+      start_year,
+      phase,
+      subject,
+      type,
+      publication_year,
+      value_formatted
+    ) %>%
+    tidyr::pivot_wider(
+      names_from = publication_year,
+      values_from = value_formatted,
+      names_prefix = "pub_"
+    ) %>%
+    dplyr::mutate(
+      tooltip = paste(
+        academic_year,
+        type,
         paste0(
-          "<p>",
-          academic_year,
-          "</p>",
-          "<p><b>Phase:</b> ",
-          phase,
-          "</p>",
-          "<p><b>Subject:</b> ",
-          subject,
-          "</p>",
-          "<p><b>Publication year:</b> ",
-          publication_year,
-          "</p>",
-          "<p><b>",
-          type,
-          " trajectory:</b> ",
-          value_formatted,
-          "</p>"
+          "2025 publication value",
+          ifelse(start_year > 2023, " (trajectory)", ""),
+          ": ",
+          pub_2025
         ),
         paste0(
-          "<p>",
-          academic_year,
-          "</p>",
-          "<p><b>Phase:</b> ",
-          phase,
-          "</p>",
-          "<p><b>Subject:</b> ",
-          subject,
-          "</p>",
-          "<p><b>Publication year:</b> ",
-          publication_year,
-          "</p>",
-          "<p><b>",
-          type,
-          ":</b> ",
-          value_formatted,
-          "</p>"
-        )
+          "2026 publication value",
+          ifelse(start_year > 2024, " (trajectory)", ""),
+          ": ",
+          pub_2026
+        ),
+        sep = "\n"
+      )
+    ) %>%
+    dplyr::select(
+      academic_year,
+      phase,
+      subject,
+      type,
+      tooltip
+    )
+
+  df <- df %>%
+    dplyr::left_join(
+      tooltip_df,
+      by = c(
+        "academic_year",
+        "phase",
+        "subject",
+        "type"
       )
     )
 
