@@ -171,11 +171,13 @@ plot_pupil_teacher_timeseries <- function(
   # Build plot
   p <- ggplot(df2, aes(x = start_year)) +
     ggiraph::geom_vline_interactive(
-      aes(xintercept = start_year, tooltip = tooltip, data_id = hover_id),
+      aes(
+        xintercept = start_year, tooltip = tooltip,
+        data_id = start_year, hover_nearest = TRUE
+      ),
       linetype = "dashed",
-      linewidth = 1,
-      color = "grey40",
-      alpha = 0
+      linewidth = 3,
+      color = "transparent"
     ) +
     ggiraph::geom_segment_interactive(
       data = df_long,
@@ -204,11 +206,6 @@ plot_pupil_teacher_timeseries <- function(
       shape = 21,
       fill = "#12436D",
       size = 2
-    ) +
-    ggiraph::geom_point_interactive(
-      aes(y = pupil_numbers, tooltip = tooltip, data_id = hover_id),
-      alpha = 0,
-      size = 8
     ) +
     ggiraph::geom_point_interactive(
       aes(
