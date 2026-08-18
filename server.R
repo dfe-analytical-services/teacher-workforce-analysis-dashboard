@@ -991,7 +991,7 @@ server <- function(input, output, session) {
       height_svg = 6,
       options = list(
         ggiraph::opts_selection(type = "none"),
-        ggiraph::opts_hover(css = "stroke-width:2px;"),
+        ggiraph::opts_hover(css = "stroke-dasharray:5,5;stroke:black;stroke-width:2px;"),
         ggiraph::opts_hover_key(css = "stroke-dasharray:4,4;"),
         ggiraph::opts_sizing(rescale = TRUE, width = 1),
         ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng")

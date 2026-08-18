@@ -664,13 +664,6 @@ plot_flow_trajectories <- function(df) {
   # only what users see when hovering
   df <- df %>%
     dplyr::mutate(
-      is_trajectory = historic_or_trajectory == "Trajectory",
-      type_lower = ifelse(
-        type %in%
-          c("Newly qualified entrants", "New to state-funded sector entrants"),
-        type,
-        tolower(type)
-      ),
       value_formatted = dplyr::case_when(
         type %in% leaver_types ~ paste0(
           sprintf("%.1f", value * 100),
@@ -737,23 +730,50 @@ plot_flow_trajectories <- function(df) {
       )
     )
 
+  vline_df <- df %>%
+    distinct(
+      start_year,
+      academic_year,
+      phase,
+      subject,
+      type
+    ) %>%
+    left_join(
+      tooltip_df,
+      by = c(
+        "academic_year",
+        "phase",
+        "subject",
+        "type"
+      )
+    ) %>%
+    group_by(start_year, academic_year) %>%
+    summarise(
+      tooltip = first(tooltip),
+      .groups = "drop"
+    )
+
   # Choose y-axis scale automatically based on the data:
   # - percentage scale for leaver rates
   # - numeric (FTE) scale for all other flow types
-  unique_type <- unique(df$type)
-  if (all(df$type %in% leaver_types)) {
-    y_scale <- ggplot2::scale_y_continuous(
+  is_rate <- unique(df$type) %in% leaver_types
+
+  y_scale <- if (is_rate) {
+    scale_y_continuous(
       labels = scales::label_percent(accuracy = 0.1),
       limits = c(0, NA)
     )
-    y_title <- paste0(unique_type, " (%)")
   } else {
-    y_scale <- ggplot2::scale_y_continuous(
+    scale_y_continuous(
       labels = scales::label_comma(),
       limits = c(0, NA)
     )
-    y_title <- paste0(unique_type, " (FTE)")
   }
+
+  y_title <- paste0(
+    unique(df$type),
+    if (is_rate) " (%)" else " (FTE)"
+  )
 
   # Build segment-level data for drawing line trajectories
   # Each row represents a single line segment from one year to the next
@@ -783,22 +803,19 @@ plot_flow_trajectories <- function(df) {
 
   # X-axis breaks are derived entirely from the data,
   # so the plot adapts automatically if years change
-  years_available <- df %>%
-    dplyr::pull(start_year) %>%
-    unique() %>%
-    sort()
-
   # Apply biennial pattern relative to the actual data
-  years_for_axis <- years_available[
-    years_available %% 2 == (min(years_available) %% 2)
-  ]
-
   # Axis labels for those years
+  years_for_axis <- df %>%
+    pull(start_year) %>%
+    unique() %>%
+    sort() %>%
+    (\(.) .[. %% 2 == min(.) %% 2])()
+
   axis_labels <- df %>%
-    dplyr::distinct(start_year, academic_year) %>%
-    dplyr::filter(start_year %in% years_for_axis) %>%
-    dplyr::arrange(start_year) %>%
-    dplyr::pull(academic_year)
+    distinct(start_year, academic_year) %>%
+    filter(start_year %in% years_for_axis) %>%
+    arrange(start_year) %>%
+    pull(academic_year)
 
   # Plot
   p <- ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
@@ -878,6 +895,18 @@ plot_flow_trajectories <- function(df) {
     ) +
     guides(
       colour = guide_legend(order = 1)
+    ) +
+    ggiraph::geom_vline_interactive(
+      data = vline_df,
+      aes(
+        xintercept = start_year,
+        tooltip = tooltip,
+        data_id = start_year,
+        hover_nearest = TRUE
+      ),
+      colour = "transparent",
+      linetype = "dashed",
+      linewidth = 3
     ) +
 
     # y scale as computed
