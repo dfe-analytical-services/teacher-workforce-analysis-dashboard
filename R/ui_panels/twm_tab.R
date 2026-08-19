@@ -282,9 +282,8 @@ twm_tab_panel <- function() {
                         gov_text(
                           HTML(
                             paste0(
-                              "Pupil numbers are shown by the ",
-                              "<span style='color:#801650; font-weight:600;'>pink</span>",
-                              " line with star markers; with projections shown as the dotted part. ",
+                              "Pupil numbers are shown by the orange",
+                              " line with star markers, with projections shown as the dotted part. ",
                               "Values correspond to the left-hand axis."
                             )
                           )
@@ -292,8 +291,7 @@ twm_tab_panel <- function() {
                         gov_text(
                           HTML(
                             paste0(
-                              "Teacher numbers are shown by the ",
-                              "<span style='color:#12436D; font-weight: 600;'>blue</span>",
+                              "Teacher numbers are shown by the blue",
                               " line with dot markers, with projected demand being the dotted part. ",
                               "Values correspond to the right-hand axis."
                             )

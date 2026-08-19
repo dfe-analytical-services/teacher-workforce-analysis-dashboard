@@ -193,7 +193,7 @@ plot_pupil_teacher_timeseries <- function(
       ),
       linewidth = 1
     ) +
-    geom_point(aes(y = pupil_numbers), color = "#801650", shape = 8, size = 3) +
+    geom_point(aes(y = pupil_numbers), color = "#F46A25", shape = 8, size = 3) +
     geom_point(
       aes(
         y = if (use_axis_lock) {
@@ -263,7 +263,7 @@ plot_pupil_teacher_timeseries <- function(
     coord_cartesian(ylim = primary_limits, clip = "on") +
     scale_colour_manual(
       name = "",
-      values = c("Pupils" = "#801650", "Teachers" = "#12436D")
+      values = c("Pupils" = "#F46A25", "Teachers" = "#12436D")
     ) +
     scale_linetype_manual(
       name = "",
@@ -290,7 +290,7 @@ plot_pupil_teacher_timeseries <- function(
         nrow = 1,
         title = NULL,
         override.aes = list(
-          colour = c("#801650", "#12436D"),
+          colour = c("#F46A25", "#12436D"),
           linetype = c("dotted", "dotted"),
           size = 0.8
         )
@@ -301,7 +301,7 @@ plot_pupil_teacher_timeseries <- function(
       axis.title.y.left = element_text(
         face = "bold",
         size = 14,
-        color = "#801650",
+        color = "#F46A25",
         angle = 90,
         vjust = 0.5,
         margin = margin(r = 20)
@@ -315,7 +315,7 @@ plot_pupil_teacher_timeseries <- function(
         margin = margin(l = 20)
       ),
       axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
-      axis.text.y.left = element_text(color = "#801650"),
+      axis.text.y.left = element_text(color = "#F46A25"),
       axis.text.y.right = element_text(color = "#12436D"),
       legend.text = element_text(size = 11),
       legend.position = "bottom",
