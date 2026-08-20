@@ -179,7 +179,7 @@ plot_pupil_teacher_timeseries <- function(
       linewidth = 3,
       color = "transparent"
     ) +
-    ggiraph::geom_segment_interactive(
+    geom_segment(
       data = df_long,
       aes(
         x = start_year,
@@ -187,9 +187,7 @@ plot_pupil_teacher_timeseries <- function(
         y = value,
         yend = next_value,
         colour = series,
-        linetype = seg_type,
-        tooltip = tooltip,
-        data_id = hover_id
+        linetype = seg_type
       ),
       linewidth = 1
     ) +
@@ -206,19 +204,6 @@ plot_pupil_teacher_timeseries <- function(
       shape = 21,
       fill = "#12436D",
       size = 2
-    ) +
-    ggiraph::geom_point_interactive(
-      aes(
-        y = if (use_axis_lock) {
-          (teacher_numbers - t0) * r + p0
-        } else {
-          teacher_numbers * r
-        },
-        tooltip = tooltip,
-        data_id = hover_id
-      ),
-      alpha = 0,
-      size = 8
     ) +
     scale_x_continuous(
       name = "Academic year",
