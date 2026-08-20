@@ -803,7 +803,7 @@ plot_flow_trajectories <- function(df) {
   p <- ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
 
     # Lines as segments with linetype mapped to Historic/Trajectory
-    ggiraph::geom_segment_interactive(
+    geom_segment(
       data = df_seg,
       ggplot2::aes(
         x = start_year,
@@ -812,17 +812,13 @@ plot_flow_trajectories <- function(df) {
         yend = next_value,
         linetype = segment_linetype,
         colour = factor(publication_year),
-        tooltip = tooltip_seg
       ),
       linewidth = 1
     ) +
-
-    # Points remain interactive
-    ggiraph::geom_point_interactive(
+    geom_point(
       ggplot2::aes(
         y = value,
-        colour = factor(publication_year),
-        tooltip = tooltip
+        colour = factor(publication_year)
       ),
       shape = 16,
       size = 2.5,
