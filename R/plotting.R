@@ -77,9 +77,8 @@ plot_pupil_teacher_timeseries <- function(
   # Prepare data
   df2 <- df %>%
     dplyr::mutate(
-      is_projection = projection == "Yes",
       tooltip = dplyr::if_else(
-        is_projection,
+        projection == "Yes",
         paste(
           academic_year,
           paste0(
@@ -108,20 +107,28 @@ plot_pupil_teacher_timeseries <- function(
           ),
           sep = "\n"
         )
-      ),
-      hover_id = paste0("year-", start_year)
+      )
     )
+
+  teacher_y <- if (use_axis_lock) {
+    (df2$teacher_numbers - t0) * r + p0
+  } else {
+    df2$teacher_numbers * r
+  }
 
   # Long format for segment plotting
   df_long <- df2 %>%
     tidyr::pivot_longer(
       cols = c(pupil_numbers, teacher_numbers),
-      names_to = "series_raw",
+      names_to = "series",
       values_to = "value_raw"
     ) %>%
     dplyr::mutate(
       series = factor(
-        ifelse(series_raw == "pupil_numbers", "Pupils", "Teachers"),
+        recode(series,
+          pupil_numbers = "Pupils",
+          teacher_numbers = "Teachers"
+        ),
         levels = c("Pupils", "Teachers")
       ),
       value = dplyr::if_else(
@@ -157,7 +164,7 @@ plot_pupil_teacher_timeseries <- function(
       primary_limits <- c(p0, p_max)
     } else {
       # fallback auto behaviour
-      transformed_teacher <- (df2$teacher_numbers - t0) * r + p0
+      transformed_teacher <- teacher_y
       y_min <- min(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
       y_max <- max(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
       start <- p0 + floor((y_min - p0) / pup_step) * pup_step
@@ -193,13 +200,7 @@ plot_pupil_teacher_timeseries <- function(
     ) +
     geom_point(aes(y = pupil_numbers), color = "#F46A25", shape = 8, size = 3) +
     geom_point(
-      aes(
-        y = if (use_axis_lock) {
-          (teacher_numbers - t0) * r + p0
-        } else {
-          teacher_numbers * r
-        }
-      ),
+      aes(y = teacher_y),
       color = "#12436D",
       shape = 21,
       fill = "#12436D",
@@ -245,7 +246,6 @@ plot_pupil_teacher_timeseries <- function(
         )
       )
     }) +
-    coord_cartesian(ylim = primary_limits, clip = "on") +
     scale_colour_manual(
       name = "",
       values = c("Pupils" = "#F46A25", "Teachers" = "#12436D")
