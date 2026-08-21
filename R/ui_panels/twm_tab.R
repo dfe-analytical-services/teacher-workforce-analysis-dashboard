@@ -1005,7 +1005,7 @@ twm_tab_panel <- function() {
                         shinyGovstyle::select_Input(
                           inputId = "filter_flow_type",
                           label = "Select entrant or leaver flow type:",
-                          select_text = choices_flow_type,
+                          select_text = flow_type_labels,
                           select_value = choices_flow_type
                         )
                       )
