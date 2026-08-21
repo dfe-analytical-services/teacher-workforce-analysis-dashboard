@@ -77,7 +77,7 @@ ui <- function(input, output, session) {
     service_navigation(
       c(
         "Teacher demand and PGITT need" = "link_to_intro_pgitt_need",
-        "User guide" = "link_to_user_guide"
+        "User guide" = "link_to_user_guide_serv_nav"
       )
     ),
     # Beta banner

@@ -98,7 +98,7 @@ twm_tab_panel <- function() {
                 ),
                 gov_text(
                   "Please see the ",
-                  actionLink("link_to_user_guide", "user guide"),
+                  actionLink("link_to_user_guide_intro", "user guide"),
                   " for details of data sources."
                 ),
                 gov_text("Data last updated: 23/4/2026"),

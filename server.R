@@ -1314,13 +1314,24 @@ server <- function(input, output, session) {
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
-  # User guide link
+  # User guide link #1
+  # Within the intro tab within the Teacher demand and PGITT need panel
 
-  observeEvent(input$link_to_user_guide, {
+  observeEvent(input$link_to_user_guide_intro, {
     updateTabsetPanel(session, "navlistPanel", selected = "User guide")
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
+
+  # User guide link #2
+  # Within service navigation
+
+  observeEvent(input$link_to_user_guide_serv_nav, {
+    updateTabsetPanel(session, "navlistPanel", selected = "User guide")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
 
   # Support and feedback link
 
