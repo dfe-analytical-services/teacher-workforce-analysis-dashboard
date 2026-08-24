@@ -26,6 +26,7 @@
 #
 # example:
 # calc_pt_change_24_to_27(df)
+# --------------------------------------------------------------------------------------
 
 calc_pt_change_24_to_27 <- function(df) {
   # Error if 2024 or 2027 data is missing
@@ -72,6 +73,7 @@ calc_pt_change_24_to_27 <- function(df) {
 #
 # example:
 # build_pupil_teacher_summary(df_change)
+# --------------------------------------------------------------------------------------
 
 build_pupil_teacher_summary <- function(df_change) {
   # Extract the 2027 row (where differences are defined)
@@ -82,7 +84,7 @@ build_pupil_teacher_summary <- function(df_change) {
   teacher_dir <- if (df_27$teacher_diff > 0) "higher" else "lower"
 
   # Construct summary sentence
-  glue::glue(
+  paste0(
     "DfE project there will be ",
     scales::label_comma()(abs(df_27$pupil_diff)),
     " ",
@@ -115,9 +117,8 @@ build_pupil_teacher_summary <- function(df_change) {
 # and returns a human-readable title describing the selected phase/subject
 # and academic year range covered by the data.
 #
-# The title is designed for use across multiple outputs, including
-# ggplot chart titles and GOV.UK Reactable table captions, ensuring
-# consistency between visual and tabular views.
+# Generates the title displayed in the chart and above the table
+# on the PGITT trainee need time series tab
 #
 # param: df A data frame containing PGITT trainee need data with the
 #             following fields:
@@ -127,13 +128,11 @@ build_pupil_teacher_summary <- function(df_change) {
 #
 # return: A single character string suitable for use as a plot title
 #         or table caption in a Shiny app.
+# --------------------------------------------------------------------------------------
 
 build_pgitt_need_ts_title <- function(df) {
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-
-  phase_val <- phase_selected[1]
-  subject_val <- subject_selected[1]
+  phase_val <- unique(df$phase)[1]
+  subject_val <- unique(df$subject)[1]
 
   min_year <- min(df$start_year, na.rm = TRUE)
   max_year <- max(df$start_year, na.rm = TRUE)
@@ -166,9 +165,7 @@ build_pgitt_need_ts_title <- function(df) {
 # and returns a human-readable title describing the selected phase/subject
 # and academic year range covered by the data.
 #
-# The title is designed for use across multiple outputs, including
-# ggplot chart titles and GOV.UK Reactable table captions, ensuring
-# consistency between visual and tabular views.
+# Generates the title displayed above the first table on the Drivers of Change tab
 #
 # param: df A drivers analysis data frame with the
 #            following fields:
@@ -181,25 +178,13 @@ build_pgitt_need_ts_title <- function(df) {
 # --------------------------------------------------------------------------------------
 
 build_drivers_table_title <- function(df) {
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-
-  phase_val <- if (length(phase_selected) == 1) {
-    phase_selected
-  } else {
-    phase_selected[1]
-  }
-
-  subject_val <- if (length(subject_selected) == 1) {
-    subject_selected
-  } else {
-    subject_selected[1]
-  }
+  phase_val <- unique(df$phase)[1]
+  subject_val <- unique(df$subject)[1]
 
   title_prefix <- dplyr::case_when(
     phase_val == "Primary" ~ "Primary",
-    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
-    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
     TRUE ~ subject_val
   )
 
@@ -216,8 +201,8 @@ build_drivers_table_title <- function(df) {
 # Takes a filtered flow trajectories data frame and returns a character
 # string describing the selected phase / subject and flow type.
 #
-# Designed for use in downloaded plots, chart titles, or captions to ensure
-# consistent naming across outputs.
+# Generates the title displayed in the chart and above the table
+# on the Flow trajectories tab
 #
 # param: df A data frame containing at least the following columns:
 #           - phase
@@ -241,34 +226,15 @@ build_flow_traj_title <- function(df) {
   }
 
   # Extract unique values
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-  type_selected <- unique(df$type)
-
-  # Pick a single value if filters return more than one
-  phase_val <- if (length(phase_selected) == 1) {
-    phase_selected
-  } else {
-    phase_selected[1]
-  }
-
-  subject_val <- if (length(subject_selected) == 1) {
-    subject_selected
-  } else {
-    subject_selected[1]
-  }
-
-  type_val <- if (length(type_selected) == 1) {
-    type_selected
-  } else {
-    type_selected[1]
-  }
+  phase_val <- unique(df$phase)[1]
+  subject_val <- unique(df$subject)[1]
+  type_val <- unique(df$type)[1]
 
   # Build title prefix
   title_prefix <- dplyr::case_when(
     phase_val == "Primary" ~ "Primary",
-    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
-    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
     TRUE ~ subject_val
   )
 
@@ -281,11 +247,42 @@ build_flow_traj_title <- function(df) {
   )
 }
 
-# Create a Tabset Panel with Optional Tabs
+# --------------------------------------------------------------------------------------
+# Create tabbed output panel with optional chart, table, and download tabs
+# --------------------------------------------------------------------------------------
 #
-# This function generates a `tabsetPanel` containing up to three tabs: "Chart",
-# "Table", and "Download".
-# Only non-NULL inputs will result in corresponding tabs being displayed.
+# Generates a Shiny `tabsetPanel` containing up to three tabs:
+# "Chart", "Table", and "Download".
+#
+# Tabs are only included when the corresponding output object is supplied.
+# This allows a consistent tabbed layout to be reused across app outputs
+# while supporting views that may not require a table or download section.
+#
+# Additional spacing is applied above the contents of the "Table" and
+# "Download" tabs to ensure consistent visual presentation.
+#
+# param: id A character string used to create a unique tabset panel ID.
+#
+# param: chart_output A Shiny UI output object to display in the "Chart" tab.
+#        This argument is required.
+#
+# param: table_output An optional Shiny UI output object to display in the
+#        "Table" tab. If NULL, the tab is omitted.
+#
+# param: download_output An optional Shiny UI output object to display in the
+#        "Download" tab. If NULL, the tab is omitted.
+#
+# return: A Shiny `tabsetPanel` containing the supplied tabs.
+#
+# example:
+# create_output_tabs(
+#   id = "pgitt_need",
+#   chart_output = plotOutput("need_plot"),
+#   table_output = reactableOutput("need_table"),
+#   download_output = downloadButton("download_data")
+# )
+#
+# --------------------------------------------------------------------------------------
 
 create_output_tabs <- function(
   id,
