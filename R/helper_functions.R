@@ -85,7 +85,7 @@ build_pupil_teacher_summary <- function(df_change) {
 
   # Construct summary sentence
   paste0(
-    "DfE project there will be ",
+    "DfE projects that there will be ",
     scales::label_comma()(abs(df_27$pupil_diff)),
     " ",
     pupil_dir,
@@ -95,7 +95,7 @@ build_pupil_teacher_summary <- function(df_change) {
       dfeR::round_five_up(df_27$pupil_pct, dp = 1)
     ),
     ") ",
-    "and teacher demand to be ",
+    "and teacher demand will be ",
     scales::label_comma()(abs(df_27$teacher_diff)),
     " ",
     teacher_dir,
