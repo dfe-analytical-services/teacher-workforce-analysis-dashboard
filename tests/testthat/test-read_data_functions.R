@@ -520,3 +520,28 @@ test_that("flow publication readers warn when value contains negative values", {
     )
   }
 })
+
+
+# 5 - Test to check that subject names match across datasets  -----------------------------------------------------
+
+test_that("subjects are consistent across datasets", {
+  # Get unique list of subjects from each dataset
+  pgitt_subjects <- unique(pgitt_need_timeseries$subject)
+  drivers_subjects <- unique(drivers_data$subject)
+  flow_subjects <- unique(flow_data$subject)
+
+  # Remove total from subject lists
+  pgitt_subjects <- setdiff(pgitt_subjects, "Total")
+  drivers_subjects <- setdiff(drivers_subjects, "Total")
+  flow_subjects <- setdiff(flow_subjects, "Total")
+
+  # Check subjects are present
+  expect_gt(length(pgitt_subjects), 0)
+  expect_gt(length(pgitt_subjects), 0)
+  expect_gt(length(pgitt_subjects), 0)
+
+  # Verify that subject names are consistent between the PGITT,
+  # drivers and flow datasets (ignoring order)
+  expect_setequal(pgitt_subjects, drivers_subjects)
+  expect_setequal(pgitt_subjects, flow_subjects)
+})
