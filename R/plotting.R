@@ -919,8 +919,8 @@ plot_flow_trajectories <- function(df) {
     scale_colour_manual(
       name = "",
       values = c(
-        "2026" = "#801650",
-        "2025" = "#28A197"
+        "2026" = "#12436D",
+        "2025" = "#F46A25"
       ),
       labels = c(
         "2026" = "2026 publication data (dotted line = trajectory)",
