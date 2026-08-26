@@ -796,15 +796,32 @@ plot_flow_trajectories <- function(df) {
   # - numeric (FTE) scale for all other flow types
   is_rate <- unique(df$type) %in% leaver_types
 
+  # Compute breaks so there's always a gridline (and label) above the
+  # highest data point. ggplot's default "pretty" breaks are chosen to span
+  # the *panel* range, but when the max value isn't close to a round number,
+  # the highest break can fall below it - leaving the line to rise past the
+  # last visible gridline with nothing above it to bound it visually.
+  max_val <- max(df$value, na.rm = TRUE)
+  y_breaks <- scales::extended_breaks(n = 5)(c(0, max_val))
+  break_step <- diff(y_breaks)[1]
+  if (max(y_breaks) <= max_val) {
+    y_breaks <- c(y_breaks, max(y_breaks) + break_step)
+  }
+  y_upper <- max(y_breaks)
+
   y_scale <- if (is_rate) {
     scale_y_continuous(
       labels = scales::label_percent(accuracy = 0.1),
-      limits = c(0, NA)
+      breaks = y_breaks,
+      limits = c(0, y_upper),
+      expand = expansion(mult = c(0, 0.02))
     )
   } else {
     scale_y_continuous(
       labels = scales::label_comma(),
-      limits = c(0, NA)
+      breaks = y_breaks,
+      limits = c(0, y_upper),
+      expand = expansion(mult = c(0, 0.02))
     )
   }
 
