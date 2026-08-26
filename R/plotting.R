@@ -116,6 +116,26 @@ plot_pupil_teacher_timeseries <- function(
     df2$teacher_numbers * r
   }
 
+  # Single 4-level factor driving colour, linetype and shape together so
+  # all four series render as one merged legend, on one row:
+  # Pupils / Teachers / Projected pupil numbers / Projected teacher demand
+  legend_levels <- c(
+    "Pupils",
+    "Teachers",
+    "Projected pupil numbers",
+    "Projected teacher demand"
+  )
+
+  df2 <- df2 %>%
+    dplyr::mutate(
+      point_category_pupil = dplyr::if_else(
+        projection == "Yes", "Projected pupil numbers", "Pupils"
+      ),
+      point_category_teacher = dplyr::if_else(
+        projection == "Yes", "Projected teacher demand", "Teachers"
+      )
+    )
+
   # Long format for segment plotting
   df_long <- df2 %>%
     tidyr::pivot_longer(
@@ -148,7 +168,15 @@ plot_pupil_teacher_timeseries <- function(
         "Projected",
         "Historic"
       ),
-      seg_type = paste(series, segment_linetype)
+      legend_key = dplyr::case_when(
+        series == "Pupils" & segment_linetype == "Historic" ~ "Pupils",
+        series == "Teachers" & segment_linetype == "Historic" ~ "Teachers",
+        series == "Pupils" & segment_linetype == "Projected" ~
+          "Projected pupil numbers",
+        series == "Teachers" & segment_linetype == "Projected" ~
+          "Projected teacher demand"
+      ),
+      legend_key = factor(legend_key, levels = legend_levels)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(next_year))
@@ -193,16 +221,34 @@ plot_pupil_teacher_timeseries <- function(
         xend = next_year,
         y = value,
         yend = next_value,
-        colour = series,
-        linetype = seg_type
+        colour = legend_key,
+        linetype = legend_key
       ),
       linewidth = 1
     ) +
-    geom_point(aes(y = pupil_numbers), color = "#F46A25", shape = 8, size = 3) +
+    scale_shape_manual(
+      values = c(
+        "Pupils" = 8,
+        "Teachers" = 21,
+        "Projected pupil numbers" = 8,
+        "Projected teacher demand" = 21
+      ),
+      guide = "none"
+    ) +
     geom_point(
-      aes(y = teacher_y),
-      color = "#12436D",
-      shape = 21,
+      aes(
+        y = pupil_numbers,
+        color = point_category_pupil,
+        shape = point_category_pupil
+      ),
+      size = 3
+    ) +
+    geom_point(
+      aes(
+        y = teacher_y,
+        color = point_category_teacher,
+        shape = point_category_teacher
+      ),
       fill = "#12436D",
       size = 2
     ) +
@@ -248,36 +294,34 @@ plot_pupil_teacher_timeseries <- function(
     }) +
     scale_colour_manual(
       name = "",
-      values = c("Pupils" = "#F46A25", "Teachers" = "#12436D")
+      breaks = legend_levels,
+      values = c(
+        "Pupils" = "#F46A25",
+        "Teachers" = "#12436D",
+        "Projected pupil numbers" = "#F46A25",
+        "Projected teacher demand" = "#12436D"
+      )
     ) +
     scale_linetype_manual(
       name = "",
+      breaks = legend_levels,
       values = c(
-        "Pupils Historic" = "solid",
-        "Teachers Historic" = "solid",
-        "Pupils Projected" = "dotted",
-        "Teachers Projected" = "dotted"
+        "Pupils" = "solid",
+        "Teachers" = "solid",
+        "Projected pupil numbers" = "dotted",
+        "Projected teacher demand" = "dotted"
       ),
-      breaks = c("Pupils Projected", "Teachers Projected"),
-      labels = c(
-        "Pupils Projected" = "Projected pupil numbers",
-        "Teachers Projected" = "Projected teacher demand"
-      )
+      guide = "none"
     ) +
     guides(
       colour = guide_legend(
-        order = 1, # series appears first
-        nrow = 1,
-        title = NULL
-      ),
-      linetype = guide_legend(
-        order = 2, # projections appear second
-        nrow = 1,
         title = NULL,
+        nrow = 1,
         override.aes = list(
-          colour = c("#F46A25", "#12436D"),
-          linetype = c("dotted", "dotted"),
-          size = 0.8
+          shape = c(8, 21, 8, 21),
+          linetype = c("solid", "solid", "dotted", "dotted"),
+          fill = c(NA, "#12436D", NA, "#12436D"),
+          size = c(3, 2, 3, 2)
         )
       )
     ) +
@@ -285,7 +329,7 @@ plot_pupil_teacher_timeseries <- function(
     theme(
       axis.title.y.left = element_text(
         face = "bold",
-        size = 14,
+        size = 15,
         color = "#F46A25",
         angle = 90,
         vjust = 0.5,
@@ -293,18 +337,30 @@ plot_pupil_teacher_timeseries <- function(
       ),
       axis.title.y.right = element_text(
         face = "bold",
-        size = 14,
+        size = 15,
         color = "#12436D",
         angle = 270,
         vjust = 0.5,
         margin = margin(l = 20)
       ),
       axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
-      axis.text.y.left = element_text(color = "#F46A25"),
-      axis.text.y.right = element_text(color = "#12436D"),
+      axis.text.y.left = element_text(
+        color = "#F46A25",
+        face = "bold",
+        size = 14
+      ),
+      axis.text.y.right = element_text(
+        color = "#12436D",
+        face = "bold",
+        size = 14
+      ),
+      axis.text.x = element_text(
+        size = 13
+      ),
       legend.text = element_text(size = 11),
       legend.position = "bottom",
       legend.margin = margin(t = -5),
+      legend.key.width = unit(1.5, "cm"),
       legend.box = "horizontal",
       legend.direction = "horizontal",
       legend.background = element_rect(fill = "transparent", colour = NA),
