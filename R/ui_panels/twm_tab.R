@@ -701,36 +701,26 @@ twm_tab_panel <- function() {
                         style = "margin-top: 1.5rem;",
                         gov_text(
                           tags$small(
-                            HTML(
-                              paste0(
-                                "This graph shows last year’s PGITT trainee need (left, ",
-                                "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
-                                " bar) and this year’s PGITT trainee need (right, ",
-                                "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
-                                " bar) for the selected school phase and/or secondary subject. ",
-                                "In between these two bars are the estimated respective drivers behind ",
-                                "the change in PGITT need between the two years."
-                              )
+                            paste0(
+                              "This graph shows last year’s PGITT trainee need (left, dark",
+                              " blue bar) and this year’s PGITT trainee need (right, dark blue",
+                              " bar) for the selected school phase and/or secondary subject. ",
+                              "In between these two bars are the estimated respective drivers behind ",
+                              "the change in PGITT need between the two years."
                             )
                           )
                         ),
                         gov_text(
                           tags$small(
-                            HTML(
-                              paste0(
-                                "<span style='color:#801650; font-weight:600;'>Pink</span>",
-                                " bars show drivers that acted to reduce PGITT trainee need this year (often ",
-                                "because forecasts are more optimistic than those produced last year), and ",
-                                "<span style='color:#28A197; font-weight:600;'>green</span>
-                                bars show drivers that acted to increase it."
-                              )
+                            paste0(
+                              "Orange bars show drivers that acted to reduce PGITT trainee need this year (often ",
+                              "because forecasts are more optimistic than those produced last year), and ",
+                              "green bars show drivers that acted to increase it."
                             )
                           )
                         )
                       )
                     ),
-
-
                     # Mini tab 2 - table
                     table_output = div(
                       # Reactive table title

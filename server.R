@@ -700,7 +700,7 @@ server <- function(input, output, session) {
         ggiraph::opts_selection(type = "none"),
         ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng"),
         ggiraph::opts_hover(
-          css = "stroke: orange; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"
+          css = "stroke: pink; stroke-width: 2.5px; filter: drop-shadow(0 0 4px white);"
         ),
         ggiraph::opts_hover_inv(css = "opacity:1;"), # keep others unchanged on hover
         ggiraph::opts_tooltip(

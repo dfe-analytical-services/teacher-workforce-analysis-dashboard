@@ -634,7 +634,7 @@ plot_drivers_waterfall <- function(df_raw) {
     ) +
     # Colour palette
     scale_fill_manual(
-      values = c(increase = "#28A197", decrease = "#801650", total = "#12436D"),
+      values = c(increase = "#28A197", decrease = "#F46A25", total = "#12436D"),
       guide = "none"
     ) +
     # Y axis formatting
