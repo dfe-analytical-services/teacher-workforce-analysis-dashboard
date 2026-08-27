@@ -703,9 +703,13 @@ plot_flow_trajectories <- function(df) {
       names_prefix = "pub_"
     ) %>%
     dplyr::mutate(
+      # Show phase for Primary, or the secondary subject, ahead of the flow type
+      # on the same line, with the flow type's first letter lowercased
+      phase_or_subject = dplyr::if_else(phase == "Primary", phase, subject),
+      type_lower = paste0(tolower(substr(type, 1, 1)), substr(type, 2, nchar(type))),
       tooltip = paste(
         academic_year,
-        type,
+        paste(phase_or_subject, type_lower),
         paste0(
           "2025 publication value",
           ifelse(start_year > 2023, " (trajectory)", ""),
