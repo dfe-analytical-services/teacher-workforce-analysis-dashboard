@@ -391,6 +391,26 @@ plot_pgitt_need_timeseries <- function(df) {
     dplyr::arrange(start_year) %>%
     dplyr::pull(academic_year)
 
+  # Compute breaks so there's always a gridline (and label) above the
+  # highest bar. ggplot's default "pretty" breaks are chosen to span the
+  # panel range, but when the max value isn't close to a round number, the
+  # highest break can fall below it - leaving the bar to rise past the last
+  # visible gridline with nothing above it to bound it visually.
+  max_val <- max(df2$pgitt_trainee_need_count, na.rm = TRUE)
+  y_breaks <- scales::extended_breaks(n = 5)(c(0, max_val))
+  break_step <- diff(y_breaks)[1]
+  if (max(y_breaks) <= max_val) {
+    y_breaks <- c(y_breaks, max(y_breaks) + break_step)
+  }
+  y_upper <- max(y_breaks)
+
+  y_scale <- scale_y_continuous(
+    labels = scales::comma,
+    breaks = y_breaks,
+    limits = c(0, y_upper),
+    expand = expansion(mult = c(0, 0.02))
+  )
+
   # Build the plot
   p <- ggplot(
     df2,
@@ -440,10 +460,7 @@ plot_pgitt_need_timeseries <- function(df) {
       labels = year_labels
     ) +
     # Format y-axis with commas and force the axis to start at 0
-    scale_y_continuous(
-      labels = scales::comma,
-      limits = c(0, NA),
-    )
+    y_scale
 
   # Return the plot object
   p + ggplot2::labs(title = build_pgitt_need_ts_title(df))
