@@ -8,6 +8,30 @@
 # scripts that contain your custom plotting functions.
 # -----------------------------------------------------------------------------
 
+# Shared helpers ---------------------------------------------------------
+
+# Compute "nice" y-axis breaks that always include one above the highest
+# data point. ggplot's default "pretty" breaks are chosen to span the panel
+# range, but when the max value isn't close to a round number, the highest
+# break can fall below it - leaving bars/lines to rise past the last
+# visible gridline with nothing above it to bound them visually.
+y_breaks_with_headroom <- function(max_val, n = 5) {
+  breaks <- scales::extended_breaks(n = n)(c(0, max_val))
+  step <- diff(breaks)[1]
+  if (max(breaks) <= max_val) breaks <- c(breaks, max(breaks) + step)
+  breaks
+}
+
+# Distinct, sorted academic-year labels (e.g. "2022/23") for a set of
+# start years, used to label x-axis breaks
+academic_year_labels <- function(df, years) {
+  df %>%
+    dplyr::distinct(start_year, academic_year) %>%
+    dplyr::filter(start_year %in% years) %>%
+    dplyr::arrange(start_year) %>%
+    dplyr::pull(academic_year)
+}
+
 # Pupil vs Teacher timeseries ---------------------------
 
 # Plot pupil numbers and teacher numbers over time on a dual y-axis
@@ -384,32 +408,10 @@ plot_pgitt_need_timeseries <- function(df) {
   year_breaks <- sort(unique(df2$start_year))
 
   # Text labels for the x-axis (e.g. "2022/23")
-  # We deduplicate year/label pairs, order them,
-  # and then pull out just the label column
-  year_labels <- df2 %>%
-    dplyr::distinct(start_year, academic_year) %>%
-    dplyr::arrange(start_year) %>%
-    dplyr::pull(academic_year)
+  year_labels <- academic_year_labels(df2, year_breaks)
 
-  # Compute breaks so there's always a gridline (and label) above the
-  # highest bar. ggplot's default "pretty" breaks are chosen to span the
-  # panel range, but when the max value isn't close to a round number, the
-  # highest break can fall below it - leaving the bar to rise past the last
-  # visible gridline with nothing above it to bound it visually.
-  max_val <- max(df2$pgitt_trainee_need_count, na.rm = TRUE)
-  y_breaks <- scales::extended_breaks(n = 5)(c(0, max_val))
-  break_step <- diff(y_breaks)[1]
-  if (max(y_breaks) <= max_val) {
-    y_breaks <- c(y_breaks, max(y_breaks) + break_step)
-  }
-  y_upper <- max(y_breaks)
-
-  y_scale <- scale_y_continuous(
-    labels = scales::comma,
-    breaks = y_breaks,
-    limits = c(0, y_upper),
-    expand = expansion(mult = c(0, 0.02))
-  )
+  # Ensure there's always a gridline above the highest bar
+  y_breaks <- y_breaks_with_headroom(max(df2$pgitt_trainee_need_count, na.rm = TRUE))
 
   # Build the plot
   p <- ggplot(
@@ -460,10 +462,15 @@ plot_pgitt_need_timeseries <- function(df) {
       labels = year_labels
     ) +
     # Format y-axis with commas and force the axis to start at 0
-    y_scale
+    scale_y_continuous(
+      labels = scales::comma,
+      breaks = y_breaks,
+      limits = c(0, max(y_breaks)),
+      expand = expansion(mult = c(0, 0.02))
+    ) +
+    ggplot2::labs(title = build_pgitt_need_ts_title(df))
 
-  # Return the plot object
-  p + ggplot2::labs(title = build_pgitt_need_ts_title(df))
+  p
 }
 
 # Drivers analysis waterfall graph --------------------------------------------------------------------------------
@@ -547,19 +554,8 @@ plot_drivers_waterfall <- function(df_raw) {
     )
 
   # Reactive title based on phase/subject selected
-
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-  phase_val <- if (length(phase_selected) == 1) {
-    phase_selected
-  } else {
-    phase_selected[1]
-  }
-  subject_val <- if (length(subject_selected) == 1) {
-    subject_selected
-  } else {
-    subject_selected[1]
-  }
+  phase_val <- df$phase[1]
+  subject_val <- df$subject[1]
 
   title_prefix <- dplyr::case_when(
     phase_val == "Primary" ~ "primary",
@@ -649,10 +645,11 @@ plot_drivers_waterfall <- function(df_raw) {
         margin = margin(t = 6),
         lineheight = 0.95
       )
-    )
-  # Apply title
-  p <- p +
+    ) +
+    # Apply title
     ggplot2::labs(title = plot_title)
+
+  p
 }
 
 # Plot flow trajectories -----------------------------------------------------------
@@ -789,34 +786,15 @@ plot_flow_trajectories <- function(df) {
   # - numeric (FTE) scale for all other flow types
   is_rate <- unique(df$type) %in% leaver_types
 
-  # Compute breaks so there's always a gridline (and label) above the
-  # highest data point. ggplot's default "pretty" breaks are chosen to span
-  # the *panel* range, but when the max value isn't close to a round number,
-  # the highest break can fall below it - leaving the line to rise past the
-  # last visible gridline with nothing above it to bound it visually.
-  max_val <- max(df$value, na.rm = TRUE)
-  y_breaks <- scales::extended_breaks(n = 5)(c(0, max_val))
-  break_step <- diff(y_breaks)[1]
-  if (max(y_breaks) <= max_val) {
-    y_breaks <- c(y_breaks, max(y_breaks) + break_step)
-  }
-  y_upper <- max(y_breaks)
-
-  y_scale <- if (is_rate) {
-    scale_y_continuous(
-      labels = scales::label_percent(accuracy = 0.1),
-      breaks = y_breaks,
-      limits = c(0, y_upper),
-      expand = expansion(mult = c(0, 0.02))
-    )
-  } else {
-    scale_y_continuous(
-      labels = scales::label_comma(),
-      breaks = y_breaks,
-      limits = c(0, y_upper),
-      expand = expansion(mult = c(0, 0.02))
-    )
-  }
+  # Ensure there's always a gridline above the highest data point, and use
+  # percent vs comma labels depending on whether this is a rate
+  y_breaks <- y_breaks_with_headroom(max(df$value, na.rm = TRUE))
+  y_scale <- scale_y_continuous(
+    labels = if (is_rate) scales::label_percent(accuracy = 0.1) else scales::label_comma(),
+    breaks = y_breaks,
+    limits = c(0, max(y_breaks)),
+    expand = expansion(mult = c(0, 0.02))
+  )
 
   y_title <- paste0(
     unique(df$type),
@@ -859,11 +837,7 @@ plot_flow_trajectories <- function(df) {
     sort() %>%
     (\(.) .[. %% 2 == min(.) %% 2])()
 
-  axis_labels <- df %>%
-    distinct(start_year, academic_year) %>%
-    filter(start_year %in% years_for_axis) %>%
-    arrange(start_year) %>%
-    pull(academic_year)
+  axis_labels <- academic_year_labels(df, years_for_axis)
 
   # Plot
   p <- ggplot2::ggplot(df, ggplot2::aes(x = start_year)) +
@@ -954,9 +928,10 @@ plot_flow_trajectories <- function(df) {
     ) +
 
     # y scale as computed
-    y_scale
+    y_scale +
 
-  # Apply title
-  p <- p +
+    # Apply title
     ggplot2::labs(title = build_flow_traj_title(df))
+
+  p
 }
