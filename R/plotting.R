@@ -75,38 +75,26 @@ plot_pupil_teacher_timeseries <- function(
   }
 
   # Prepare data
+  # Build a shared prefix/label for historic/projected
   df2 <- df %>%
     dplyr::mutate(
-      tooltip = dplyr::if_else(
-        projection == "Yes",
-        paste(
-          academic_year,
-          paste0(
-            "Projected ",
-            tolower(phase),
-            " pupil numbers: ",
-            scales::comma(pupil_numbers)
-          ),
-          paste0(
-            "Projected ",
-            tolower(phase),
-            " teacher demand: ",
-            scales::comma(teacher_numbers)
-          ),
-          sep = "\n"
-        ),
-        paste(
-          academic_year,
-          paste0(
-            phase, " pupil numbers: ",
-            scales::comma(pupil_numbers)
-          ),
-          paste0(
-            phase, " teacher numbers: ",
-            scales::comma(teacher_numbers)
-          ),
-          sep = "\n"
-        )
+      prefix = dplyr::if_else(
+        projection == "Yes", paste0("Projected ", tolower(phase)), phase
+      ),
+      teacher_label = dplyr::if_else(
+        projection == "Yes", "teacher demand", "teacher numbers"
+      ),
+      tooltip = paste(
+        academic_year,
+        paste0(prefix, " pupil numbers: ", scales::comma(pupil_numbers)),
+        paste0(prefix, " ", teacher_label, ": ", scales::comma(teacher_numbers)),
+        sep = "\n"
+      ),
+      point_category_pupil = dplyr::if_else(
+        projection == "Yes", "Projected pupil numbers", "Pupils"
+      ),
+      point_category_teacher = dplyr::if_else(
+        projection == "Yes", "Projected teacher demand", "Teachers"
       )
     )
 
@@ -125,16 +113,6 @@ plot_pupil_teacher_timeseries <- function(
     "Projected pupil numbers",
     "Projected teacher demand"
   )
-
-  df2 <- df2 %>%
-    dplyr::mutate(
-      point_category_pupil = dplyr::if_else(
-        projection == "Yes", "Projected pupil numbers", "Pupils"
-      ),
-      point_category_teacher = dplyr::if_else(
-        projection == "Yes", "Projected teacher demand", "Teachers"
-      )
-    )
 
   # Long format for segment plotting
   df_long <- df2 %>%
@@ -169,12 +147,11 @@ plot_pupil_teacher_timeseries <- function(
         "Historic"
       ),
       legend_key = dplyr::case_when(
-        series == "Pupils" & segment_linetype == "Historic" ~ "Pupils",
-        series == "Teachers" & segment_linetype == "Historic" ~ "Teachers",
-        series == "Pupils" & segment_linetype == "Projected" ~
+        segment_linetype == "Projected" & series == "Pupils" ~
           "Projected pupil numbers",
-        series == "Teachers" & segment_linetype == "Projected" ~
-          "Projected teacher demand"
+        segment_linetype == "Projected" & series == "Teachers" ~
+          "Projected teacher demand",
+        TRUE ~ as.character(series)
       ),
       legend_key = factor(legend_key, levels = legend_levels)
     ) %>%
@@ -192,9 +169,8 @@ plot_pupil_teacher_timeseries <- function(
       primary_limits <- c(p0, p_max)
     } else {
       # fallback auto behaviour
-      transformed_teacher <- teacher_y
-      y_min <- min(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
-      y_max <- max(df2$pupil_numbers, transformed_teacher, na.rm = TRUE)
+      y_min <- min(df2$pupil_numbers, teacher_y, na.rm = TRUE)
+      y_max <- max(df2$pupil_numbers, teacher_y, na.rm = TRUE)
       start <- p0 + floor((y_min - p0) / pup_step) * pup_step
       end <- p0 + ceiling((y_max - p0) / pup_step) * pup_step
 
@@ -262,33 +238,29 @@ plot_pupil_teacher_timeseries <- function(
       )
     ) +
 
-    # Conditional Y‑axis using list()
+    # Conditional Y‑axis
     (if (use_axis_lock) {
-      list(
-        scale_y_continuous(
-          name = pupils_axis_name,
-          breaks = primary_breaks,
-          labels = scales::comma,
-          limits = primary_limits,
-          expand = c(0, 0),
-          sec.axis = sec_axis(
-            transform = ~ (. - p0) / r + t0,
-            name = teachers_axis_name,
-            breaks = secondary_breaks,
-            labels = scales::comma
-          )
+      scale_y_continuous(
+        name = pupils_axis_name,
+        breaks = primary_breaks,
+        labels = scales::comma,
+        limits = primary_limits,
+        expand = c(0, 0),
+        sec.axis = sec_axis(
+          transform = ~ (. - p0) / r + t0,
+          name = teachers_axis_name,
+          breaks = secondary_breaks,
+          labels = scales::comma
         )
       )
     } else {
-      list(
-        scale_y_continuous(
-          name = pupils_axis_name,
-          labels = scales::comma,
-          sec.axis = sec_axis(
-            ~ . / r,
-            name = teachers_axis_name,
-            labels = scales::comma
-          )
+      scale_y_continuous(
+        name = pupils_axis_name,
+        labels = scales::comma,
+        sec.axis = sec_axis(
+          ~ . / r,
+          name = teachers_axis_name,
+          labels = scales::comma
         )
       )
     }) +
