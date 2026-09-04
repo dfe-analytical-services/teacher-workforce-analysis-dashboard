@@ -18,7 +18,8 @@
 test_df_increase <- tibble::tibble(
   start_year = c(2024, 2027),
   pupil_numbers = c(100000, 105000),
-  teacher_numbers = c(5000, 5200)
+  teacher_numbers = c(5000, 5200),
+  phase = c("Primary", "Primary")
 )
 
 
@@ -53,8 +54,8 @@ test_that("build_pupil_teacher_summary creates correct text for increases", {
     calc_pt_change_24_to_27(test_df_increase)
   )
 
-  # Verify correct directional language and formatting
-  expect_match(summary_text, "5,000 more pupils")
+  # Verify correct directional language and formatting, including phase
+  expect_match(summary_text, "5,000 more primary pupils")
   expect_match(summary_text, "200 higher")
   expect_match(summary_text, "5.0%")
   expect_match(summary_text, "4.0%")
@@ -75,7 +76,8 @@ test_that("build_pupil_teacher_summary handles decreases correctly", {
     pupil_numbers = c(100000, 95000),
     # 4800 - 5000 = -200
     # ((4800 - 5000)/5000) * 100 = -4%
-    teacher_numbers = c(5000, 4800)
+    teacher_numbers = c(5000, 4800),
+    phase = c("Secondary", "Secondary")
   )
 
   # Create summary text for decreasing scenario
@@ -83,8 +85,8 @@ test_that("build_pupil_teacher_summary handles decreases correctly", {
     calc_pt_change_24_to_27(test_df_decrease)
   )
 
-  # Check directional wording switches appropriately
-  expect_match(summary_text, "5,000 fewer pupils")
+  # Check directional wording switches appropriately, including phase
+  expect_match(summary_text, "5,000 fewer secondary pupils")
   expect_match(summary_text, "200 lower")
 
   # Check negative percentage formatting
@@ -109,7 +111,8 @@ test_that(
       pupil_numbers = c(100000, 102250), # 2.25%
       # 10465 - 10000 = 465
       # (465 / 10000) * 100 = 4.65%
-      teacher_numbers = c(10000, 10465) # 4.65%
+      teacher_numbers = c(10000, 10465), # 4.65%
+      phase = c("Primary", "Primary")
     )
 
     summary_text <- build_pupil_teacher_summary(
@@ -134,7 +137,8 @@ test_that("calc_pt_change_24_to_27 errors if 2027 data is missing", {
   df_missing <- tibble::tibble(
     start_year = 2024,
     pupil_numbers = 100000,
-    teacher_numbers = 5000
+    teacher_numbers = 5000,
+    phase = "Primary"
   )
 
   # Calculation should fail because data for 2027 is missing

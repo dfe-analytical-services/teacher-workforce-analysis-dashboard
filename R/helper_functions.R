@@ -17,6 +17,8 @@
 #   - start_year
 #   - pupil_numbers
 #   - teacher_numbers
+#   - phase (e.g. "Primary"/"Secondary"), carried through unchanged so
+#     downstream summary text can reference it.
 #
 # return: A data frame with additional columns:
 #   - pupil_diff
@@ -68,6 +70,9 @@ calc_pt_change_24_to_27 <- function(df) {
 # changes between 2024/25 and 2027/28.
 #
 # param: df_change A data frame containing change metrics for 2024 and 2027.
+#   Must include a `phase` column (e.g. "Primary"/"Secondary"), which is
+#   used to describe the pupils as "primary pupils" or "secondary pupils"
+#   in the summary sentence.
 #
 # return: A single character string suitable for display in a Shiny text output.
 #
@@ -83,13 +88,18 @@ build_pupil_teacher_summary <- function(df_change) {
   pupil_dir <- if (df_27$pupil_diff > 0) "more" else "fewer"
   teacher_dir <- if (df_27$teacher_diff > 0) "higher" else "lower"
 
+  # Add in phase e.g. gives "primary pupils"/"secondary pupils"
+  pupil_label <- paste(tolower(unique(df_27$phase)[1]), "pupils")
+
   # Construct summary sentence
   paste0(
     "DfE projects that there will be ",
     scales::label_comma()(abs(df_27$pupil_diff)),
     " ",
     pupil_dir,
-    " pupils (",
+    " ",
+    pupil_label,
+    " (",
     sprintf(
       "%.1f%%",
       dfeR::round_five_up(df_27$pupil_pct, dp = 1)
