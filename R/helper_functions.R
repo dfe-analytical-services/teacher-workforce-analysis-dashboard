@@ -321,3 +321,62 @@ create_output_tabs <- function(
 
   do.call(tabsetPanel, c(list(id = paste0("main_tabs_", id)), tabs))
 }
+
+# --------------------------------------------------------------------------------------
+# Styling overrides to give a wide, but capped, page width
+# --------------------------------------------------------------------------------------
+#
+# Experimental: a local adaptation of `shinyGovstyle::full_width_overrides()`
+# that caps the page at 1800px rather than allowing it to stretch to 100% of
+# the viewport width.
+#
+# This was added after updating the dashboard to align with the latest GDS
+# styling, including the addition of a GOV.UK service navigation bar and the
+# removal of the left-hand navigation panel. Without a width cap, these
+# changes made the page excessively wide on large monitors.
+#
+# It carries the same caveats as the original function: it is not well tested
+# and may cause unexpected styling issues when used alongside components from
+# other packages, so use with care.
+#
+# Returns: HTML containing CSS styling overrides.
+#
+# Example:
+# max_width_overrides()
+
+max_width_overrides <- function() {
+  shiny::tags$head(
+    shiny::tags$style(
+      shiny::HTML(
+        # Overall overrides
+        ".container-fluid { padding: 0; }",
+        # Match GOV.UK Frontend's own gutter values: 15px (mobile) and 30px
+        # (desktop). Without this, text would start flush against the viewport
+        # edge in a full-width layout, which GOV.UK Frontend normally avoids
+        # via its max-width container and auto margins.
+        # Cap at 1800px and centre with auto margins once the viewport
+        # exceeds that width, rather than stretching to 100% indefinitely.
+        # padding-left/-right are set equally so the gutter is symmetric.
+        ".govuk-width-container { max-width: 1800px; margin-left: auto; margin-right: auto; padding-left: 15px; padding-right: 15px; }",
+        paste0(
+          "@media (min-width: 641px) {",
+          " .govuk-width-container { padding-left: 30px; padding-right: 30px; } }"
+        ),
+        ".govuk-grid-row { margin-left: 0; margin-right: 0; }",
+        "[class*='govuk-grid-column-'] { padding: 0; }",
+        ".govuk-main-wrapper { padding-top: 20px; }",
+
+        # Cookie banner overrides
+        ".govuk-button-group { margin-right: 0px; }",
+
+        # Footer overrides
+        ".govuk-footer { padding: 2rem; }",
+        "html { background-color: #f3f2f1; }",
+
+        # Left content overrides
+        ".govuk-contents-box { margin-left: 0; margin-right: 0; }",
+        ".govuk-contents-box { padding: 10px; width: fit-content !important; }"
+      )
+    )
+  )
+}

@@ -69,7 +69,7 @@ ui <- function(input, output, session) {
 
 
     # Header ------------------------------------------------------------------
-    shinyGovstyle::full_width_overrides(),
+    max_width_overrides(),
     shinyGovstyle::header(
       org_name = "Department for Education",
       service_name = "Teacher workforce analysis dashboard (England)"
