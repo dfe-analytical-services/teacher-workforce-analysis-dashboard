@@ -81,7 +81,7 @@ twm_tab_panel <- function() {
                 gov_text(
                   "This interactive dashboard accompanies the ",
                   a("Teacher demand and postgraduate trainee need publication.",
-                    href = "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27",
+                    href = parent_publication,
                     target = "_blank"
                   )
                 ),
