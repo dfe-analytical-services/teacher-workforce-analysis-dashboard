@@ -696,29 +696,6 @@ twm_tab_panel <- function() {
                       ggiraph::girafeOutput("drivers_waterfall_plot",
                         width  = NULL,
                         height = NULL
-                      ),
-                      div(
-                        style = "margin-top: 1.5rem;",
-                        gov_text(
-                          tags$small(
-                            paste0(
-                              "This graph shows last year’s PGITT trainee need (left, dark",
-                              " blue bar) and this year’s PGITT trainee need (right, dark blue",
-                              " bar) for the selected school phase and/or secondary subject. ",
-                              "In between these two bars are the estimated respective drivers behind ",
-                              "the change in PGITT need between the two years."
-                            )
-                          )
-                        ),
-                        gov_text(
-                          tags$small(
-                            paste0(
-                              "Orange bars show drivers that acted to reduce PGITT trainee need this year (often ",
-                              "because forecasts are more optimistic than those produced last year), and ",
-                              "green bars show drivers that acted to increase it."
-                            )
-                          )
-                        )
                       )
                     ),
                     # Mini tab 2 - table
@@ -796,6 +773,30 @@ twm_tab_panel <- function() {
                           "before rounding is applied. For this reason, the PGITT trainee need figures quoted may differ ",
                           "slightly to those published elsewhere."
                         )
+                      )
+                    )
+                  )
+                ),
+
+                # Interpretation text box below chart, across the whole screen
+                bslib::card(
+                  style = "margin-top: 1rem;",
+                  bslib::card_header(gov_text("How to interpret this graph")),
+                  bslib::card_body(
+                    gov_text(
+                      paste0(
+                        "This graph shows last year’s PGITT trainee need (left, dark",
+                        " blue bar) and this year’s PGITT trainee need (right, dark blue",
+                        " bar) for the selected school phase and/or secondary subject. ",
+                        "In between these two bars are the estimated respective drivers behind ",
+                        "the change in PGITT need between the two years."
+                      )
+                    ),
+                    gov_text(
+                      paste0(
+                        "Orange bars show drivers that acted to reduce PGITT trainee need this year (often ",
+                        "because forecasts are more optimistic than those produced last year), and ",
+                        "green bars show drivers that acted to increase it."
                       )
                     )
                   )
