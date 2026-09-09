@@ -213,7 +213,7 @@ server <- function(input, output, session) {
       height_svg = 6,
       options = list(
         ggiraph::opts_selection(type = "none"),
-        ggiraph::opts_hover(css = "stroke-width:2px;"),
+        ggiraph::opts_hover(css = "stroke-dasharray:5,5;stroke:black;stroke-width:2px;"),
         # Keep dashed appearance in legend keys on hover as well:
         ggiraph::opts_hover_key(
           css = "stroke-dasharray:8,6; stroke-width:1.6px;"
@@ -224,16 +224,26 @@ server <- function(input, output, session) {
     )
   })
 
+  # Build a reactive title for the selected school phase/subject
+  # for the pupil/teacher numbers table
+
+  output$pupil_teacher_table_title <- renderUI({
+    heading_text(
+      unique(pt_data_filtered()$phase)[1],
+      level = 3,
+      size = "s"
+    )
+  })
+
   # Table: pupil/teacher numbers - interactive via govReactable
 
   output$pupil_teacher_table <- renderGovReactable({
     df <- pt_data_filtered() %>%
       dplyr::select(
-        Phase = phase,
         `Academic year` = academic_year,
+        Projection = projection,
         `Pupil numbers (FTE)` = pupil_numbers,
-        `Teacher numbers (FTE)` = teacher_numbers,
-        Projection = projection
+        `Teacher numbers (FTE)` = teacher_numbers
       )
 
     govReactable(
@@ -472,17 +482,10 @@ server <- function(input, output, session) {
     df <- pgitt_need_filtered() %>%
       dplyr::select(
         `Academic year` = academic_year,
-        Phase = phase,
-        Subject = subject,
         `PGITT trainee need` = pgitt_trainee_need_count,
         `Difference in need to previous year` = difference_to_previous_year_count,
         `Percentage change in need to previous year` = difference_to_previous_year_percent
       )
-
-    # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase %in% c("Primary", "Total"))) {
-      df <- dplyr::select(df, -Subject)
-    }
 
     govReactable(
       df,
@@ -771,16 +774,9 @@ server <- function(input, output, session) {
           )
       ) %>%
       dplyr::select(
-        Phase = phase,
-        Subject = subject,
         Driver = driver,
         Value = value
       )
-
-    # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
-      df <- dplyr::select(df, -Subject)
-    }
 
     govReactable(
       df,
@@ -788,7 +784,7 @@ server <- function(input, output, session) {
       searchable = FALSE,
       filterable = FALSE,
       highlight = TRUE,
-      right_col = c("Value"),
+      right_col = "Value",
       defaultColDef = reactable::colDef(
         format = reactable::colFormat(
           separators = TRUE,
@@ -995,7 +991,7 @@ server <- function(input, output, session) {
       height_svg = 6,
       options = list(
         ggiraph::opts_selection(type = "none"),
-        ggiraph::opts_hover(css = "stroke-width:2px;"),
+        ggiraph::opts_hover(css = "stroke-dasharray:5,5;stroke:black;stroke-width:2px;"),
         ggiraph::opts_hover_key(css = "stroke-dasharray:4,4;"),
         ggiraph::opts_sizing(rescale = TRUE, width = 1),
         ggiraph::opts_toolbar(saveaspng = FALSE, hidden = "saveaspng")
@@ -1031,36 +1027,32 @@ server <- function(input, output, session) {
           type == "New to state-funded sector entrants" ~ "NTSF entrants",
           TRUE ~ type
         )
-      ) %>%
-      dplyr::select(
-        Phase = phase,
-        Subject = subject,
-        `Academic year` = academic_year,
-        `Flow type` = Type,
-        Value = value,
-        `Historic or trajectory` = historic_or_trajectory
       )
 
-    # Drop subject column from dataset if primary selected
-    if (nrow(df) > 0 && all(df$Phase == "Primary")) {
-      df <- dplyr::select(df, -Subject)
-    }
+    flow_type_name <- unique(df$Type)
 
-    # conditional value formatting depending on whether leaver rates or non-leaver rates chosen
     leaver_types <- c(
       "Total leaver rate",
       "55+ leaver rate",
       "Under 55 leaver rate"
     )
 
-    is_leaver_table <- nrow(df) > 0 && all(df$`Flow type` %in% leaver_types)
+    is_leaver_table <- flow_type_name %in% leaver_types
 
-    # rename value column to include (FTE) if entrant type
-    # if a leaver type it will be formatted with a %
-
-    if (!is_leaver_table) {
-      df <- dplyr::rename(df, `Value (FTE)` = Value)
+    # Add (FTE) to column heading if not a leaver type
+    value_col_name <- if (is_leaver_table) {
+      flow_type_name
+    } else {
+      paste0(flow_type_name, " (FTE)")
     }
+
+    df <- df %>%
+      rename(!!value_col_name := value) %>%
+      dplyr::select(
+        `Academic year` = academic_year,
+        `Historic or trajectory` = historic_or_trajectory,
+        all_of(value_col_name)
+      )
 
     value_formatter <- if (is_leaver_table) {
       reactable::colFormat(digits = 1, percent = TRUE)
@@ -1070,6 +1062,7 @@ server <- function(input, output, session) {
 
     govReactable(
       df,
+      right_col = value_col_name,
       pagination = FALSE,
       searchable = FALSE,
       filterable = FALSE,
@@ -1213,6 +1206,24 @@ server <- function(input, output, session) {
 
   # Adding content navigation for Teacher demand trajectories and PGITT trainee need section
 
+  # Teacher demand and PGITT need - Introduction link
+
+  observeEvent(input$link_to_intro_pgitt_need, {
+    updateTabsetPanel(
+      session,
+      "navlistPanel",
+      selected = "Teacher demand and PGITT need"
+    )
+    updateTabsetPanel(
+      session,
+      "twm_tabsetpanels",
+      selected = "Introduction"
+    )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
+
   # Teacher demand trajectories link
 
   observeEvent(input$link_to_teacher_demand_traj, {
@@ -1280,13 +1291,24 @@ server <- function(input, output, session) {
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
-  # User guide link
+  # User guide link #1
+  # Within the intro tab within the Teacher demand and PGITT need panel
 
-  observeEvent(input$link_to_user_guide, {
+  observeEvent(input$link_to_user_guide_intro, {
     updateTabsetPanel(session, "navlistPanel", selected = "User guide")
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
+
+  # User guide link #2
+  # Within service navigation
+
+  observeEvent(input$link_to_user_guide_serv_nav, {
+    updateTabsetPanel(session, "navlistPanel", selected = "User guide")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
 
   # Support and feedback link
 

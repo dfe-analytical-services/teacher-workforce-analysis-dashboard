@@ -81,7 +81,7 @@ twm_tab_panel <- function() {
                 gov_text(
                   "This interactive dashboard accompanies the ",
                   a("Teacher demand and postgraduate trainee need publication.",
-                    href = "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27",
+                    href = parent_publication,
                     target = "_blank"
                   )
                 ),
@@ -98,7 +98,7 @@ twm_tab_panel <- function() {
                 ),
                 gov_text(
                   "Please see the ",
-                  actionLink("link_to_user_guide", "user guide"),
+                  actionLink("link_to_user_guide_intro", "user guide"),
                   " for details of data sources."
                 ),
                 gov_text("Data last updated: 23/4/2026"),
@@ -201,8 +201,7 @@ twm_tab_panel <- function() {
               id = "teacher_demand_traj",
               "Teacher demand trajectories",
               gov_main_layout(
-                heading_text("Historical pupil and teacher numbers, projected pupil numbers ",
-                  "and teacher demand trajectories",
+                heading_text("Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories",
                   level = 2, size = "m"
                 ),
                 gov_text(
@@ -226,22 +225,18 @@ twm_tab_panel <- function() {
                         "pupil_teacher_plot",
                         width  = NULL,
                         height = NULL
-                      ),
-                      gov_text(
-                        tags$span(
-                          "Please note: pupil and teacher numbers are shown on separate y axes ",
-                          "because they are on very different scales. ",
-                          "The axes start above zero to make trends easier to see.",
-                          style = "font-size: 1rem;"
-                        )
-                      ),
+                      )
                     ),
 
                     # Mini tab 2 - table
-                    table_output = govReactableOutput("pupil_teacher_table",
-                      caption = "",
-                      caption_size = "s",
-                      heading_level = "h3"
+                    table_output = div(
+                      # Reactive table title
+                      uiOutput("pupil_teacher_table_title"),
+                      govReactableOutput("pupil_teacher_table",
+                        caption = "",
+                        caption_size = "s",
+                        heading_level = "h3"
+                      )
                     ),
 
                     # Mini tab 3 - download
@@ -287,9 +282,8 @@ twm_tab_panel <- function() {
                         gov_text(
                           HTML(
                             paste0(
-                              "Pupil numbers are shown by the ",
-                              "<span style='color:#F46A25; font-weight:600;'>orange</span>",
-                              " line with star markers; with projections shown as the dotted part. ",
+                              "Pupil numbers are shown by the orange",
+                              " line with star markers, with projections shown as the dotted part. ",
                               "Values correspond to the left-hand axis."
                             )
                           )
@@ -297,14 +291,18 @@ twm_tab_panel <- function() {
                         gov_text(
                           HTML(
                             paste0(
-                              "Teacher numbers are shown by the ",
-                              "<span style='color:#12436D; font-weight: 600;'>blue</span>",
+                              "Teacher numbers are shown by the blue",
                               " line with dot markers, with projected demand being the dotted part. ",
                               "Values correspond to the right-hand axis."
                             )
                           )
                         ),
                         gov_text("Select a school phase to view its data and hover over the data points to see the value."),
+                        gov_text(
+                          "Please note: pupil and teacher numbers are shown on separate y axes ",
+                          "because they are on very different scales. ",
+                          "The axes start above zero to make trends easier to see."
+                        )
                       )
                     )
                   )
@@ -698,41 +696,8 @@ twm_tab_panel <- function() {
                       ggiraph::girafeOutput("drivers_waterfall_plot",
                         width  = NULL,
                         height = NULL
-                      ),
-                      div(
-                        style = "margin-top: 1.5rem;",
-                        gov_text(
-                          tags$small(
-                            HTML(
-                              paste0(
-                                "This graph shows last year’s PGITT trainee need (left, ",
-                                "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
-                                " bar) and this year’s PGITT trainee need (right, ",
-                                "<span style='color:#12436D; font-weight:600;'>dark blue</span>",
-                                " bar) for the selected school phase and/or secondary subject. ",
-                                "In between these two bars are the estimated respective drivers behind ",
-                                "the change in PGITT need between the two years."
-                              )
-                            )
-                          )
-                        ),
-                        gov_text(
-                          tags$small(
-                            HTML(
-                              paste0(
-                                "<span style='color:#F46A25; font-weight:600;'>Orange</span>",
-                                " bars show drivers that acted to reduce PGITT trainee need this year (often ",
-                                "because forecasts are more optimistic than those produced last year), and ",
-                                "<span style='color:#28A197; font-weight:600;'>green</span>
-                                bars show drivers that acted to increase it."
-                              )
-                            )
-                          )
-                        )
                       )
                     ),
-
-
                     # Mini tab 2 - table
                     table_output = div(
                       # Reactive table title
@@ -808,6 +773,30 @@ twm_tab_panel <- function() {
                           "before rounding is applied. For this reason, the PGITT trainee need figures quoted may differ ",
                           "slightly to those published elsewhere."
                         )
+                      )
+                    )
+                  )
+                ),
+
+                # Interpretation text box below chart, across the whole screen
+                bslib::card(
+                  style = "margin-top: 1rem;",
+                  bslib::card_header(gov_text("How to interpret this graph")),
+                  bslib::card_body(
+                    gov_text(
+                      paste0(
+                        "This graph shows last year’s PGITT trainee need (left, dark",
+                        " blue bar) and this year’s PGITT trainee need (right, dark blue",
+                        " bar) for the selected school phase and/or secondary subject. ",
+                        "In between these two bars are the estimated respective drivers behind ",
+                        "the change in PGITT need between the two years."
+                      )
+                    ),
+                    gov_text(
+                      paste0(
+                        "Orange bars show drivers that acted to reduce PGITT trainee need this year (often ",
+                        "because forecasts are more optimistic than those produced last year), and ",
+                        "green bars show drivers that acted to increase it."
                       )
                     )
                   )
@@ -1007,7 +996,7 @@ twm_tab_panel <- function() {
                         shinyGovstyle::select_Input(
                           inputId = "filter_flow_type",
                           label = "Select entrant or leaver flow type:",
-                          select_text = choices_flow_type,
+                          select_text = flow_type_labels,
                           select_value = choices_flow_type
                         )
                       )
