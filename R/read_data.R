@@ -44,6 +44,46 @@ read_pupil_teacher_numbers <- function(
     )
   }
 
+  # Warn if pupil or teacher numbers contain missing values
+  if (any(is.na(df$pupil_numbers)) || any(is.na(df$teacher_numbers))) {
+    warning(
+      "Missing values detected in pupil_numbers or teacher_numbers.",
+      call. = FALSE
+    )
+  }
+
+  # Warn if pupil or teacher numbers contain negative values
+  if (
+    any(df$pupil_numbers < 0, na.rm = TRUE) ||
+      any(df$teacher_numbers < 0, na.rm = TRUE)
+  ) {
+    warning(
+      "Negative values detected in pupil_numbers or teacher_numbers.",
+      call. = FALSE
+    )
+  }
+
+  # Check academic_year format (yyyy/yy)
+  invalid_academic_year <- !grepl(
+    "^\\d{4}/\\d{2}$",
+    df$academic_year
+  ) & !is.na(df$academic_year)
+
+  if (any(invalid_academic_year)) {
+    warning(
+      paste0(
+        "❌ Invalid academic_year format detected. ",
+        "Expected format: yyyy/yy (e.g. 2024/25). ",
+        "Invalid values: ",
+        paste(
+          unique(df$academic_year[invalid_academic_year]),
+          collapse = ", "
+        )
+      ),
+      call. = FALSE
+    )
+  }
+
   # transformations
   df <- df %>%
     mutate(
@@ -87,6 +127,24 @@ read_pgitt_need_timeseries <- function(
         "❌ Missing required columns in pgitt need time series file: ",
         paste(missing, collapse = ", ")
       ),
+      call. = FALSE
+    )
+  }
+
+  # Warn if pgitt_trainee_need_count contains missing values
+  if (any(is.na(df$pgitt_trainee_need_count))) {
+    warning(
+      "Missing values detected in pgitt_trainee_need_count.",
+      call. = FALSE
+    )
+  }
+
+  # Warn if pgitt_trainee_need_count contains negative values
+  if (
+    any(df$pgitt_trainee_need_count < 0, na.rm = TRUE)
+  ) {
+    warning(
+      "Negative values detected in pgitt_trainee_need_count.",
       call. = FALSE
     )
   }
@@ -153,6 +211,14 @@ read_drivers_data <- function(
     )
   }
 
+  # Warn if value column contains missing values
+  if (any(is.na(df$value))) {
+    warning(
+      "Missing values detected in value column.",
+      call. = FALSE
+    )
+  }
+
   # round values to 1 dp
   # use round_five_up() instead of round() to avoid banker's rounding
   # (round-to-even behaviour for x.5 values).
@@ -198,6 +264,37 @@ read_flows_publication_data <- function(file, publication_year) {
         publication_year,
         " file: ",
         paste(missing, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  # Warn if value column contains negative values
+  if (
+    any(df$value < 0, na.rm = TRUE)
+  ) {
+    warning(
+      "Negative values detected in value column.",
+      call. = FALSE
+    )
+  }
+
+  # Check academic_year format (yyyy/yy)
+  invalid_academic_year <- !grepl(
+    "^\\d{4}/\\d{2}$",
+    df$academic_year
+  ) & !is.na(df$academic_year)
+
+  if (any(invalid_academic_year)) {
+    warning(
+      paste0(
+        "❌ Invalid academic_year format detected. ",
+        "Expected format: yyyy/yy (e.g. 2024/25). ",
+        "Invalid values: ",
+        paste(
+          unique(df$academic_year[invalid_academic_year]),
+          collapse = ", "
+        )
       ),
       call. = FALSE
     )

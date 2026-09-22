@@ -5,8 +5,8 @@
 #   • the function runs without error
 #   • the output is a ggplot2 object
 #   • the data used in the plot contains expected columns
-#   • key layers exist (e.g. geom types)
-#   • for interactive ggiraph plots: expected class attributes exist
+#   • key layers exist (e.g. segments, points, bars and hover layers)
+#   • interactive ggiraph layers are present where expected
 # -----------------------------------------------------------------------------------------------------------------
 
 # Tests for plot_pupil_teacher_timeseries() -----------------------------------------------------------------------
@@ -41,11 +41,14 @@ test_that("plot_pupil_teacher_timeseries works and returns an interactive ggplot
   expect_true("start_year" %in% names(df))
 
   # Check for interactive ggiraph layers
-  # Extract all layer classes (e.g. GeomSegmentInteractive, GeomPointInteractive)
+  # Extract all layer classes
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
-  # Should contain interactive segments (lines)
-  expect_true(any(grepl("GeomInteractiveSegment", layer_classes)))
+  # Should contain interactive vertical hover lines
+  expect_true(any(grepl("GeomInteractiveVline", layer_classes)))
+
+  # Should contain standard line segments
+  expect_true(any(grepl("GeomSegment", layer_classes)))
 })
 
 
@@ -101,8 +104,9 @@ test_that("plot_drivers_waterfall works and returns an interactive ggplot", {
   # Check for interactive rectangle layers (the waterfall bars)
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
-  # Should contain GeomRectInteractive
+  # Should contain GeomInteractiveRect & GeomInteractivePoint
   expect_true(any(grepl("GeomInteractiveRect", layer_classes)))
+  expect_true(any(grepl("GeomInteractivePoint", layer_classes)))
 })
 
 
@@ -140,9 +144,12 @@ test_that("plot_flow_trajectories works and returns an interactive ggplot", {
   # Check for expected ggiraph layers
   layer_classes <- unlist(lapply(p$layers, function(x) class(x$geom)))
 
-  # Should contain interactive segments (lines)
-  expect_true(any(grepl("GeomInteractiveSegment", layer_classes)))
+  # Should contain interactive hover lines
+  expect_true(any(grepl("GeomInteractiveVline", layer_classes)))
 
-  # Should contain interactive points
-  expect_true(any(grepl("GeomInteractivePoint", layer_classes)))
+  # Should contain standard segments used for trajectories
+  expect_true(any(grepl("GeomSegment", layer_classes)))
+
+  # Should contain standard points
+  expect_true(any(grepl("GeomPoint", layer_classes)))
 })

@@ -2,10 +2,10 @@
 
 ---
 
-## Introduction 
+## Introduction
 
 This dashboard provides an accessible explanation of how postgraduate initial teacher training (PGITT)
-trainee need is estimated using the Department for Education’s teacher workforce model. 
+trainee need is estimated using the Department for Education’s teacher workforce model.
 It allows users to explore how projections of pupil numbers influence the future teacher demand trajectory 
 for both primary and secondary state-funded schools in England as well as the 
 inflows and outflows to the teacher workforce, both historical and forecast, and how these relate to PGITT trainee need. 
@@ -22,7 +22,7 @@ The following requirements are necessary for running the application yourself or
 
 ### i. Software requirements (for running locally)
 
-- Installation of R Studio 2026.01.2 "Apple Blossom" or higher
+- Installation of RStudio 2026.01.2 "Apple Blossom" or higher
 
 - Installation of R 4.5.3 or higher
 
@@ -46,7 +46,7 @@ There are no access requirements as all data is available in the repository.
 
 1. Clone or download the repo. 
 
-2. Open the R project in R Studio.
+2. Open the R project in RStudio.
 
 3. Run `renv::restore()` to install dependencies.
 
@@ -72,11 +72,11 @@ You should run `shinytest2::test_app()` regularly to check that the tests are pa
 
 ### Deployment
 
-The app is deployed to Department for Education's shinyapps.io subscription using GitHub actions. The yaml file for this can be found in the .github/workflows folder. Maintenance of this is provided by the explore education statistics platforms team.
+The app is deployed to Department for Education's shinyapps.io subscription using GitHub actions. The yaml file for this can be found in the .github/workflows folder. Maintenance of this is provided by the Explore Education Statistics platforms team.
 
 ### Navigation
 
-In general all .r files will have a usable outline, so make use of that for navigation if in RStudio: `Ctrl-Shift-O`.
+In general all .R files will have a usable outline, so make use of that for navigation if in RStudio: `Ctrl-Shift-O`.
 
 ### Code styling 
 
@@ -102,4 +102,4 @@ You can also use the "Issues" tab in GitHub to suggest new features, changes or 
 
 Email the app developers: ittstatistics.publications@education.gov.uk.
 
-Email the Explore Education Statistics team: explore.statistics@education.gov.uk
+Email the Explore Education Statistics platforms team: explore.statistics@education.gov.uk

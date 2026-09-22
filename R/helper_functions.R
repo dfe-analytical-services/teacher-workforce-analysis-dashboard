@@ -17,6 +17,8 @@
 #   - start_year
 #   - pupil_numbers
 #   - teacher_numbers
+#   - phase (e.g. "Primary"/"Secondary"), carried through unchanged so
+#     downstream summary text can reference it.
 #
 # return: A data frame with additional columns:
 #   - pupil_diff
@@ -26,6 +28,7 @@
 #
 # example:
 # calc_pt_change_24_to_27(df)
+# --------------------------------------------------------------------------------------
 
 calc_pt_change_24_to_27 <- function(df) {
   # Error if 2024 or 2027 data is missing
@@ -67,11 +70,15 @@ calc_pt_change_24_to_27 <- function(df) {
 # changes between 2024/25 and 2027/28.
 #
 # param: df_change A data frame containing change metrics for 2024 and 2027.
+#   Must include a `phase` column (e.g. "Primary"/"Secondary"), which is
+#   used to describe the pupils as "primary pupils" or "secondary pupils"
+#   in the summary sentence.
 #
 # return: A single character string suitable for display in a Shiny text output.
 #
 # example:
 # build_pupil_teacher_summary(df_change)
+# --------------------------------------------------------------------------------------
 
 build_pupil_teacher_summary <- function(df_change) {
   # Extract the 2027 row (where differences are defined)
@@ -81,19 +88,24 @@ build_pupil_teacher_summary <- function(df_change) {
   pupil_dir <- if (df_27$pupil_diff > 0) "more" else "fewer"
   teacher_dir <- if (df_27$teacher_diff > 0) "higher" else "lower"
 
+  # Add in phase e.g. gives "primary pupils"/"secondary pupils"
+  pupil_label <- paste(tolower(unique(df_27$phase)[1]), "pupils")
+
   # Construct summary sentence
-  glue::glue(
-    "DfE project there will be ",
+  paste0(
+    "DfE projects that there will be ",
     scales::label_comma()(abs(df_27$pupil_diff)),
     " ",
     pupil_dir,
-    " pupils (",
+    " ",
+    pupil_label,
+    " (",
     sprintf(
       "%.1f%%",
       dfeR::round_five_up(df_27$pupil_pct, dp = 1)
     ),
     ") ",
-    "and teacher demand to be ",
+    "and teacher demand will be ",
     scales::label_comma()(abs(df_27$teacher_diff)),
     " ",
     teacher_dir,
@@ -115,9 +127,8 @@ build_pupil_teacher_summary <- function(df_change) {
 # and returns a human-readable title describing the selected phase/subject
 # and academic year range covered by the data.
 #
-# The title is designed for use across multiple outputs, including
-# ggplot chart titles and GOV.UK Reactable table captions, ensuring
-# consistency between visual and tabular views.
+# Generates the title displayed in the chart and above the table
+# on the PGITT trainee need time series tab
 #
 # param: df A data frame containing PGITT trainee need data with the
 #             following fields:
@@ -127,13 +138,11 @@ build_pupil_teacher_summary <- function(df_change) {
 #
 # return: A single character string suitable for use as a plot title
 #         or table caption in a Shiny app.
+# --------------------------------------------------------------------------------------
 
 build_pgitt_need_ts_title <- function(df) {
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-
-  phase_val <- phase_selected[1]
-  subject_val <- subject_selected[1]
+  phase_val <- unique(df$phase)[1]
+  subject_val <- unique(df$subject)[1]
 
   min_year <- min(df$start_year, na.rm = TRUE)
   max_year <- max(df$start_year, na.rm = TRUE)
@@ -166,9 +175,7 @@ build_pgitt_need_ts_title <- function(df) {
 # and returns a human-readable title describing the selected phase/subject
 # and academic year range covered by the data.
 #
-# The title is designed for use across multiple outputs, including
-# ggplot chart titles and GOV.UK Reactable table captions, ensuring
-# consistency between visual and tabular views.
+# Generates the title displayed above the first table on the Drivers of Change tab
 #
 # param: df A drivers analysis data frame with the
 #            following fields:
@@ -181,25 +188,13 @@ build_pgitt_need_ts_title <- function(df) {
 # --------------------------------------------------------------------------------------
 
 build_drivers_table_title <- function(df) {
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-
-  phase_val <- if (length(phase_selected) == 1) {
-    phase_selected
-  } else {
-    phase_selected[1]
-  }
-
-  subject_val <- if (length(subject_selected) == 1) {
-    subject_selected
-  } else {
-    subject_selected[1]
-  }
+  phase_val <- unique(df$phase)[1]
+  subject_val <- unique(df$subject)[1]
 
   title_prefix <- dplyr::case_when(
     phase_val == "Primary" ~ "Primary",
-    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
-    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
     TRUE ~ subject_val
   )
 
@@ -216,8 +211,8 @@ build_drivers_table_title <- function(df) {
 # Takes a filtered flow trajectories data frame and returns a character
 # string describing the selected phase / subject and flow type.
 #
-# Designed for use in downloaded plots, chart titles, or captions to ensure
-# consistent naming across outputs.
+# Generates the title displayed in the chart and above the table
+# on the Flow trajectories tab
 #
 # param: df A data frame containing at least the following columns:
 #           - phase
@@ -241,34 +236,15 @@ build_flow_traj_title <- function(df) {
   }
 
   # Extract unique values
-  phase_selected <- unique(df$phase)
-  subject_selected <- unique(df$subject)
-  type_selected <- unique(df$type)
-
-  # Pick a single value if filters return more than one
-  phase_val <- if (length(phase_selected) == 1) {
-    phase_selected
-  } else {
-    phase_selected[1]
-  }
-
-  subject_val <- if (length(subject_selected) == 1) {
-    subject_selected
-  } else {
-    subject_selected[1]
-  }
-
-  type_val <- if (length(type_selected) == 1) {
-    type_selected
-  } else {
-    type_selected[1]
-  }
+  phase_val <- unique(df$phase)[1]
+  subject_val <- unique(df$subject)[1]
+  type_val <- unique(df$type)[1]
 
   # Build title prefix
   title_prefix <- dplyr::case_when(
     phase_val == "Primary" ~ "Primary",
-    phase_val == "Secondary" && subject_val == "Total" ~ "Secondary",
-    phase_val == "Secondary" && subject_val != "Total" ~ subject_val,
+    phase_val == "Secondary" & subject_val == "Total" ~ "Secondary",
+    phase_val == "Secondary" & subject_val != "Total" ~ subject_val,
     TRUE ~ subject_val
   )
 
@@ -281,11 +257,42 @@ build_flow_traj_title <- function(df) {
   )
 }
 
-# Create a Tabset Panel with Optional Tabs
+# --------------------------------------------------------------------------------------
+# Create tabbed output panel with optional chart, table, and download tabs
+# --------------------------------------------------------------------------------------
 #
-# This function generates a `tabsetPanel` containing up to three tabs: "Chart",
-# "Table", and "Download".
-# Only non-NULL inputs will result in corresponding tabs being displayed.
+# Generates a Shiny `tabsetPanel` containing up to three tabs:
+# "Chart", "Table", and "Download".
+#
+# Tabs are only included when the corresponding output object is supplied.
+# This allows a consistent tabbed layout to be reused across app outputs
+# while supporting views that may not require a table or download section.
+#
+# Additional spacing is applied above the contents of the "Table" and
+# "Download" tabs to ensure consistent visual presentation.
+#
+# param: id A character string used to create a unique tabset panel ID.
+#
+# param: chart_output A Shiny UI output object to display in the "Chart" tab.
+#        This argument is required.
+#
+# param: table_output An optional Shiny UI output object to display in the
+#        "Table" tab. If NULL, the tab is omitted.
+#
+# param: download_output An optional Shiny UI output object to display in the
+#        "Download" tab. If NULL, the tab is omitted.
+#
+# return: A Shiny `tabsetPanel` containing the supplied tabs.
+#
+# example:
+# create_output_tabs(
+#   id = "pgitt_need",
+#   chart_output = plotOutput("need_plot"),
+#   table_output = reactableOutput("need_table"),
+#   download_output = downloadButton("download_data")
+# )
+#
+# --------------------------------------------------------------------------------------
 
 create_output_tabs <- function(
   id,
@@ -313,4 +320,63 @@ create_output_tabs <- function(
   )
 
   do.call(tabsetPanel, c(list(id = paste0("main_tabs_", id)), tabs))
+}
+
+# --------------------------------------------------------------------------------------
+# Styling overrides to give a wide, but capped, page width
+# --------------------------------------------------------------------------------------
+#
+# Experimental: a local adaptation of `shinyGovstyle::full_width_overrides()`
+# that caps the page at 1800px rather than allowing it to stretch to 100% of
+# the viewport width.
+#
+# This was added after updating the dashboard to align with the latest GDS
+# styling, including the addition of a GOV.UK service navigation bar and the
+# removal of the left-hand navigation panel. Without a width cap, these
+# changes made the page excessively wide on large monitors.
+#
+# It carries the same caveats as the original function: it is not well tested
+# and may cause unexpected styling issues when used alongside components from
+# other packages, so use with care.
+#
+# Returns: HTML containing CSS styling overrides.
+#
+# Example:
+# max_width_overrides()
+
+max_width_overrides <- function() {
+  shiny::tags$head(
+    shiny::tags$style(
+      shiny::HTML(
+        # Overall overrides
+        ".container-fluid { padding: 0; }",
+        # Match GOV.UK Frontend's own gutter values: 15px (mobile) and 30px
+        # (desktop). Without this, text would start flush against the viewport
+        # edge in a full-width layout, which GOV.UK Frontend normally avoids
+        # via its max-width container and auto margins.
+        # Cap at 1800px and centre with auto margins once the viewport
+        # exceeds that width, rather than stretching to 100% indefinitely.
+        # padding-left/-right are set equally so the gutter is symmetric.
+        ".govuk-width-container { max-width: 1800px; margin-left: auto; margin-right: auto; padding-left: 15px; padding-right: 15px; }",
+        paste0(
+          "@media (min-width: 641px) {",
+          " .govuk-width-container { padding-left: 30px; padding-right: 30px; } }"
+        ),
+        ".govuk-grid-row { margin-left: 0; margin-right: 0; }",
+        "[class*='govuk-grid-column-'] { padding: 0; }",
+        ".govuk-main-wrapper { padding-top: 20px; }",
+
+        # Cookie banner overrides
+        ".govuk-button-group { margin-right: 0px; }",
+
+        # Footer overrides
+        ".govuk-footer { padding: 2rem; }",
+        "html { background-color: #f3f2f1; }",
+
+        # Left content overrides
+        ".govuk-contents-box { margin-left: 0; margin-right: 0; }",
+        ".govuk-contents-box { padding: 10px; width: fit-content !important; }"
+      )
+    )
+  )
 }
