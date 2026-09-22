@@ -104,7 +104,7 @@ twm_tab_panel <- function() {
                 gov_text("Data last updated: 23/4/2026"),
 
                 # Disclaimers text box
-                heading_text("Disclaimers and caveats", level = "3", size = "s"),
+                heading_text("Disclaimers and caveats", level = 3, size = "s"),
                 tags$ul(
                   tags$li(
                     gov_text(
