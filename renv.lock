@@ -4220,6 +4220,7 @@
         "R (>= 4.1.0)"
       ],
       "Imports": [
+        "bslib",
         "htmltools",
         "jsonlite",
         "lifecycle",
@@ -4233,7 +4234,6 @@
         "writexl"
       ],
       "Suggests": [
-        "bslib",
         "knitr",
         "rlang",
         "rmarkdown",
@@ -4245,15 +4245,17 @@
       "Encoding": "UTF-8",
       "LazyData": "true",
       "Roxygen": "list(markdown = TRUE)",
-      "RoxygenNote": "7.3.3",
-      "Author": "Ross Wyatt [aut], Cam Race [aut, cre], Sarah Wong [aut], Richard Bielby [ctb], Charlotte Foster [ctb], Jeni Martin [ctb], Andrew Baker [ctb]",
-      "Maintainer": "Cam Race <camrace8@gmail.com>",
+      "Config/roxygen2/version": "8.1.0",
       "RemoteType": "github",
-      "RemoteUsername": "dfe-analytical-services",
+      "RemoteHost": "api.github.com",
       "RemoteRepo": "shinyGovstyle",
-      "RemoteRef": "main",
-      "RemoteSha": "112d08089335f8488b5c35d02847cda7f7071406",
-      "RemoteHost": "api.github.com"
+      "RemoteUsername": "dfe-analytical-services",
+      "RemotePkgRef": "dfe-analytical-services/shinyGovstyle",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "65309fd05adb1db1f888093e5bf1f398c30e3648",
+      "NeedsCompilation": "no",
+      "Author": "Ross Wyatt [aut], Cam Race [aut, cre], Sarah Wong [aut], Richard Bielby [ctb], Charlotte Foster [ctb], Jeni Martin [ctb], Andrew Baker [ctb]",
+      "Maintainer": "Cam Race <camrace8@gmail.com>"
     },
     "shinyalert": {
       "Package": "shinyalert",
