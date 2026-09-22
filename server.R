@@ -504,6 +504,13 @@ server <- function(input, output, session) {
         format = reactable::colFormat(
           separators = TRUE
         )
+      ),
+      columns = list(
+        `Percentage change in need to previous year` = reactable::colDef(
+          format = reactable::colFormat(
+            digits = 1
+          )
+        )
       )
     )
   })
