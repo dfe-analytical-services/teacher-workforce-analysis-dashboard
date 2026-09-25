@@ -11,7 +11,7 @@
 # Library calls ---------------------------------------------------------------
 shhh <- suppressPackageStartupMessages # It's a library, so shhh!
 
-# Core shiny and R packages
+# Core Shiny and R packages
 shhh(library(shiny))
 shhh(library(bslib))
 shhh(library(rstudioapi))
@@ -23,26 +23,20 @@ shhh(library(shinyGovstyle))
 
 # Creating charts and tables
 shhh(library(ggplot2))
-shhh(library(DT))
-shhh(library(sf))
-shhh(library(leaflet))
 shhh(library(htmltools))
 shhh(library(reactable))
 shhh(library(svglite))
 shhh(library(afcharts))
-shhh(library(ggrepel))
 shhh(library(showtext))
 
-# Reading files
-shhh(library(openxlsx))
-shhh(library(readxl)) # added
-shhh(library(arrow)) # added
+# Reading parquet files
+shhh(library(arrow))
 
 # Data and string manipulation
 shhh(library(dplyr))
 shhh(library(stringr))
 shhh(library(ggiraph))
-shhh(library(janitor)) # added
+shhh(library(janitor))
 
 # Shiny extensions
 shhh(library(shinyjs))
@@ -52,14 +46,15 @@ shhh(library(xfun))
 shhh(library(metathis))
 shhh(library(shinyalert))
 
-# Dependencies needed for testing or CI but not for the app -------------------
-# Including them here keeps them in renv but avoids the app needlessly loading
-# them, saving on load time.
+# Dependencies needed for testing or CI but not for the app itself ------------
+# The if(FALSE) block ensures dependency scanners (e.g. renv::dependencies())
+# see these packages and keep them in renv.lock, while preventing them from
+# being loaded when the app starts saving on load time.
 if (FALSE) {
-  shhh(library(shinytest2))
-  shhh(library(rsconnect))
-  shhh(library(chromote))
-  shhh(library(testthat))
+  library(shinytest2)
+  library(rsconnect)
+  library(chromote)
+  library(testthat)
 }
 
 # Source scripts --------------------------------------------------------------
@@ -75,17 +70,20 @@ source("R/read_data.R")
 # Source custom functions script
 source("R/helper_functions.R")
 
-gbp <- enc2utf8("\u00A3")
-
 # Source all files in the ui_panels and standard_panels folders
 lapply(list.files("R/ui_panels/", full.names = TRUE), source)
 lapply(list.files("R/standard_panels/", full.names = TRUE), source)
 
 # Set global variables --------------------------------------------------------
 
-site_title <- "Teacher workforce analysis dashboard (England)" # name of app
-parent_pub_name <- "Teacher demand and postgraduate trainee need" # name of source publication
-parent_publication <- # link to source publication
+# Name of app
+site_title <- "Teacher workforce analysis dashboard (England)"
+
+# Name of source publication
+parent_pub_name <- "Teacher demand and postgraduate trainee need"
+
+# Link to source publication
+parent_publication <-
   "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27"
 
 # Set the URLs that the site will be published to
@@ -101,7 +99,7 @@ google_analytics_key <- "437MHW92CL"
 
 # End of global variables -----------------------------------------------------
 
-# Enable bookmarking so that input choices are shown in the url ---------------
+# Enable bookmarking so that input choices are shown in the URL ---------------
 enableBookmarking("url")
 
 # Fonts for charts ------------------------------------------------------------
@@ -121,8 +119,8 @@ showtext_auto()
 
 pupil_teacher_numbers <- read_pupil_teacher_numbers()
 
-# phase list for teacher demand trajectory tab filter
-# sort phase so primary first
+# Choices for the school phase filter on the Teacher demand trajectories tab
+# Sort phase alphabetically so Primary is listed first
 
 choices_pupil_teacher_phase <- sort(unique(pupil_teacher_numbers$phase))
 
@@ -130,15 +128,16 @@ choices_pupil_teacher_phase <- sort(unique(pupil_teacher_numbers$phase))
 
 pgitt_need_timeseries <- read_pgitt_need_timeseries()
 
-# phase and subject list for pgitt trainee need tab filter
-# sort phase so total first
+# Choices for the phase filter on the PGITT trainee need time series tab
+# Sort alphabetically but with Total listed first
 
 choices_pgitt_need_phase <- c(
   "Total",
   sort(setdiff(unique(pgitt_need_timeseries$phase), "Total"))
 )
 
-# make a unique subject list but it starts with total
+# Choices for the secondary subject filter on the PGITT trainee need time series tab
+# Sort alphabetically but with Total listed first
 
 choices_pgitt_need_subject <- c(
   "Total",
@@ -149,13 +148,13 @@ choices_pgitt_need_subject <- c(
 
 drivers_data <- read_drivers_data()
 
-# phase and subject list for drivers tab
-
-# sort phase so primary first
+# Choices for the school phase filter on the Drivers of change in PGITT trainee need tab
+# Sort phase alphabetically so Primary is listed first
 
 choices_drivers_phase <- sort(unique(drivers_data$phase))
 
-# make a unique subject list but it starts with total
+# Choices for the secondary subject filter on the Drivers of change in PGITT trainee need tab
+# Sort alphabetically but with Total listed first
 
 choices_drivers_subject <- c(
   "Total",
@@ -164,23 +163,30 @@ choices_drivers_subject <- c(
 
 # Add data for flow trajectories  ---------------------------------------------------
 
-# read in 2025 publication data
+# Read in 2025 publication data
 
 flow_data_2025_publication <- read_flows_2025_publication_data()
 
-# read in 2026 publication data
+# Read in 2026 publication data
 
 flow_data_2026_publication <- read_flows_2026_publication_data()
 
-# final dataset
+# Final dataset
 
 flow_data <- bind_rows(flow_data_2025_publication, flow_data_2026_publication)
 
-# save values of phase, subject and flow type
+# Choices for the school phase filter on the Flow trajectories tab
+# Sort phase alphabetically so Primary is listed first
 
 choices_flow_phase <- sort(unique(flow_data$phase))
 
+# Choices for the secondary subject filter on the Flow trajectories tab
+# Sort alphabetically
+
 choices_flow_subject <- sort(unique(flow_data$subject))
+
+# Choices for the entrant or leaver flow type filter on the Flow trajectories tab
+# Ordered manually to group leaver rates before entrant types
 
 choices_flow_type <- c(
   "Total leaver rate",
@@ -191,7 +197,10 @@ choices_flow_type <- c(
   "Returners"
 )
 
-# set display labels for flow type to include abbreviations for drop down filter list
+# Display labels for the entrant or leaver flow type filter on the
+# Flow trajectories tab. Adds NQE and NTSF abbreviations for
+# consistency with the table column headings while preserving the
+# underlying values used for filtering.
 
 flow_type_labels <- dplyr::case_when(
   choices_flow_type == "Newly qualified entrants" ~
