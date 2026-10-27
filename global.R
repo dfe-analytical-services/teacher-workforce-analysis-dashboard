@@ -11,6 +11,9 @@
 # Library calls ---------------------------------------------------------------
 shhh <- suppressPackageStartupMessages # It's a library, so shhh!
 
+# Dual hosting package
+shhh(library(rsconnect))
+
 # Core Shiny and R packages
 shhh(library(shiny))
 shhh(library(bslib))
