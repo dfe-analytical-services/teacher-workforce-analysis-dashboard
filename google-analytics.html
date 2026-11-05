@@ -67,4 +67,29 @@ dashboard.
     });
   });
 
+   $(document).on('click', 'ul#navigation', function(e) {
+    gtag(
+      'event', 
+      'Service navigation', 
+      {
+        'event_category' : 'Top level navigation',
+        'event_label' : e.target.closest('li').querySelector('a').getAttribute('id')
+      });
+    });
+
+  $(document).on(
+    'click', 'ul#tabsetpanels', function(e) {
+      gtag(
+        'event', 
+        'Example page tabset click', 
+        {
+          'event_category' : 'Mid level navigation',
+          'event_label' : document.querySelector(
+            'ul#tabsetpanels > li > a.active'
+          ).getAttribute('data-value')
+        }
+      );
+    }
+  );
+ 
 </script>
