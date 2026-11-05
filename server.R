@@ -46,6 +46,11 @@ server <- function(input, output, session) {
         input,
         c("navlistPanel", "twm_tabsetpanels")
       )
+    } else if (input$navlistPanel == "Wider metrics") {
+      set_bookmark_include(
+        input,
+        c("navlistPanel", "wider_metrics_tabsetpanels")
+      )
     } else {
       set_bookmark_include(
         input,
@@ -113,7 +118,19 @@ server <- function(input, output, session) {
       "Flow trajectories",
       parent_pub_link,
       "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
-      "23/4/2026"
+      "23/4/2026",
+      "Sufficiency metrics",
+      "School workforce census (SWC)",
+      "Teacher vacancy rate, qualified teacher entrant rate, qualified teacher leaver rate and pupil to teacher ratio charts",
+      swc_data_updated,
+      "Quality metrics",
+      "School workforce census (SWC)",
+      "Percentage of teachers still in service after qualifying, percentage of teachers with qualified teacher status and headcount of occasional teachers charts",
+      swc_data_updated,
+      "Subject level metrics",
+      "School workforce census (SWC)",
+      "Proportion of secondary subject hours taught by a teacher with a relevant post A level qualification (specialism rate) charts",
+      swc_data_updated
     )
 
     govReactable(
@@ -1209,6 +1226,31 @@ server <- function(input, output, session) {
     }
   )
 
+  # School workforce census (SWC) tabs ----------------------------------------------------------------------------------
+
+  # Sufficiency metrics, Quality metrics and Subject level metrics tabs all show
+  # SWC measures with the same chart / table / download layout. The outputs for each
+  # are registered by swc_tab_server() (see R/swc_tab_server.R) using the matching
+  # prefix from swc_tab_panel() in the UI.
+
+  # Sufficiency metrics: vacancy, entrant and leaver rates, and pupil to teacher ratios
+  swc_tab_server(input, output, session, prefix = "swc", data = swc_data)
+
+  # Quality metrics: teachers in service after qualifying, QTS and occasional teachers
+  swc_tab_server(input, output, session, prefix = "quality", data = swc_quality_data)
+
+  # Subject level metrics: specialism rate for the selected subject, with 'All subjects'
+  # always shown for comparison
+  swc_tab_server(
+    input,
+    output,
+    session,
+    prefix = "subject",
+    data = swc_subject_data,
+    breakdown_filter = TRUE,
+    comparator = "All subjects"
+  )
+
   # Dashboard navigation --------------------------------------------------------------------------------------------
 
   # Adding content navigation for Teacher demand trajectories and PGITT trainee need section
@@ -1298,6 +1340,45 @@ server <- function(input, output, session) {
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
+  # Sufficiency metrics link
+
+  observeEvent(input$link_to_swc_measures, {
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(
+      session,
+      "wider_metrics_tabsetpanels",
+      selected = "Sufficiency metrics"
+    )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
+  # Quality metrics link
+
+  observeEvent(input$link_to_quality_metrics, {
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(
+      session,
+      "wider_metrics_tabsetpanels",
+      selected = "Quality metrics"
+    )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
+  # Subject level metrics link
+
+  observeEvent(input$link_to_subject_metrics, {
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(
+      session,
+      "wider_metrics_tabsetpanels",
+      selected = "Subject level metrics"
+    )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
   # User guide link #1
   # Within the intro tab within the Teacher demand and PGITT need panel
 
@@ -1316,6 +1397,14 @@ server <- function(input, output, session) {
     shinyjs::runjs("window.scrollTo(0, 0);")
   })
 
+
+  # Wider metrics link (service navigation)
+
+  observeEvent(input$link_to_wider_metrics, {
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
 
   # Support and feedback link
 

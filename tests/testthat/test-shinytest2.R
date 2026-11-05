@@ -3,6 +3,7 @@ library(shinytest2)
 
 all_inputs <- c(
   "twm_tabsetpanels",
+  "wider_metrics_tabsetpanels",
 
   # Teacher demand trajectories
   "file_type_pupil_teacher",
@@ -26,7 +27,23 @@ all_inputs <- c(
   "filter_phase_flow",
   "filter_subject_flow",
   "filter_flow_type",
-  "main_tabs_flow_trajectories"
+  "main_tabs_flow_trajectories",
+
+  # Sufficiency metrics
+  "file_type_swc",
+  "filter_swc_measure",
+  "main_tabs_swc_measures",
+
+  # Quality metrics
+  "file_type_quality",
+  "filter_quality_measure",
+  "main_tabs_quality_measures",
+
+  # Subject level metrics
+  "file_type_subject",
+  "filter_subject_measure",
+  "filter_subject_breakdown",
+  "main_tabs_subject_measures"
 )
 
 
@@ -50,7 +67,22 @@ all_outputs <- c(
   # Flow trajectories tab
   "table_flow_trajectories",
   "download_button_ui_flows",
-  "flow_traj_title_table_ui"
+  "flow_traj_title_table_ui",
+
+  # Sufficiency metrics tab
+  "table_swc_measures",
+  "download_button_ui_swc",
+  "swc_title_table_ui",
+
+  # Quality metrics tab
+  "table_quality_measures",
+  "download_button_ui_quality",
+  "quality_title_table_ui",
+
+  # Subject level metrics tab
+  "table_subject_measures",
+  "download_button_ui_subject",
+  "subject_title_table_ui"
 )
 
 
@@ -164,6 +196,62 @@ test_that("{shinytest2} recording: initial_state", {
 
   app$set_inputs(main_tabs_flow_trajectories = "Chart")
   app$set_inputs(filter_subject_flow = "Physics")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(
+    navlistPanel = "Wider metrics",
+    wider_metrics_tabsetpanels = "Sufficiency metrics"
+  )
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(filter_swc_measure = "Qualified teacher entrant rate")
+  app$set_inputs(main_tabs_swc_measures = "Table")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(filter_swc_measure = "Qualified teacher leaver rate")
+  app$set_inputs(main_tabs_swc_measures = "Download")
+  app$set_inputs(file_type_swc = "XLSX (Up to 1 MB)")
+  app$set_inputs(file_type_swc = "JPEG (Up to 500 KB)")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(filter_swc_measure = "Pupil to qualified teacher ratio")
+  app$set_inputs(main_tabs_swc_measures = "Table")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(main_tabs_swc_measures = "Chart")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(wider_metrics_tabsetpanels = "Quality metrics")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(filter_quality_measure = "Headcount of occasional teachers")
+  app$set_inputs(main_tabs_quality_measures = "Table")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(main_tabs_quality_measures = "Download")
+  app$set_inputs(file_type_quality = "XLSX (Up to 1 MB)")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(wider_metrics_tabsetpanels = "Subject level metrics")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(filter_subject_breakdown = "Biology")
+  app$set_inputs(main_tabs_subject_measures = "Table")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(main_tabs_subject_measures = "Download")
+  app$set_inputs(file_type_subject = "JPEG (Up to 500 KB)")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 

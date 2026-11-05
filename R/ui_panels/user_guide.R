@@ -71,6 +71,25 @@ user_guide_panel <- function() {
                 "Explore the inflows and outflows to the teacher workforce, both historical and ",
                 "forecast, and how these relate to PGITT trainee need."
               )
+            ),
+            tags$li(
+              gov_text(
+                "View historic teacher vacancy, entrant and leaver rates, and pupil to teacher ratios, ",
+                "in the sufficiency metrics tab. This tab uses data from the school workforce census (SWC)."
+              )
+            ),
+            tags$li(
+              gov_text(
+                "View the percentage of teachers still in service after qualifying, the percentage of ",
+                "teachers with qualified teacher status and the number of occasional teachers in the ",
+                "quality metrics tab. This tab uses data from the school workforce census (SWC)."
+              )
+            ),
+            tags$li(
+              gov_text(
+                "View the specialism rate for secondary subjects in the subject level metrics tab. ",
+                "This tab uses data from the school workforce census (SWC)."
+              )
             )
           ),
           heading_text("Disclaimers and caveats", level = 2, size = "m"),

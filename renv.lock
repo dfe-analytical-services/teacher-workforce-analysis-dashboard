@@ -4222,16 +4222,15 @@
       "LazyData": "true",
       "Roxygen": "list(markdown = TRUE)",
       "Config/roxygen2/version": "8.1.0",
+      "Author": "Ross Wyatt [aut], Cam Race [aut, cre], Sarah Wong [aut], Richard Bielby [ctb], Charlotte Foster [ctb], Jeni Martin [ctb], Andrew Baker [ctb]",
+      "Maintainer": "Cam Race <camrace8@gmail.com>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "shinyGovstyle",
       "RemoteUsername": "dfe-analytical-services",
       "RemotePkgRef": "dfe-analytical-services/shinyGovstyle",
       "RemoteRef": "HEAD",
-      "RemoteSha": "65309fd05adb1db1f888093e5bf1f398c30e3648",
-      "NeedsCompilation": "no",
-      "Author": "Ross Wyatt [aut], Cam Race [aut, cre], Sarah Wong [aut], Richard Bielby [ctb], Charlotte Foster [ctb], Jeni Martin [ctb], Andrew Baker [ctb]",
-      "Maintainer": "Cam Race <camrace8@gmail.com>"
+      "RemoteSha": "65309fd05adb1db1f888093e5bf1f398c30e3648"
     },
     "shinyalert": {
       "Package": "shinyalert",

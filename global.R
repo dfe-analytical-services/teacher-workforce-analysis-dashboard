@@ -211,3 +211,70 @@ flow_type_labels <- dplyr::case_when(
 )
 
 names(choices_flow_type) <- flow_type_labels
+
+# Add data for the Sufficiency metrics tab (all from the school workforce census, SWC) -----
+
+# Date the SWC measures data files were produced (matches the file names in
+# data/). Used in download file names and the 'Data last updated' text.
+swc_data_date <- "2026-11-02"
+
+# Same date in the d/m/yyyy format used elsewhere in the dashboard
+swc_data_updated <- paste(
+  as.integer(format(as.Date(swc_data_date), "%d")),
+  as.integer(format(as.Date(swc_data_date), "%m")),
+  format(as.Date(swc_data_date), "%Y"),
+  sep = "/"
+)
+
+swc_vacancies <- read_swc_vacancies()
+
+swc_entrants <- read_swc_entrants()
+
+swc_leavers <- read_swc_leavers()
+
+swc_ptr_qualified <- read_swc_ptr_qualified()
+
+swc_ptr_all <- read_swc_ptr_all()
+
+# Final dataset
+swc_data <- bind_rows(
+  swc_vacancies,
+  swc_entrants,
+  swc_leavers,
+  swc_ptr_qualified,
+  swc_ptr_all
+)
+
+# Choices for the measure filter on the Sufficiency metrics tab
+# Ordered as vacancies, entrants, leavers then pupil to teacher ratios
+
+choices_swc_measure <- unname(swc_measure_names)
+
+# Add data for the Quality metrics tab (all from SWC) -------------------------------
+
+swc_in_service <- read_swc_in_service()
+
+swc_qts <- read_swc_qts()
+
+swc_occasional <- read_swc_occasional()
+
+# Final dataset
+swc_quality_data <- bind_rows(swc_in_service, swc_qts, swc_occasional)
+
+# Choices for the measure filter on the Quality metrics tab
+
+choices_quality_measure <- unname(swc_quality_measure_names)
+
+# Add data for the Subject level metrics tab (all from SWC) -------------------------
+
+swc_subject_data <- read_swc_specialism()
+
+# Choices for the measure filter on the Subject level metrics tab
+
+choices_subject_measure <- unname(swc_subject_measure_names)
+
+# Choices for the subject filter on the Subject level metrics tab
+# Sorted alphabetically, so the first subject shown is not 'All subjects'
+# (which is always shown on the chart for comparison)
+
+choices_subject_breakdown <- sort(levels(swc_subject_data$breakdown))

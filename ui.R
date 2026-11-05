@@ -77,6 +77,7 @@ ui <- function(input, output, session) {
     service_navigation(
       c(
         "Teacher demand and PGITT need" = "link_to_intro_pgitt_need",
+        "Wider metrics" = "link_to_wider_metrics",
         "User guide" = "link_to_user_guide_serv_nav"
       )
     ),
@@ -97,6 +98,7 @@ ui <- function(input, output, session) {
         type = "hidden",
         id = "navlistPanel",
         twm_tab_panel(),
+        wider_metrics_tab_panel(),
         user_guide_panel(),
         dash_a11y_panel(),
         shiny::tabPanel(

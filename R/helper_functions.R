@@ -258,6 +258,186 @@ build_flow_traj_title <- function(df) {
 }
 
 # --------------------------------------------------------------------------------------
+# Number of decimal places / label accuracy for SWC measure percentages
+# --------------------------------------------------------------------------------------
+#
+# Vacancy rates are much smaller than entrant and leaver rates (well under 1%),
+# so are shown to 2 decimal places of a percentage (accuracy 0.01). Entrant and
+# leaver rates are shown to 1 decimal place (accuracy 0.1).
+#
+# param: measure A character string, one of the values in swc_measure_names
+#
+# return: A single number suitable for the `accuracy` argument of
+#         scales::label_percent()
+#
+# --------------------------------------------------------------------------------------
+
+swc_percent_accuracy <- function(measure) {
+  if (identical(as.character(measure), swc_measure_names[["vacancies"]])) {
+    0.01
+  } else {
+    0.1
+  }
+}
+
+# --------------------------------------------------------------------------------------
+# Is an SWC measure a ratio (pupils per teacher) rather than a percentage rate?
+# --------------------------------------------------------------------------------------
+#
+# param: measure A character string, one of the values in swc_measure_names
+#
+# return: TRUE for the pupil to teacher ratio measures, otherwise FALSE
+#
+# --------------------------------------------------------------------------------------
+
+swc_is_ratio <- function(measure) {
+  as.character(measure)[1] %in% swc_ratio_measures
+}
+
+# --------------------------------------------------------------------------------------
+# Type of value for an SWC measure: "rate", "ratio" or "count"
+# --------------------------------------------------------------------------------------
+#
+# - rate: stored as a proportion and shown as a percentage
+# - ratio: pupils per teacher
+# - count: a headcount
+#
+# param: measure A character string, one of the SWC measure names
+#
+# return: One of "rate", "ratio" or "count"
+#
+# --------------------------------------------------------------------------------------
+
+swc_value_type <- function(measure) {
+  measure <- as.character(measure)[1]
+
+  if (measure %in% swc_ratio_measures) {
+    "ratio"
+  } else if (measure %in% swc_count_measures) {
+    "count"
+  } else {
+    "rate"
+  }
+}
+
+# --------------------------------------------------------------------------------------
+# Number of decimal places shown for an SWC measure
+# --------------------------------------------------------------------------------------
+#
+# Vacancy rates are shown to 2 dp of a percentage, counts to 0 dp, and all other
+# rates and ratios to 1 dp.
+#
+# --------------------------------------------------------------------------------------
+
+swc_value_digits <- function(measure) {
+  if (swc_value_type(measure) == "count") {
+    0
+  } else if (swc_percent_accuracy(measure) == 0.01) {
+    2
+  } else {
+    1
+  }
+}
+
+# --------------------------------------------------------------------------------------
+# Axis titles for SWC charts
+# --------------------------------------------------------------------------------------
+#
+# The percentage of teachers still in service after qualifying is reported by
+# the academic year in which teachers qualified, so has its own x axis title.
+# Rates have "(%)" added to the y axis title; ratios and counts use the
+# measure name alone.
+#
+# --------------------------------------------------------------------------------------
+
+swc_x_axis_title <- function(measure) {
+  if (identical(as.character(measure)[1], swc_quality_measure_names[["in_service"]])) {
+    "Academic year of qualification"
+  } else {
+    "Academic year"
+  }
+}
+
+swc_y_axis_title <- function(measure) {
+  if (swc_value_type(measure) == "rate") {
+    paste0(as.character(measure)[1], " (%)")
+  } else {
+    as.character(measure)[1]
+  }
+}
+
+# --------------------------------------------------------------------------------------
+# Value labelling function for an SWC measure
+# --------------------------------------------------------------------------------------
+#
+# Returns a function which formats values for chart axes and hover labels:
+# percentages for rates (e.g. 0.056 -> "5.6%") and numbers to 1 decimal place
+# for ratios (e.g. 17.3 -> "17.3").
+#
+# param: measure A character string, one of the values in swc_measure_names
+#
+# return: A function suitable for use as a ggplot2 `labels` argument
+#
+# --------------------------------------------------------------------------------------
+
+swc_value_labeller <- function(measure) {
+  switch(swc_value_type(measure),
+    ratio = scales::label_number(accuracy = 0.1),
+    count = scales::label_comma(accuracy = 1),
+    scales::label_percent(accuracy = swc_percent_accuracy(measure))
+  )
+}
+
+# --------------------------------------------------------------------------------------
+# Build dynamic title for SWC measures outputs
+# --------------------------------------------------------------------------------------
+#
+# Takes a filtered SWC measures data frame and returns a character string
+# describing the selected measure and the academic year range covered.
+#
+# Generates the title displayed in the chart and above the table
+# on the School workforce census measures tab
+#
+# param: df A data frame containing at least the following columns:
+#           - measure
+#           - start_year
+#           - academic_year
+#
+# param: breakdown_label Optional character string naming the selected
+#        breakdown (e.g. subject) to include in the title
+#
+# return: A single character string suitable for use as a plot title
+#
+# --------------------------------------------------------------------------------------
+
+build_swc_measure_title <- function(df, breakdown_label = NULL) {
+  # Defensive checks
+  required_cols <- c("measure", "start_year", "academic_year")
+  missing_cols <- setdiff(required_cols, names(df))
+
+  if (length(missing_cols) > 0) {
+    stop(
+      "build_swc_measure_title(): data frame is missing required columns: ",
+      paste(missing_cols, collapse = ", ")
+    )
+  }
+
+  measure_val <- as.character(unique(df$measure))[1]
+
+  first_year <- df$academic_year[which.min(df$start_year)]
+  last_year <- df$academic_year[which.max(df$start_year)]
+
+  # Optionally name the selected breakdown, e.g. the selected subject
+  measure_label <- if (is.null(breakdown_label)) {
+    measure_val
+  } else {
+    paste0(measure_val, ": ", breakdown_label)
+  }
+
+  paste0(measure_label, ", ", first_year, " to ", last_year)
+}
+
+# --------------------------------------------------------------------------------------
 # Create tabbed output panel with optional chart, table, and download tabs
 # --------------------------------------------------------------------------------------
 #

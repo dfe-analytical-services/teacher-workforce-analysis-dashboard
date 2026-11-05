@@ -346,3 +346,357 @@ read_flows_2026_publication_data <- function(
     publication_year = 2026
   )
 }
+
+# School workforce census (SWC) measures data ---------------------------------------------------------------------
+
+# Display names for the three SWC measures shown on the
+# School workforce census measures tab
+swc_measure_names <- c(
+  vacancies = "Teacher vacancy rate",
+  entrants = "Qualified teacher entrant rate",
+  leavers = "Qualified teacher leaver rate",
+  ptr_qualified = "Pupil to qualified teacher ratio",
+  ptr_all = "Pupil to teacher ratio (qualified and unqualified teachers)"
+)
+
+# Measures which are ratios (pupils per teacher) rather than rates (stored as
+# proportions and shown as percentages)
+swc_ratio_measures <- swc_measure_names[c("ptr_qualified", "ptr_all")]
+
+# Display names for the measures shown on the Quality metrics tab
+swc_quality_measure_names <- c(
+  in_service = "Percentage of teachers still in service after qualifying",
+  qts = "Percentage of teachers with qualified teacher status (QTS)",
+  occasional = "Headcount of occasional teachers"
+)
+
+# Display name for the measure shown on the Subject level metrics tab
+swc_subject_measure_names <- c(
+  specialism = "Specialism rate"
+)
+
+# Measures which are counts (headcounts) rather than rates or ratios
+swc_count_measures <- swc_quality_measure_names["occasional"]
+
+# shared helper for reading the SWC measure datasets (vacancies, entrants,
+# leavers and pupil to teacher ratios) because the file structure and
+# processing steps are identical.
+#
+# Files are in wide format: one row per academic year (column 'category') and
+# one column per breakdown (e.g. entrant type). Rates are stored as
+# proportions (e.g. 0.056 = 5.6%). Ratios are stored as pupils per teacher
+# (e.g. 17.3), selected with value_type = "ratio". Counts are headcounts
+# (e.g. 16021), selected with value_type = "count".
+#
+# Returns long format with columns:
+# measure, breakdown, academic_year, start_year, value
+
+read_swc_measure_data <- function(
+  file,
+  measure,
+  breakdown_order = NULL,
+  dp = 3,
+  value_type = c("rate", "ratio", "count")
+) {
+  value_type <- match.arg(value_type)
+
+  df <- read_parquet(file)
+
+  # required columns
+  if (!"category" %in% names(df)) {
+    stop(
+      paste0("❌ Missing required columns in SWC ", measure, " file: category"),
+      call. = FALSE
+    )
+  }
+
+  breakdown_cols <- setdiff(names(df), "category")
+
+  if (length(breakdown_cols) == 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in SWC ",
+        measure,
+        " file: at least one breakdown column"
+      ),
+      call. = FALSE
+    )
+  }
+
+  # breakdown columns must be numeric rates
+  non_numeric <- breakdown_cols[!vapply(df[breakdown_cols], is.numeric, logical(1))]
+
+  if (length(non_numeric) > 0) {
+    stop(
+      paste0(
+        "❌ Non-numeric columns in SWC ",
+        measure,
+        " file: ",
+        paste(non_numeric, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  # Warn if values are negative, or if rates are above 100%
+  all_values <- unlist(df[breakdown_cols], use.names = FALSE)
+
+  if (value_type == "rate") {
+    if (any(all_values < 0, na.rm = TRUE) || any(all_values > 1, na.rm = TRUE)) {
+      warning(
+        paste0(
+          "Values outside the range 0 to 1 detected in SWC ",
+          measure,
+          " file. Rates should be stored as proportions."
+        ),
+        call. = FALSE
+      )
+    }
+  } else if (value_type == "ratio" && any(all_values <= 0, na.rm = TRUE)) {
+    warning(
+      paste0(
+        "Zero or negative values detected in SWC ",
+        measure,
+        " file. Ratios should be positive."
+      ),
+      call. = FALSE
+    )
+  } else if (value_type == "count" && any(all_values < 0, na.rm = TRUE)) {
+    warning(
+      paste0("Negative values detected in SWC ", measure, " file."),
+      call. = FALSE
+    )
+  }
+
+  # Check academic_year format (yyyy/yy)
+  invalid_academic_year <- !grepl("^\\d{4}/\\d{2}$", df$category) &
+    !is.na(df$category)
+
+  if (any(invalid_academic_year)) {
+    warning(
+      paste0(
+        "❌ Invalid academic_year format detected. ",
+        "Expected format: yyyy/yy (e.g. 2024/25). ",
+        "Invalid values: ",
+        paste(unique(df$category[invalid_academic_year]), collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  # Order breakdowns as requested, with any others after in file order
+  breakdown_levels <- c(
+    intersect(breakdown_order, breakdown_cols),
+    setdiff(breakdown_cols, breakdown_order)
+  )
+
+  df %>%
+    rename(academic_year = category) %>%
+    tidyr::pivot_longer(
+      cols = all_of(breakdown_cols),
+      names_to = "breakdown",
+      values_to = "value"
+    ) %>%
+    mutate(
+      measure = measure,
+      breakdown = factor(breakdown, levels = breakdown_levels),
+      start_year = as.integer(substr(academic_year, 1, 4)),
+      # round using round_five_up() because base R's round() uses banker's
+      # rounding. Rates are proportions, so dp = 3 keeps 0.1 percentage points
+      value = dfeR::round_five_up(value, dp = dp)
+    ) %>%
+    filter(!is.na(value)) %>%
+    arrange(start_year, breakdown) %>%
+    select(measure, breakdown, academic_year, start_year, value)
+}
+
+# Read SWC teacher vacancy rate dataset
+# Vacancy rates are small so are kept to 4 dp (0.01 percentage points)
+
+read_swc_vacancies <- function(
+  file = "data/6_swc_vacancies_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_measure_names[["vacancies"]],
+    breakdown_order = c(
+      "State-funded nursery and primary",
+      "State-funded secondary"
+    ),
+    dp = 4
+  )
+}
+
+# Read SWC qualified teacher entrant rate dataset
+
+read_swc_entrants <- function(
+  file = "data/7_swc_entrants_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_measure_names[["entrants"]],
+    breakdown_order = c(
+      "Total",
+      "Newly qualified entrants",
+      "Returners to state funded sector",
+      "Deferred newly qualified entrants",
+      "Entrants new to state funded sector"
+    ),
+    dp = 3
+  )
+}
+
+# Read SWC qualified teacher leaver rate dataset
+
+read_swc_leavers <- function(
+  file = "data/8_swc_leavers_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_measure_names[["leavers"]],
+    breakdown_order = c("Total", "Out of service", "Retired", "Deceased"),
+    dp = 3
+  )
+}
+
+# Read SWC pupil to qualified teacher ratio dataset
+# Ratios are pupils per teacher, kept to 1 dp as in the source
+
+read_swc_ptr_qualified <- function(
+  file = "data/9_swc_ptr_qualified_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_measure_names[["ptr_qualified"]],
+    breakdown_order = c(
+      "State-funded nursery and primary",
+      "State-funded secondary"
+    ),
+    dp = 1,
+    value_type = "ratio"
+  )
+}
+
+# Read SWC pupil to teacher ratio dataset (qualified and unqualified teachers)
+
+read_swc_ptr_all <- function(
+  file = "data/10_swc_ptr_all_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_measure_names[["ptr_all"]],
+    breakdown_order = c(
+      "State-funded nursery and primary",
+      "State-funded secondary"
+    ),
+    dp = 1,
+    value_type = "ratio"
+  )
+}
+
+# Read SWC percentage of teachers still in service after qualifying dataset
+# Breakdowns are the number of years after qualifying. Later qualifying years
+# have no value for longer periods because that time has not yet passed.
+
+read_swc_in_service <- function(
+  file = "data/11_swc_in_service_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_quality_measure_names[["in_service"]],
+    breakdown_order = c(
+      "1 year after qualifying",
+      "3 years after qualifying",
+      "5 years after qualifying",
+      "10 years after qualifying"
+    ),
+    dp = 3
+  )
+}
+
+# Read SWC percentage of teachers with qualified teacher status (QTS) dataset
+
+read_swc_qts <- function(
+  file = "data/12_swc_qts_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_quality_measure_names[["qts"]],
+    breakdown_order = c(
+      "State-funded nursery and primary",
+      "State-funded secondary"
+    ),
+    dp = 3
+  )
+}
+
+# Read SWC headcount of occasional teachers dataset
+# Values are counts of teachers, so kept to 0 dp
+
+read_swc_occasional <- function(
+  file = "data/13_swc_occasional_teachers_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = swc_quality_measure_names[["occasional"]],
+    breakdown_order = c(
+      "Total",
+      "State-funded nursery and primary",
+      "State-funded secondary"
+    ),
+    dp = 0,
+    value_type = "count"
+  )
+}
+
+# Read SWC specialism rate dataset
+#
+# The specialism rate (proportion of hours taught by a teacher with a relevant
+# post A level qualification) is supplied across two files which hold
+# different subjects, both including 'All subjects'. They are read separately
+# and combined, keeping one row per subject and academic year.
+# 'All subjects' is listed first, followed by subjects alphabetically.
+
+read_swc_specialism <- function(
+  files = c(
+    "data/14_swc_specialism_a_2026-11-02.parquet",
+    "data/15_swc_specialism_b_2026-11-02.parquet"
+  )
+) {
+  df <- files %>%
+    lapply(
+      read_swc_measure_data,
+      measure = swc_subject_measure_names[["specialism"]],
+      dp = 3
+    ) %>%
+    bind_rows() %>%
+    mutate(breakdown = as.character(breakdown))
+
+  # Subjects which appear in both files should have identical values
+  conflicting <- df %>%
+    group_by(breakdown, academic_year) %>%
+    filter(n_distinct(value) > 1) %>%
+    ungroup()
+
+  if (nrow(conflicting) > 0) {
+    warning(
+      paste0(
+        "Conflicting specialism rates found for the same subject and ",
+        "academic year across files: ",
+        paste(unique(conflicting$breakdown), collapse = ", "),
+        ". The first value has been kept."
+      ),
+      call. = FALSE
+    )
+  }
+
+  subject_levels <- c(
+    "All subjects",
+    sort(setdiff(unique(df$breakdown), "All subjects"))
+  )
+
+  df %>%
+    distinct(breakdown, academic_year, .keep_all = TRUE) %>%
+    mutate(breakdown = factor(breakdown, levels = subject_levels)) %>%
+    arrange(start_year, breakdown)
+}

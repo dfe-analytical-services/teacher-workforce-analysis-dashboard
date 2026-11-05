@@ -4,3 +4,13 @@ data/2_pgitt_need_timeseries_2026-04-23.parquet,published
 data/3_drivers_analysis_2026-04-23.parquet,published
 data/4_flow_trajectories_2025_publication_2026-04-23.parquet,published
 data/5_flow_trajectories_2026_publication_2026-04-23.parquet,published
+data/6_swc_vacancies_2026-11-02.parquet,published
+data/7_swc_entrants_2026-11-02.parquet,published
+data/8_swc_leavers_2026-11-02.parquet,published
+data/9_swc_ptr_qualified_2026-11-02.parquet,published
+data/10_swc_ptr_all_2026-11-02.parquet,published
+data/11_swc_in_service_2026-11-02.parquet,published
+data/12_swc_qts_2026-11-02.parquet,published
+data/13_swc_occasional_teachers_2026-11-02.parquet,published
+data/14_swc_specialism_a_2026-11-02.parquet,published
+data/15_swc_specialism_b_2026-11-02.parquet,published

@@ -545,3 +545,377 @@ test_that("subjects are consistent across datasets", {
   expect_setequal(pgitt_subjects, drivers_subjects)
   expect_setequal(pgitt_subjects, flow_subjects)
 })
+
+
+# 5 - Tests for read_swc_*() ---------------------------------------------------------------------------------------
+
+swc_readers <- list(
+  vacancies = read_swc_vacancies,
+  entrants = read_swc_entrants,
+  leavers = read_swc_leavers,
+  ptr_qualified = read_swc_ptr_qualified,
+  ptr_all = read_swc_ptr_all
+)
+
+# Does the shared reader pivot to long format, order breakdowns, derive
+# start_year and round .5s up?
+
+test_that("read_swc_measure_data() pivots to long format, orders breakdowns and rounds .5s up", {
+  input <- tibble::tibble(
+    category = c("2022/23", "2023/24"),
+    `Type B` = c(0.0125, 0.02),
+    `Type A` = c(0.0345, 0.05)
+  )
+
+  file <- write_test_parquet(input)
+
+  out <- read_swc_measure_data(
+    file,
+    measure = "Test measure",
+    breakdown_order = c("Type A", "Type B"),
+    dp = 3
+  )
+
+  expect_named(
+    out,
+    c("measure", "breakdown", "academic_year", "start_year", "value")
+  )
+  expect_equal(nrow(out), 4)
+  expect_equal(unique(out$measure), "Test measure")
+
+  # Breakdown is an ordered factor following breakdown_order
+  expect_equal(levels(out$breakdown), c("Type A", "Type B"))
+
+  expect_equal(sort(unique(out$start_year)), c(2022L, 2023L))
+  expect_true(is.numeric(out$value))
+
+  # 0.0125 and 0.0345 are exact .5 cases at 3 dp so should round up
+  expect_equal(
+    out$value[out$breakdown == "Type B" & out$start_year == 2022L],
+    0.013
+  )
+  expect_equal(
+    out$value[out$breakdown == "Type A" & out$start_year == 2022L],
+    0.035
+  )
+})
+
+test_that("read_swc_measure_data() drops NA values", {
+  input <- tibble::tibble(
+    category = c("2022/23", "2023/24"),
+    Total = c(0.1, NA)
+  )
+
+  out <- read_swc_measure_data(
+    write_test_parquet(input),
+    measure = "Test measure"
+  )
+
+  expect_equal(nrow(out), 1)
+})
+
+test_that("read_swc_measure_data() throws errors for missing or invalid columns", {
+  # No category column
+  expect_missing_cols_error(
+    read_swc_measure_data(
+      write_test_parquet(tibble::tibble(year = "2022/23", Total = 0.1)),
+      measure = "Test measure"
+    )
+  )
+
+  # No breakdown columns
+  expect_missing_cols_error(
+    read_swc_measure_data(
+      write_test_parquet(tibble::tibble(category = "2022/23")),
+      measure = "Test measure"
+    )
+  )
+
+  # Non-numeric breakdown column
+  expect_error(
+    read_swc_measure_data(
+      write_test_parquet(
+        tibble::tibble(category = "2022/23", Total = "x")
+      ),
+      measure = "Test measure"
+    ),
+    regexp = "Non-numeric columns"
+  )
+})
+
+test_that("read_swc_measure_data() warns on rates outside 0 to 1 and bad academic years", {
+  expect_warning(
+    read_swc_measure_data(
+      write_test_parquet(
+        tibble::tibble(category = "2022/23", Total = 5.2)
+      ),
+      measure = "Test measure"
+    ),
+    regexp = "outside the range 0 to 1"
+  )
+
+  expect_warning(
+    read_swc_measure_data(
+      write_test_parquet(
+        tibble::tibble(category = "2022-23", Total = 0.1)
+      ),
+      measure = "Test measure"
+    ),
+    regexp = "Invalid academic_year format"
+  )
+})
+
+# Do the three dataset readers label the measure correctly and keep
+# the preferred breakdown order?
+
+test_that("read_swc_*() readers label the measure and order breakdowns", {
+  inputs <- list(
+    vacancies = tibble::tibble(
+      category = "2024/25",
+      `State-funded secondary` = 0.006,
+      `State-funded nursery and primary` = 0.003
+    ),
+    entrants = tibble::tibble(
+      category = "2024/25",
+      `Returners to state funded sector` = 0.038,
+      Total = 0.092,
+      `Newly qualified entrants` = 0.038
+    ),
+    leavers = tibble::tibble(
+      category = "2023/24",
+      Retired = 0.008,
+      Total = 0.09,
+      `Out of service` = 0.082
+    ),
+    ptr_qualified = tibble::tibble(
+      category = "2024/25",
+      `State-funded secondary` = 17.3,
+      `State-funded nursery and primary` = 21.3
+    ),
+    ptr_all = tibble::tibble(
+      category = "2024/25",
+      `State-funded secondary` = 16.7,
+      `State-funded nursery and primary` = 20.8
+    )
+  )
+
+  expected_first <- c(
+    vacancies = "State-funded nursery and primary",
+    entrants = "Total",
+    leavers = "Total",
+    ptr_qualified = "State-funded nursery and primary",
+    ptr_all = "State-funded nursery and primary"
+  )
+
+  for (nm in names(swc_readers)) {
+    out <- swc_readers[[nm]](write_test_parquet(inputs[[nm]]))
+
+    expect_equal(unique(out$measure), swc_measure_names[[nm]])
+    expect_equal(levels(out$breakdown)[1], expected_first[[nm]])
+  }
+})
+
+# Do the real data files load without warnings and cover the expected years?
+
+test_that("real SWC data files load with the expected structure", {
+  data_dir <- testthat::test_path("..", "..", "data")
+
+  for (nm in names(swc_readers)) {
+    file <- list.files(
+      data_dir,
+      pattern = paste0("^[0-9]+_swc_", nm, "_.*[.]parquet$"),
+      full.names = TRUE
+    )
+    expect_length(file, 1)
+
+    out <- expect_no_warning(swc_readers[[nm]](file))
+
+    expect_false(anyNA(out$value))
+
+    # Rates are proportions; ratios are pupils per teacher
+    if (swc_measure_names[[nm]] %in% swc_ratio_measures) {
+      expect_true(all(out$value > 5 & out$value < 40))
+    } else {
+      expect_true(all(out$value >= 0 & out$value <= 1))
+    }
+
+    expect_true(all(grepl("^[0-9]{4}/[0-9]{2}$", out$academic_year)))
+  }
+})
+
+# Ratios (pupils per teacher) are not proportions so should not be flagged
+# for being above 1, but non-positive values should be
+
+test_that("read_swc_measure_data() accepts ratios above 1 and warns on non-positive ratios", {
+  expect_no_warning(
+    read_swc_measure_data(
+      write_test_parquet(tibble::tibble(category = "2022/23", Primary = 21.3)),
+      measure = "Test ratio",
+      dp = 1,
+      value_type = "ratio"
+    )
+  )
+
+  expect_warning(
+    read_swc_measure_data(
+      write_test_parquet(tibble::tibble(category = "2022/23", Primary = -1)),
+      measure = "Test ratio",
+      dp = 1,
+      value_type = "ratio"
+    ),
+    regexp = "Zero or negative values"
+  )
+})
+
+
+# 6 - Tests for the quality and subject level SWC readers ------------------------------------------------------------
+
+# Percentage of teachers still in service after qualifying:
+# longer periods have NA for recent years, which should be dropped
+
+test_that("read_swc_in_service() orders breakdowns and drops NA values", {
+  input <- tibble::tibble(
+    category = c("2013/14", "2014/15"),
+    `10 years after qualifying` = c(0.58, NA),
+    `1 year after qualifying` = c(0.86, 0.87),
+    `5 years after qualifying` = c(0.69, 0.7)
+  )
+
+  out <- read_swc_in_service(write_test_parquet(input))
+
+  expect_equal(unique(out$measure), swc_quality_measure_names[["in_service"]])
+  expect_equal(
+    levels(out$breakdown)[1:3],
+    c("1 year after qualifying", "5 years after qualifying", "10 years after qualifying")
+  )
+  # 6 values supplied less 1 NA
+  expect_equal(nrow(out), 5)
+  expect_false(anyNA(out$value))
+})
+
+test_that("read_swc_qts() labels the measure and orders phases", {
+  input <- tibble::tibble(
+    category = "2024/25",
+    `State-funded secondary` = 0.967,
+    `State-funded nursery and primary` = 0.985
+  )
+
+  out <- read_swc_qts(write_test_parquet(input))
+
+  expect_equal(unique(out$measure), swc_quality_measure_names[["qts"]])
+  expect_equal(levels(out$breakdown)[1], "State-funded nursery and primary")
+})
+
+# Occasional teachers are headcounts: values above 1 are fine, and they are
+# kept as whole numbers
+
+test_that("read_swc_occasional() reads counts without warnings and rounds to whole numbers", {
+  input <- tibble::tibble(
+    category = c("2023/24", "2024/25"),
+    `State-funded nursery and primary` = c(10752.4, 10000),
+    `State-funded secondary` = c(5269, 5000),
+    Total = c(16021.4, 15000)
+  )
+
+  out <- expect_no_warning(read_swc_occasional(write_test_parquet(input)))
+
+  expect_equal(unique(out$measure), swc_quality_measure_names[["occasional"]])
+  expect_equal(levels(out$breakdown)[1], "Total")
+  expect_equal(
+    out$value[out$breakdown == "Total" & out$academic_year == "2023/24"],
+    16021
+  )
+})
+
+test_that("read_swc_measure_data() warns on negative counts", {
+  expect_warning(
+    read_swc_measure_data(
+      write_test_parquet(tibble::tibble(category = "2022/23", Total = -5)),
+      measure = "Test count",
+      dp = 0,
+      value_type = "count"
+    ),
+    regexp = "Negative values"
+  )
+})
+
+# The specialism rate comes from two files with different subjects, both
+# containing 'All subjects'
+
+test_that("read_swc_specialism() combines files, keeps one row per subject and year, and lists 'All subjects' first", {
+  file_a <- write_test_parquet(
+    tibble::tibble(
+      category = c("2023/24", "2024/25"),
+      Biology = c(0.94, 0.95),
+      `All subjects` = c(0.88, 0.89)
+    )
+  )
+  file_b <- write_test_parquet(
+    tibble::tibble(
+      category = c("2023/24", "2024/25"),
+      `All subjects` = c(0.88, 0.89),
+      `All Sciences` = c(0.93, 0.94)
+    )
+  )
+
+  out <- expect_no_warning(read_swc_specialism(c(file_a, file_b)))
+
+  expect_equal(
+    levels(out$breakdown),
+    c("All subjects", "All Sciences", "Biology")
+  )
+  # 3 subjects x 2 years, with 'All subjects' not duplicated
+  expect_equal(nrow(out), 6)
+  expect_equal(unique(out$measure), swc_subject_measure_names[["specialism"]])
+})
+
+test_that("read_swc_specialism() warns when files disagree about a subject", {
+  file_a <- write_test_parquet(
+    tibble::tibble(category = "2024/25", `All subjects` = 0.88)
+  )
+  file_b <- write_test_parquet(
+    tibble::tibble(category = "2024/25", `All subjects` = 0.5)
+  )
+
+  expect_warning(
+    read_swc_specialism(c(file_a, file_b)),
+    regexp = "Conflicting specialism rates"
+  )
+})
+
+# Do the real quality and subject level data files load without warnings?
+
+test_that("real quality and subject level SWC data files load with the expected structure", {
+  data_dir <- testthat::test_path("..", "..", "data")
+
+  find_file <- function(pattern) {
+    list.files(data_dir, pattern = pattern, full.names = TRUE)
+  }
+
+  in_service <- expect_no_warning(
+    read_swc_in_service(find_file("^[0-9]+_swc_in_service_.*[.]parquet$"))
+  )
+  qts <- expect_no_warning(
+    read_swc_qts(find_file("^[0-9]+_swc_qts_.*[.]parquet$"))
+  )
+  occasional <- expect_no_warning(
+    read_swc_occasional(find_file("^[0-9]+_swc_occasional_teachers_.*[.]parquet$"))
+  )
+  specialism <- expect_no_warning(
+    read_swc_specialism(find_file("^[0-9]+_swc_specialism_[ab]_.*[.]parquet$"))
+  )
+
+  for (out in list(in_service, qts, specialism)) {
+    expect_false(anyNA(out$value))
+    expect_true(all(out$value >= 0 & out$value <= 1))
+  }
+
+  expect_false(anyNA(occasional$value))
+  expect_true(all(occasional$value > 0))
+  expect_equal(occasional$value, round(occasional$value))
+
+  # Specialism: 13 subjects, one row per subject and year
+  expect_equal(nlevels(specialism$breakdown), 13)
+  expect_equal(levels(specialism$breakdown)[1], "All subjects")
+  expect_false(any(duplicated(specialism[c("breakdown", "academic_year")])))
+})

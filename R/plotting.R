@@ -935,3 +935,129 @@ plot_flow_trajectories <- function(df) {
 
   p
 }
+
+# Plot SWC measures ----------------------------------------------------------------
+
+# Plot historic school workforce census (SWC) measures over time, e.g. teacher
+# vacancy rates, qualified teacher entrant rates, leaver rates and pupil to
+# teacher ratios
+#
+# This function:
+# - draws one interactive line per breakdown (e.g. entrant type)
+# - shows rates on a percentage y axis and ratios and counts on a numeric y
+#   axis, all starting at zero
+# - optionally names the selected breakdown (e.g. subject) in the title
+# - states the data source (SWC) in the plot caption
+# - uses a different point shape for each line so the chart does not rely on
+#   colour alone
+#
+# Expected columns include:
+# measure, breakdown, academic_year, start_year, value
+
+plot_swc_measures <- function(df, title_breakdown = NULL) {
+  df <- df %>%
+    dplyr::mutate(breakdown = droplevels(factor(breakdown)))
+
+  measure_name <- as.character(unique(df$measure))[1]
+  value_label <- swc_value_labeller(measure_name)
+
+  # Tooltip shows the values for every breakdown in the hovered year
+  tooltip_df <- df %>%
+    dplyr::arrange(start_year, breakdown) %>%
+    dplyr::group_by(start_year) %>%
+    dplyr::summarise(
+      tooltip = paste(
+        c(
+          dplyr::first(academic_year),
+          paste0(breakdown, ": ", value_label(value))
+        ),
+        collapse = "\n"
+      ),
+      .groups = "drop"
+    )
+
+  # Ensure there's always a gridline above the highest data point
+  y_breaks <- y_breaks_with_headroom(max(df$value, na.rm = TRUE))
+
+  # Label every other year, anchored on the latest year so it is always labelled
+  years_for_axis <- df %>%
+    dplyr::pull(start_year) %>%
+    unique() %>%
+    sort() %>%
+    (\(.) .[. %% 2 == max(.) %% 2])()
+
+  axis_labels <- academic_year_labels(df, years_for_axis)
+
+  # afcharts categorical colours and distinct shapes
+  line_colours <- c(
+    "#12436D", "#28A197", "#801650", "#F46A25", "#3D3D3D", "#A285D1"
+  )
+  line_shapes <- c(16, 17, 15, 18, 4, 3)
+  n_lines <- nlevels(df$breakdown)
+
+  ggplot2::ggplot(
+    df,
+    ggplot2::aes(
+      x = start_year,
+      y = value,
+      colour = breakdown,
+      shape = breakdown,
+      group = breakdown
+    )
+  ) +
+    ggplot2::geom_line(linewidth = 1) +
+    ggplot2::geom_point(size = 2.5, na.rm = TRUE) +
+
+    # Invisible interactive lines which give one tooltip per academic year
+    ggiraph::geom_vline_interactive(
+      data = tooltip_df,
+      ggplot2::aes(
+        xintercept = start_year,
+        tooltip = tooltip,
+        data_id = start_year,
+        hover_nearest = TRUE
+      ),
+      colour = "transparent",
+      linetype = "dashed",
+      linewidth = 3
+    ) +
+
+    # Theme & labels
+    afcharts::theme_af() +
+    ggplot2::xlab(swc_x_axis_title(measure_name)) +
+    ggplot2::ylab(swc_y_axis_title(measure_name)) +
+    ggplot2::theme(
+      text = element_text(size = 14),
+      axis.title.x = element_text(margin = margin(t = 12), family = "dejavu"),
+      axis.title.y = element_text(
+        angle = 90,
+        vjust = 0.5,
+        margin = margin(r = 12),
+        family = "dejavu"
+      ),
+      axis.line = element_line(linewidth = 0.75),
+      legend.position = "bottom"
+    ) +
+    ggplot2::scale_x_continuous(
+      breaks = years_for_axis,
+      labels = axis_labels
+    ) +
+    ggplot2::scale_y_continuous(
+      labels = value_label,
+      breaks = y_breaks,
+      limits = c(0, max(y_breaks)),
+      expand = ggplot2::expansion(mult = c(0, 0.02))
+    ) +
+    ggplot2::scale_colour_manual(
+      name = "",
+      values = line_colours[seq_len(n_lines)]
+    ) +
+    ggplot2::scale_shape_manual(
+      name = "",
+      values = line_shapes[seq_len(n_lines)]
+    ) +
+    ggplot2::labs(
+      title = build_swc_measure_title(df, title_breakdown),
+      caption = "Source: school workforce census (SWC)"
+    )
+}
