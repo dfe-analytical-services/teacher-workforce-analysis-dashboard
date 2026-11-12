@@ -46,7 +46,7 @@ server <- function(input, output, session) {
         input,
         c("navlistPanel", "twm_tabsetpanels")
       )
-    } else if (input$navlistPanel == "Wider metrics") {
+    } else if (input$navlistPanel == "Wider teacher supply metrics") {
       set_bookmark_include(
         input,
         c("navlistPanel", "wider_metrics_tabsetpanels")
@@ -1234,7 +1234,14 @@ server <- function(input, output, session) {
   # prefix from swc_tab_panel() in the UI.
 
   # Sufficiency metrics: vacancy, entrant and leaver rates, and pupil to teacher ratios
-  swc_tab_server(input, output, session, prefix = "swc", data = swc_data)
+  swc_tab_server(
+    input,
+    output,
+    session,
+    prefix = "swc",
+    data = swc_data,
+    teacher_type_filter = TRUE
+  )
 
   # Quality metrics: teachers in service after qualifying, QTS and occasional teachers
   swc_tab_server(input, output, session, prefix = "quality", data = swc_quality_data)
@@ -1343,7 +1350,7 @@ server <- function(input, output, session) {
   # Sufficiency metrics link
 
   observeEvent(input$link_to_swc_measures, {
-    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider teacher supply metrics")
     updateTabsetPanel(
       session,
       "wider_metrics_tabsetpanels",
@@ -1356,7 +1363,7 @@ server <- function(input, output, session) {
   # Quality metrics link
 
   observeEvent(input$link_to_quality_metrics, {
-    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider teacher supply metrics")
     updateTabsetPanel(
       session,
       "wider_metrics_tabsetpanels",
@@ -1369,7 +1376,7 @@ server <- function(input, output, session) {
   # Subject level metrics link
 
   observeEvent(input$link_to_subject_metrics, {
-    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider teacher supply metrics")
     updateTabsetPanel(
       session,
       "wider_metrics_tabsetpanels",
@@ -1398,10 +1405,15 @@ server <- function(input, output, session) {
   })
 
 
-  # Wider metrics link (service navigation)
+  # Wider teacher supply metrics link (service navigation)
 
   observeEvent(input$link_to_wider_metrics, {
-    updateTabsetPanel(session, "navlistPanel", selected = "Wider metrics")
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider teacher supply metrics")
+    updateTabsetPanel(
+      session,
+      "wider_metrics_tabsetpanels",
+      selected = "Introduction"
+    )
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")
   })

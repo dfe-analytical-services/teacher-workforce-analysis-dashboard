@@ -1,13 +1,14 @@
 # # ---------------------------------------------------------------------------------------------------------------
 #
-# USER INTERFACE COMPONENTS FOR: *Wider metrics* tab
-# Contains the Sufficiency, Quality and Subject level metrics sub-tabs (all from the school workforce census)
+# USER INTERFACE COMPONENTS FOR: *Wider teacher supply metrics* tab
+# Contains the Introduction, Sufficiency, Quality and Subject level metrics sub-tabs
+# (metrics sub-tabs all use data from the school workforce census)
 #
 # # ---------------------------------------------------------------------------------------------------------------
 
 wider_metrics_tab_panel <- function() {
   tabPanel(
-    "Wider metrics",
+    "Wider teacher supply metrics",
     gov_main_layout(
       gov_row(
         # Header --------------------------------------------------------------
@@ -15,7 +16,7 @@ wider_metrics_tab_panel <- function() {
           width = 12,
           div(
             id = "wider_metrics_main_col",
-            heading_text("Wider metrics", level = 1, size = "l")
+            heading_text("Wider teacher supply metrics", level = 1, size = "l")
           )
         ),
 
@@ -24,6 +25,54 @@ wider_metrics_tab_panel <- function() {
           width = 12,
           tabsetPanel(
             id = "wider_metrics_tabsetpanels",
+
+            #####################################################################
+
+            #   Introduction tab
+
+            #####################################################################
+
+            tabPanel(
+              "Introduction",
+              gov_main_layout(
+                heading_text("Introduction", level = 2, size = "m"),
+                heading_text("About this section", level = 3, size = "s"),
+                gov_text(
+                  "The ",
+                  em("'Wider teacher supply metrics'"),
+                  " section of the dashboard can be explored across three areas:"
+                ),
+                tags$ul(
+                  tags$li(
+                    gov_text(
+                      actionLink("link_to_swc_measures", "Sufficiency metrics"),
+                      " shows historic teacher vacancy, entrant and leaver rates, and pupil to teacher ratios, ",
+                      "using data from the school workforce census (SWC)."
+                    )
+                  ),
+                  tags$li(
+                    gov_text(
+                      actionLink("link_to_quality_metrics", "Quality metrics"),
+                      " shows the percentage of teachers still in service after qualifying, the percentage ",
+                      "of teachers with qualified teacher status, and the number of occasional teachers, ",
+                      "using data from the school workforce census (SWC)."
+                    )
+                  ),
+                  tags$li(
+                    gov_text(
+                      actionLink("link_to_subject_metrics", "Subject level metrics"),
+                      " shows the specialism rate for secondary subjects, using data from the school ",
+                      "workforce census (SWC)."
+                    )
+                  )
+                ),
+                gov_text(
+                  "All of the data in this section comes from the school workforce census (SWC), rather ",
+                  "than from the teacher workforce model (TWM) used in the Teacher demand and PGITT need ",
+                  "section of this dashboard. Figures cover state-funded schools in England."
+                )
+              )
+            ),
 
             #####################################################################
 
@@ -42,11 +91,16 @@ wider_metrics_tab_panel <- function() {
                 "in England."
               ),
               measure_choices = choices_swc_measure,
+              teacher_type_choices = choices_swc_teacher_type,
               about = tagList(
                 gov_text(
                   "Select a measure to view its data. Each line shows a different breakdown ",
                   "of the measure, and hovering over the chart shows the value of every line ",
                   "for that academic year."
+                ),
+                gov_text(
+                  "When the pupil to teacher ratio is selected, choose whether to include only ",
+                  "qualified teachers, or both qualified and unqualified teachers."
                 ),
                 gov_text(
                   "Rates are shown as percentages and pupil to teacher ratios as the number of ",
@@ -87,9 +141,9 @@ wider_metrics_tab_panel <- function() {
                   "state-funded nursery and primary schools and for state-funded secondary schools."
                 ),
                 gov_text(
-                  "The pupil to qualified teacher ratio counts qualified teachers only. The pupil to ",
-                  "teacher ratio (qualified and unqualified teachers) counts both qualified and ",
-                  "unqualified teachers, so is lower."
+                  "Selecting 'Qualified teachers only' counts qualified teachers only. Selecting ",
+                  "'Qualified and unqualified teachers' counts both qualified and unqualified ",
+                  "teachers, so the ratio is lower."
                 ),
                 gov_text(strong("Leaver types")),
                 gov_text(

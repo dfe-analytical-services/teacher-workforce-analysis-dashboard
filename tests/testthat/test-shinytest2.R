@@ -32,6 +32,7 @@ all_inputs <- c(
   # Sufficiency metrics
   "file_type_swc",
   "filter_swc_measure",
+  "filter_swc_teacher_type",
   "main_tabs_swc_measures",
 
   # Quality metrics
@@ -200,7 +201,7 @@ test_that("{shinytest2} recording: initial_state", {
   app$expect_values(input = all_inputs, output = all_outputs)
 
   app$set_inputs(
-    navlistPanel = "Wider metrics",
+    navlistPanel = "Wider teacher supply metrics",
     wider_metrics_tabsetpanels = "Sufficiency metrics"
   )
   app$wait_for_idle(500)
@@ -218,7 +219,8 @@ test_that("{shinytest2} recording: initial_state", {
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 
-  app$set_inputs(filter_swc_measure = "Pupil to qualified teacher ratio")
+  app$set_inputs(filter_swc_measure = "Pupil to teacher ratio")
+  app$set_inputs(filter_swc_teacher_type = "Qualified and unqualified teachers")
   app$set_inputs(main_tabs_swc_measures = "Table")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)

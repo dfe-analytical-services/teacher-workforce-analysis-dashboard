@@ -41,7 +41,7 @@ twm_tab_panel <- function() {
                 gov_text(
                   "The ",
                   em("'Teacher demand trajectories and postgraduate initial teacher training (PGITT) trainee need'"),
-                  " section of the dashboard can be explored across eight areas:"
+                  " section of the dashboard can be explored across five areas:"
                 ),
                 tags$ul(
                   tags$li(
@@ -75,28 +75,6 @@ twm_tab_panel <- function() {
                     gov_text(
                       actionLink("link_to_flow_traj", "Flow trajectories"),
                       " shows historic and trajectories of inflows and outflows to the teacher workforce."
-                    )
-                  ),
-                  tags$li(
-                    gov_text(
-                      actionLink("link_to_swc_measures", "Sufficiency metrics"),
-                      " shows historic teacher vacancy, entrant and leaver rates, and pupil to teacher ratios, ",
-                      "using data from the school workforce census (SWC)."
-                    )
-                  ),
-                  tags$li(
-                    gov_text(
-                      actionLink("link_to_quality_metrics", "Quality metrics"),
-                      " shows the percentage of teachers still in service after qualifying, the percentage ",
-                      "of teachers with qualified teacher status, and the number of occasional teachers, ",
-                      "using data from the school workforce census (SWC)."
-                    )
-                  ),
-                  tags$li(
-                    gov_text(
-                      actionLink("link_to_subject_metrics", "Subject level metrics"),
-                      " shows the specialism rate for secondary subjects, using data from the school ",
-                      "workforce census (SWC)."
                     )
                   )
                 ),

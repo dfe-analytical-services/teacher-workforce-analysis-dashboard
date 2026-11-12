@@ -246,9 +246,16 @@ swc_data <- bind_rows(
 )
 
 # Choices for the measure filter on the Sufficiency metrics tab
-# Ordered as vacancies, entrants, leavers then pupil to teacher ratios
+# Ordered as vacancies, entrants, leavers then pupil to teacher ratio
 
-choices_swc_measure <- unname(swc_measure_names)
+choices_swc_measure <- c(
+  unname(swc_measure_names[c("vacancies", "entrants", "leavers")]),
+  swc_ptr_label
+)
+
+# Choices for the teacher type filter, shown when the pupil to teacher ratio is selected
+
+choices_swc_teacher_type <- names(swc_ptr_teacher_types)
 
 # Add data for the Quality metrics tab (all from SWC) -------------------------------
 

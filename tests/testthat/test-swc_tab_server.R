@@ -30,11 +30,21 @@ test_that("each tab's outputs and downloads work for every measure", {
           output,
           session,
           prefix = tab_prefix,
-          data = tab$data
+          data = tab$data,
+          teacher_type_filter = tab_prefix == "swc"
         )
       }
 
       shiny::testServer(server_fn, {
+        # The teacher type filter is only used by the pupil to teacher ratio
+        if (tab_prefix == "swc") {
+          set_input(
+            session,
+            "filter_swc_teacher_type",
+            choices_swc_teacher_type[1]
+          )
+        }
+
         for (m in tab$measures) {
           set_input(session, paste0("filter_", tab_prefix, "_measure"), m)
 
@@ -138,4 +148,65 @@ test_that("the occasional teachers download holds whole-number headcounts, not p
     expect_true(all(csv$Total == round(csv$Total)))
     expect_true(all(csv$Total > 1000))
   })
+})
+
+
+test_that("the pupil to teacher ratio is one measure, with a teacher type filter choosing the dataset", {
+  server_fn <- function(input, output, session) {
+    swc_tab_server(
+      input,
+      output,
+      session,
+      prefix = "swc",
+      data = swc_data,
+      teacher_type_filter = TRUE
+    )
+  }
+
+  shiny::testServer(server_fn, {
+    session$setInputs(
+      filter_swc_measure = swc_ptr_label,
+      filter_swc_teacher_type = "Qualified teachers only",
+      file_type_swc = "CSV (Up to 1 MB)"
+    )
+
+    csv_qualified <- utils::read.csv(output$download_swc_measures, check.names = FALSE)
+    expect_equal(unique(csv_qualified$Measure), swc_measure_names[["ptr_qualified"]])
+
+    session$setInputs(filter_swc_teacher_type = "Qualified and unqualified teachers")
+
+    csv_all <- utils::read.csv(output$download_swc_measures, check.names = FALSE)
+    expect_equal(unique(csv_all$Measure), swc_measure_names[["ptr_all"]])
+
+    # Including unqualified teachers gives a lower ratio
+    expect_true(all(
+      csv_all$`State-funded secondary` < csv_qualified$`State-funded secondary`,
+      na.rm = TRUE
+    ))
+  })
+})
+
+
+test_that("swc_resolve_measure() only uses the teacher type for the pupil to teacher ratio", {
+  expect_equal(
+    swc_resolve_measure(swc_ptr_label, "Qualified teachers only"),
+    swc_measure_names[["ptr_qualified"]]
+  )
+  expect_equal(
+    swc_resolve_measure(swc_ptr_label, "Qualified and unqualified teachers"),
+    swc_measure_names[["ptr_all"]]
+  )
+
+  # Other measures are returned unchanged, whatever the teacher type
+  expect_equal(
+    swc_resolve_measure(swc_measure_names[["vacancies"]], "Qualified teachers only"),
+    swc_measure_names[["vacancies"]]
+  )
+  expect_equal(
+    swc_resolve_measure(swc_measure_names[["vacancies"]]),
+    swc_measure_names[["vacancies"]]
+  )
+
+  expect_error(swc_resolve_measure(swc_ptr_label), "teacher_type")
+  expect_error(swc_resolve_measure(swc_ptr_label, "Unknown"), "teacher_type")
 })

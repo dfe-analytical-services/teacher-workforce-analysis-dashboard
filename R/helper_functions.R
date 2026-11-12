@@ -281,6 +281,33 @@ swc_percent_accuracy <- function(measure) {
 }
 
 # --------------------------------------------------------------------------------------
+# Convert the selected filter options to the measure name used in the SWC data
+# --------------------------------------------------------------------------------------
+#
+# The two pupil to teacher ratio measures share one option in the measure filter
+# (swc_ptr_label). The teacher type filter then picks which dataset is used.
+# All other measures are returned unchanged.
+#
+# param: measure A character string, the option selected in the measure filter
+# param: teacher_type A character string, the option selected in the teacher type
+#        filter (a name of swc_ptr_teacher_types). Only used for the pupil to
+#        teacher ratio
+#
+# return: A character string, a value in swc_measure_names
+#
+# --------------------------------------------------------------------------------------
+
+swc_resolve_measure <- function(measure, teacher_type = NULL) {
+  if (identical(as.character(measure), swc_ptr_label)) {
+    if (is.null(teacher_type) || !teacher_type %in% names(swc_ptr_teacher_types)) {
+      stop("swc_resolve_measure(): `teacher_type` must be one of: ", toString(names(swc_ptr_teacher_types)))
+    }
+    return(unname(swc_ptr_teacher_types[[teacher_type]]))
+  }
+  as.character(measure)
+}
+
+# --------------------------------------------------------------------------------------
 # Is an SWC measure a ratio (pupils per teacher) rather than a percentage rate?
 # --------------------------------------------------------------------------------------
 #

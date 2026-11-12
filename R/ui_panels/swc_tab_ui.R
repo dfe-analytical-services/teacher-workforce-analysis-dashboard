@@ -21,6 +21,10 @@
 # param: breakdown_choices Optional character vector of choices for a second
 #        filter (e.g. subjects). If NULL no second filter is shown
 # param: breakdown_label Label for the second filter
+# param: teacher_type_choices Optional character vector of choices for a filter
+#        for whether unqualified teachers are included. It is only shown when the
+#        pupil to teacher ratio (swc_ptr_label) is selected in the measure filter.
+#        If NULL no teacher type filter is added
 
 swc_tab_panel <- function(
   prefix,
@@ -30,8 +34,11 @@ swc_tab_panel <- function(
   about,
   definitions,
   breakdown_choices = NULL,
-  breakdown_label = NULL
+  breakdown_label = NULL,
+  teacher_type_choices = NULL
 ) {
+  has_second_filter <- !is.null(breakdown_choices) || !is.null(teacher_type_choices)
+
   tabPanel(
     id = paste0(prefix, "_measures"),
     title,
@@ -96,7 +103,7 @@ swc_tab_panel <- function(
           # Filters
           bslib::card(
             bslib::card_header(
-              gov_text(if (is.null(breakdown_choices)) "Filter" else "Filters")
+              gov_text(if (has_second_filter) "Filters" else "Filter")
             ),
             bslib::card_body(
               shinyGovstyle::select_Input(
@@ -105,6 +112,21 @@ swc_tab_panel <- function(
                 select_text = measure_choices,
                 select_value = measure_choices
               ),
+              if (!is.null(teacher_type_choices)) {
+                conditionalPanel(
+                  condition = sprintf(
+                    "input.filter_%s_measure == '%s'",
+                    prefix,
+                    swc_ptr_label
+                  ),
+                  shinyGovstyle::select_Input(
+                    inputId = paste0("filter_", prefix, "_teacher_type"),
+                    label = "Select which teachers to include:",
+                    select_text = teacher_type_choices,
+                    select_value = teacher_type_choices
+                  )
+                )
+              },
               if (!is.null(breakdown_choices)) {
                 shinyGovstyle::select_Input(
                   inputId = paste0("filter_", prefix, "_breakdown"),

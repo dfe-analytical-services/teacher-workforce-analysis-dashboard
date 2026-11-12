@@ -9,6 +9,7 @@
 # match those created by swc_tab_panel() in R/ui_panels/swc_tab_ui.R:
 #
 #   filter_<prefix>_measure       measure filter
+#   filter_<prefix>_teacher_type  optional teacher type filter (pupil to teacher ratio)
 #   filter_<prefix>_breakdown     optional breakdown filter (e.g. subject)
 #   file_type_<prefix>            download file type
 #   <prefix>_timeseries_plot      chart
@@ -28,6 +29,9 @@
 #        (e.g. subject), and only that breakdown is shown
 # param: comparator Optional breakdown which is always shown alongside the
 #        selected breakdown for comparison (e.g. "All subjects")
+# param: teacher_type_filter If TRUE the tab has a teacher type filter, used to
+#        choose between the pupil to teacher ratio datasets (qualified teachers
+#        only, or qualified and unqualified teachers)
 
 swc_tab_server <- function(
   input,
@@ -36,9 +40,11 @@ swc_tab_server <- function(
   prefix,
   data,
   breakdown_filter = FALSE,
-  comparator = NULL
+  comparator = NULL,
+  teacher_type_filter = FALSE
 ) {
   measure_id <- paste0("filter_", prefix, "_measure")
+  teacher_type_id <- paste0("filter_", prefix, "_teacher_type")
   breakdown_id <- paste0("filter_", prefix, "_breakdown")
   file_type_id <- paste0("file_type_", prefix)
 
@@ -57,12 +63,27 @@ swc_tab_server <- function(
     input[[breakdown_id]]
   })
 
+  # Selected measure, as named in the data. The pupil to teacher ratio is one
+  # option in the measure filter, with the teacher type filter choosing which
+  # of the two ratio datasets is used
+
+  selected_measure <- reactive({
+    measure_in <- input[[measure_id]]
+    req(measure_in)
+
+    if (teacher_type_filter && identical(measure_in, swc_ptr_label)) {
+      req(input[[teacher_type_id]])
+      return(swc_resolve_measure(measure_in, input[[teacher_type_id]]))
+    }
+
+    measure_in
+  })
+
   # Data
   # Reactive SWC data filtered by the selected measure (and breakdown)
 
   filtered <- reactive({
-    measure_in <- input[[measure_id]]
-    req(measure_in)
+    measure_in <- selected_measure()
 
     df <- dplyr::filter(data, measure == measure_in) %>%
       # Order breakdowns as they appear in the data. Combined datasets share
@@ -260,7 +281,7 @@ swc_tab_server <- function(
       file_name <- paste(
         c(
           "swc",
-          slug(input[[measure_id]]),
+          slug(selected_measure()),
           if (breakdown_filter) slug(selected_breakdown()),
           swc_data_date
         ),

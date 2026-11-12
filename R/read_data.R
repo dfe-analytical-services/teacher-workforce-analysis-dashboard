@@ -363,6 +363,17 @@ swc_measure_names <- c(
 # proportions and shown as percentages)
 swc_ratio_measures <- swc_measure_names[c("ptr_qualified", "ptr_all")]
 
+# The two pupil to teacher ratio datasets are shown as a single option in the
+# measure filter. A second filter then selects whether unqualified teachers are
+# included. Names are the labels shown in that filter, values are the measure
+# names in the data.
+swc_ptr_label <- "Pupil to teacher ratio"
+
+swc_ptr_teacher_types <- c(
+  "Qualified teachers only" = swc_measure_names[["ptr_qualified"]],
+  "Qualified and unqualified teachers" = swc_measure_names[["ptr_all"]]
+)
+
 # Display names for the measures shown on the Quality metrics tab
 swc_quality_measure_names <- c(
   in_service = "Percentage of teachers still in service after qualifying",
