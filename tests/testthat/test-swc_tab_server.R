@@ -16,7 +16,8 @@ set_input <- function(session, name, value) {
 test_that("each tab's outputs and downloads work for every measure", {
   tabs <- list(
     swc = list(data = swc_data, measures = choices_swc_measure),
-    quality = list(data = swc_quality_data, measures = choices_quality_measure)
+    quality = list(data = swc_quality_data, measures = choices_quality_measure),
+    itt = list(data = itt_data, measures = choices_itt_measure)
   )
 
   for (prefix in names(tabs)) {
@@ -183,6 +184,42 @@ test_that("the pupil to teacher ratio is one measure, with a teacher type filter
       csv_all$`State-funded secondary` < csv_qualified$`State-funded secondary`,
       na.rm = TRUE
     ))
+  })
+})
+
+
+test_that("the PGITT metrics download names the ITT data and shows whole percentages", {
+  server_fn <- function(input, output, session) {
+    swc_tab_server(
+      input,
+      output,
+      session,
+      prefix = "itt",
+      data = itt_data,
+      file_prefix = "itt",
+      data_date = itt_data_date
+    )
+  }
+
+  shiny::testServer(server_fn, {
+    session$setInputs(
+      filter_itt_measure = itt_measure_names[["need_met"]],
+      file_type_itt = "CSV (Up to 1 MB)"
+    )
+
+    path <- output$download_itt_measures
+    csv <- utils::read.csv(path, check.names = FALSE)
+
+    expect_equal(
+      names(csv),
+      c("Measure", "Academic year", "Primary (%)", "Secondary (%)")
+    )
+    expect_equal(csv$`Secondary (%)`, round(csv$`Secondary (%)`))
+    expect_true(any(csv$`Primary (%)` > 100))
+
+    session$setInputs(filter_itt_measure = itt_measure_names[["trainees"]])
+    csv_trainees <- utils::read.csv(output$download_itt_measures, check.names = FALSE)
+    expect_equal(names(csv_trainees), c("Measure", "Academic year", "Primary", "Secondary"))
   })
 })
 

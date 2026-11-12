@@ -285,3 +285,28 @@ choices_subject_measure <- unname(swc_subject_measure_names)
 # (which is always shown on the chart for comparison)
 
 choices_subject_breakdown <- sort(levels(swc_subject_data$breakdown))
+
+# Add data for the PGITT metrics tab (from the ITT census and ITT performance profiles) ----
+
+# Date the ITT data files were produced (matches the file names in data/)
+itt_data_date <- "2026-11-02"
+
+itt_data_updated <- paste(
+  as.integer(format(as.Date(itt_data_date), "%d")),
+  as.integer(format(as.Date(itt_data_date), "%m")),
+  format(as.Date(itt_data_date), "%Y"),
+  sep = "/"
+)
+
+itt_trainees <- read_itt_trainees()
+
+itt_need_met <- read_itt_need_met()
+
+itt_qts_teaching <- read_itt_qts_teaching()
+
+# Final dataset
+itt_data <- bind_rows(itt_trainees, itt_need_met, itt_qts_teaching)
+
+# Choices for the measure filter on the PGITT metrics tab
+
+choices_itt_measure <- unname(itt_measure_names)

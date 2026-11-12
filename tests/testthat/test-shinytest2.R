@@ -44,7 +44,12 @@ all_inputs <- c(
   "file_type_subject",
   "filter_subject_measure",
   "filter_subject_breakdown",
-  "main_tabs_subject_measures"
+  "main_tabs_subject_measures",
+
+  # PGITT metrics
+  "file_type_itt",
+  "filter_itt_measure",
+  "main_tabs_itt_measures"
 )
 
 
@@ -83,7 +88,12 @@ all_outputs <- c(
   # Subject level metrics tab
   "table_subject_measures",
   "download_button_ui_subject",
-  "subject_title_table_ui"
+  "subject_title_table_ui",
+
+  # PGITT metrics tab
+  "table_itt_measures",
+  "download_button_ui_itt",
+  "itt_title_table_ui"
 )
 
 
@@ -254,6 +264,20 @@ test_that("{shinytest2} recording: initial_state", {
 
   app$set_inputs(main_tabs_subject_measures = "Download")
   app$set_inputs(file_type_subject = "JPEG (Up to 500 KB)")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(wider_metrics_tabsetpanels = "PGITT metrics")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(filter_itt_measure = "Percentage of PGITT trainee need met")
+  app$set_inputs(main_tabs_itt_measures = "Table")
+  app$wait_for_idle(500)
+  app$expect_values(input = all_inputs, output = all_outputs)
+
+  app$set_inputs(main_tabs_itt_measures = "Download")
+  app$set_inputs(file_type_itt = "XLSX (Up to 1 MB)")
   app$wait_for_idle(500)
   app$expect_values(input = all_inputs, output = all_outputs)
 

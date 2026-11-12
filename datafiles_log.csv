@@ -14,3 +14,6 @@ data/12_swc_qts_2026-11-02.parquet,published
 data/13_swc_occasional_teachers_2026-11-02.parquet,published
 data/14_swc_specialism_a_2026-11-02.parquet,published
 data/15_swc_specialism_b_2026-11-02.parquet,published
+data/16_itt_census_trainees_2026-11-02.parquet,published
+data/17_itt_census_need_met_2026-11-02.parquet,published
+data/18_itt_performance_profiles_qts_teaching_2026-11-02.parquet,published

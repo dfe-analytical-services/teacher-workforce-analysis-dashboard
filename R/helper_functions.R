@@ -273,10 +273,38 @@ build_flow_traj_title <- function(df) {
 # --------------------------------------------------------------------------------------
 
 swc_percent_accuracy <- function(measure) {
-  if (identical(as.character(measure), swc_measure_names[["vacancies"]])) {
+  measure <- as.character(measure)[1]
+
+  if (identical(measure, swc_measure_names[["vacancies"]])) {
     0.01
+  } else if (measure %in% itt_measure_names) {
+    # ITT census and performance profiles percentages are published as whole numbers
+    1
   } else {
     0.1
+  }
+}
+
+# --------------------------------------------------------------------------------------
+# Data source for a measure shown on the SWC style tabs
+# --------------------------------------------------------------------------------------
+#
+# PGITT metrics come from the ITT census or ITT performance profiles; all other
+# measures come from the school workforce census (SWC).
+#
+# param: measure A character string, a measure name
+#
+# return: A character string naming the data source, e.g. for chart captions
+#
+# --------------------------------------------------------------------------------------
+
+swc_data_source <- function(measure) {
+  measure <- as.character(measure)[1]
+
+  if (measure %in% names(itt_measure_sources)) {
+    itt_measure_sources[[measure]]
+  } else {
+    "school workforce census (SWC)"
   }
 }
 
@@ -359,6 +387,8 @@ swc_value_type <- function(measure) {
 swc_value_digits <- function(measure) {
   if (swc_value_type(measure) == "count") {
     0
+  } else if (swc_value_type(measure) == "rate" && swc_percent_accuracy(measure) == 1) {
+    0
   } else if (swc_percent_accuracy(measure) == 0.01) {
     2
   } else {
@@ -378,15 +408,23 @@ swc_value_digits <- function(measure) {
 # --------------------------------------------------------------------------------------
 
 swc_x_axis_title <- function(measure) {
-  if (identical(as.character(measure)[1], swc_quality_measure_names[["in_service"]])) {
+  measure <- as.character(measure)[1]
+
+  if (identical(measure, swc_quality_measure_names[["in_service"]])) {
     "Academic year of qualification"
+  } else if (identical(measure, itt_measure_names[["qts_teaching"]])) {
+    # ITT performance profiles report trainees by the year they trained
+    "Academic year of training"
   } else {
     "Academic year"
   }
 }
 
 swc_y_axis_title <- function(measure) {
-  if (swc_value_type(measure) == "rate") {
+  # The full measure name is too long to fit along the y axis
+  if (identical(as.character(measure)[1], itt_measure_names[["qts_teaching"]])) {
+    "Achieved QTS and teaching (%)"
+  } else if (swc_value_type(measure) == "rate") {
     paste0(as.character(measure)[1], " (%)")
   } else {
     as.character(measure)[1]

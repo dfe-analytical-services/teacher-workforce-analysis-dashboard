@@ -130,7 +130,15 @@ server <- function(input, output, session) {
       "Subject level metrics",
       "School workforce census (SWC)",
       "Proportion of secondary subject hours taught by a teacher with a relevant post A level qualification (specialism rate) charts",
-      swc_data_updated
+      swc_data_updated,
+      "PGITT metrics",
+      "Initial teacher training (ITT) census",
+      "Number of postgraduate initial teacher training (PGITT) trainees and percentage of PGITT trainee need met charts",
+      itt_data_updated,
+      "PGITT metrics",
+      "ITT performance profiles",
+      "Percentage of PGITT trainees that achieved QTS and were teaching in a state-funded school chart",
+      itt_data_updated
     )
 
     govReactable(
@@ -1258,6 +1266,18 @@ server <- function(input, output, session) {
     comparator = "All subjects"
   )
 
+  # PGITT metrics: PGITT trainees and percentage of need met (ITT census), and
+  # trainees that achieved QTS and were teaching (ITT performance profiles)
+  swc_tab_server(
+    input,
+    output,
+    session,
+    prefix = "itt",
+    data = itt_data,
+    file_prefix = "itt",
+    data_date = itt_data_date
+  )
+
   # Dashboard navigation --------------------------------------------------------------------------------------------
 
   # Adding content navigation for Teacher demand trajectories and PGITT trainee need section
@@ -1381,6 +1401,19 @@ server <- function(input, output, session) {
       session,
       "wider_metrics_tabsetpanels",
       selected = "Subject level metrics"
+    )
+    # Force scroll to top
+    shinyjs::runjs("window.scrollTo(0, 0);")
+  })
+
+  # PGITT metrics link
+
+  observeEvent(input$link_to_pgitt_metrics, {
+    updateTabsetPanel(session, "navlistPanel", selected = "Wider teacher supply metrics")
+    updateTabsetPanel(
+      session,
+      "wider_metrics_tabsetpanels",
+      selected = "PGITT metrics"
     )
     # Force scroll to top
     shinyjs::runjs("window.scrollTo(0, 0);")

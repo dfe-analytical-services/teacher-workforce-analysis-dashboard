@@ -386,8 +386,38 @@ swc_subject_measure_names <- c(
   specialism = "Specialism rate"
 )
 
+# Display names for the measures shown on the PGITT metrics tab. These come
+# from the initial teacher training (ITT) census and ITT performance profiles
+# rather than the SWC, but use the same chart / table / download layout
+itt_measure_names <- c(
+  trainees = "Number of PGITT trainees",
+  need_met = "Percentage of PGITT trainee need met",
+  qts_teaching = paste0(
+    "Percentage of PGITT trainees that achieved QTS and were teaching in a ",
+    "state-funded school"
+  )
+)
+
+# Data source of each PGITT measure, as shown in chart captions
+itt_census_source <- "initial teacher training (ITT) census"
+itt_performance_profiles_source <- "ITT performance profiles"
+
+itt_measure_sources <- c(
+  stats::setNames(
+    rep(itt_census_source, 2),
+    itt_measure_names[c("trainees", "need_met")]
+  ),
+  stats::setNames(
+    itt_performance_profiles_source,
+    itt_measure_names[["qts_teaching"]]
+  )
+)
+
 # Measures which are counts (headcounts) rather than rates or ratios
-swc_count_measures <- swc_quality_measure_names["occasional"]
+swc_count_measures <- c(
+  swc_quality_measure_names["occasional"],
+  itt_measure_names["trainees"]
+)
 
 # shared helper for reading the SWC measure datasets (vacancies, entrants,
 # leavers and pupil to teacher ratios) because the file structure and
@@ -407,7 +437,8 @@ read_swc_measure_data <- function(
   measure,
   breakdown_order = NULL,
   dp = 3,
-  value_type = c("rate", "ratio", "count")
+  value_type = c("rate", "ratio", "count"),
+  max_rate = 1
 ) {
   value_type <- match.arg(value_type)
 
@@ -453,10 +484,12 @@ read_swc_measure_data <- function(
   all_values <- unlist(df[breakdown_cols], use.names = FALSE)
 
   if (value_type == "rate") {
-    if (any(all_values < 0, na.rm = TRUE) || any(all_values > 1, na.rm = TRUE)) {
+    if (any(all_values < 0, na.rm = TRUE) || any(all_values > max_rate, na.rm = TRUE)) {
       warning(
         paste0(
-          "Values outside the range 0 to 1 detected in SWC ",
+          "Values outside the range 0 to ",
+          max_rate,
+          " detected in SWC ",
           measure,
           " file. Rates should be stored as proportions."
         ),
@@ -710,4 +743,58 @@ read_swc_specialism <- function(
     distinct(breakdown, academic_year, .keep_all = TRUE) %>%
     mutate(breakdown = factor(breakdown, levels = subject_levels)) %>%
     arrange(start_year, breakdown)
+}
+
+# Initial teacher training (ITT) census and ITT performance profiles data ------------------------------------------
+
+# These files have the same wide structure as the SWC files (one row per
+# academic year in 'category', one column per phase), so are read with
+# read_swc_measure_data().
+
+# Read ITT census number of PGITT trainees dataset
+# Values are counts of trainees, so kept to 0 dp
+
+read_itt_trainees <- function(
+  file = "data/16_itt_census_trainees_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = itt_measure_names[["trainees"]],
+    breakdown_order = c("Primary", "Secondary"),
+    dp = 0,
+    value_type = "count"
+  )
+}
+
+# Read ITT census percentage of PGITT trainee need met dataset
+# Recruitment can exceed need, so rates above 100% are expected (up to 200%
+# before a warning). The file's '100% line' column is a chart reference line
+# rather than data, so is dropped (the chart draws its own 100% line).
+
+read_itt_need_met <- function(
+  file = "data/17_itt_census_need_met_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = itt_measure_names[["need_met"]],
+    breakdown_order = c("Primary", "Secondary"),
+    dp = 2,
+    max_rate = 2
+  ) %>%
+    filter(breakdown != "100% line") %>%
+    mutate(breakdown = droplevels(breakdown))
+}
+
+# Read ITT performance profiles percentage of PGITT trainees that achieved QTS
+# and were teaching in a state-funded school
+
+read_itt_qts_teaching <- function(
+  file = "data/18_itt_performance_profiles_qts_teaching_2026-11-02.parquet"
+) {
+  read_swc_measure_data(
+    file = file,
+    measure = itt_measure_names[["qts_teaching"]],
+    breakdown_order = c("Primary", "Secondary"),
+    dp = 2
+  )
 }

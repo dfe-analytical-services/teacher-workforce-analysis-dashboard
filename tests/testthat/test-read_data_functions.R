@@ -919,3 +919,73 @@ test_that("real quality and subject level SWC data files load with the expected 
   expect_equal(levels(specialism$breakdown)[1], "All subjects")
   expect_false(any(duplicated(specialism[c("breakdown", "academic_year")])))
 })
+
+
+# 7 - Tests for the ITT census and ITT performance profiles readers ------------------------------------------------
+
+test_that("read_itt_need_met() drops the '100% line' column and allows rates above 100%", {
+  input <- tibble::tibble(
+    category = c("2020/21", "2021/22"),
+    Secondary = c(1.01, 0.78),
+    Primary = c(1.23, 1.30),
+    `100% line` = c(1, 1)
+  )
+
+  out <- expect_no_warning(read_itt_need_met(write_test_parquet(input)))
+
+  expect_equal(levels(out$breakdown), c("Primary", "Secondary"))
+  expect_equal(unique(out$measure), itt_measure_names[["need_met"]])
+  expect_equal(nrow(out), 4)
+})
+
+test_that("read_itt_need_met() warns on implausibly high rates", {
+  input <- tibble::tibble(category = "2020/21", Secondary = 5, Primary = 1)
+
+  expect_warning(
+    read_itt_need_met(write_test_parquet(input)),
+    regexp = "outside the range 0 to 2"
+  )
+})
+
+test_that("read_itt_trainees() reads counts as whole numbers with Primary first", {
+  input <- tibble::tibble(
+    category = "2025/26",
+    Secondary = 17174.4,
+    Primary = 9815
+  )
+
+  out <- expect_no_warning(read_itt_trainees(write_test_parquet(input)))
+
+  expect_equal(levels(out$breakdown)[1], "Primary")
+  expect_equal(out$value, c(9815, 17174))
+})
+
+test_that("real ITT data files load with the expected structure", {
+  data_dir <- testthat::test_path("..", "..", "data")
+
+  find_file <- function(pattern) {
+    list.files(data_dir, pattern = pattern, full.names = TRUE)
+  }
+
+  trainees <- expect_no_warning(
+    read_itt_trainees(find_file("^[0-9]+_itt_census_trainees_.*[.]parquet$"))
+  )
+  need_met <- expect_no_warning(
+    read_itt_need_met(find_file("^[0-9]+_itt_census_need_met_.*[.]parquet$"))
+  )
+  qts_teaching <- expect_no_warning(
+    read_itt_qts_teaching(
+      find_file("^[0-9]+_itt_performance_profiles_qts_teaching_.*[.]parquet$")
+    )
+  )
+
+  for (out in list(trainees, need_met, qts_teaching)) {
+    expect_false(anyNA(out$value))
+    expect_equal(levels(out$breakdown), c("Primary", "Secondary"))
+    expect_true(all(grepl("^[0-9]{4}/[0-9]{2}$", out$academic_year)))
+  }
+
+  expect_true(all(trainees$value > 1000))
+  expect_true(all(need_met$value > 0 & need_met$value < 2))
+  expect_true(all(qts_teaching$value > 0 & qts_teaching$value <= 1))
+})

@@ -1,7 +1,8 @@
 # -----------------------------------------------------------------------------
 # Server logic shared by the tabs which show school workforce census (SWC)
 # measures over time: Sufficiency metrics, Quality metrics and
-# Subject level metrics.
+# Subject level metrics. Also used by the PGITT metrics tab, which has the same
+# layout but uses data from the ITT census and ITT performance profiles.
 #
 # Each tab has the same layout (chart, table and download views with a measure
 # filter), so the server logic is written once here and registered per tab with
@@ -32,6 +33,9 @@
 # param: teacher_type_filter If TRUE the tab has a teacher type filter, used to
 #        choose between the pupil to teacher ratio datasets (qualified teachers
 #        only, or qualified and unqualified teachers)
+# param: file_prefix Start of the download file names, naming the data source
+# param: data_date Date the data files were produced (yyyy-mm-dd), added to
+#        download file names
 
 swc_tab_server <- function(
   input,
@@ -41,7 +45,9 @@ swc_tab_server <- function(
   data,
   breakdown_filter = FALSE,
   comparator = NULL,
-  teacher_type_filter = FALSE
+  teacher_type_filter = FALSE,
+  file_prefix = "swc",
+  data_date = swc_data_date
 ) {
   measure_id <- paste0("filter_", prefix, "_measure")
   teacher_type_id <- paste0("filter_", prefix, "_teacher_type")
@@ -280,10 +286,10 @@ swc_tab_server <- function(
       # make file name which adds the selected measure (and breakdown)
       file_name <- paste(
         c(
-          "swc",
+          file_prefix,
           slug(selected_measure()),
           if (breakdown_filter) slug(selected_breakdown()),
-          swc_data_date
+          data_date
         ),
         collapse = "_"
       )
@@ -316,10 +322,11 @@ swc_tab_server <- function(
       } else {
         # JPEG: save static ggplot.
         tmp_file <- tempfile(paste0(
-          "swc_",
+          file_prefix,
+          "_",
           prefix,
           "_",
-          swc_data_date,
+          data_date,
           ".jpeg"
         ))
         ggplot2::ggsave(

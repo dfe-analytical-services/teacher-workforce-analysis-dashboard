@@ -90,6 +90,14 @@ user_guide_panel <- function() {
                 "View the specialism rate for secondary subjects in the subject level metrics tab. ",
                 "This tab uses data from the school workforce census (SWC)."
               )
+            ),
+            tags$li(
+              gov_text(
+                "View the number of PGITT trainees, the percentage of PGITT trainee need met, and the ",
+                "percentage of PGITT trainees that achieved QTS and were teaching in a state-funded ",
+                "school in the PGITT metrics tab. This tab uses data from the initial teacher training ",
+                "(ITT) census and ITT performance profiles."
+              )
             )
           ),
           heading_text("Disclaimers and caveats", level = 2, size = "m"),

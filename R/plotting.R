@@ -995,6 +995,14 @@ plot_swc_measures <- function(df, title_breakdown = NULL) {
   line_shapes <- c(16, 17, 15, 18, 4, 3)
   n_lines <- nlevels(df$breakdown)
 
+  # The percentage of PGITT trainee need met has a reference line at 100%
+  # (need fully met), so the y axis must reach at least 100%
+  show_100_line <- identical(measure_name, itt_measure_names[["need_met"]])
+
+  if (show_100_line) {
+    y_breaks <- y_breaks_with_headroom(max(c(df$value, 1), na.rm = TRUE))
+  }
+
   ggplot2::ggplot(
     df,
     ggplot2::aes(
@@ -1005,6 +1013,9 @@ plot_swc_measures <- function(df, title_breakdown = NULL) {
       group = breakdown
     )
   ) +
+    (if (show_100_line) {
+      ggplot2::geom_hline(yintercept = 1, linetype = "dashed", colour = "#3D3D3D")
+    }) +
     ggplot2::geom_line(linewidth = 1) +
     ggplot2::geom_point(size = 2.5, na.rm = TRUE) +
 
@@ -1058,6 +1069,10 @@ plot_swc_measures <- function(df, title_breakdown = NULL) {
     ) +
     ggplot2::labs(
       title = build_swc_measure_title(df, title_breakdown),
-      caption = "Source: school workforce census (SWC)"
+      caption = paste0(
+        "Source: ",
+        swc_data_source(measure_name),
+        if (show_100_line) ". Dashed line shows 100% of need met"
+      )
     )
 }

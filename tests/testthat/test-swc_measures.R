@@ -200,6 +200,45 @@ test_that("plot_swc_measures() handles counts and a named breakdown", {
   expect_false(any(grepl("%", y_labels)))
 })
 
+test_that("PGITT measures use whole percentages, counts and the right axis titles", {
+  expect_equal(swc_value_type(itt_measure_names[["trainees"]]), "count")
+  expect_equal(swc_value_type(itt_measure_names[["need_met"]]), "rate")
+  expect_equal(swc_value_type(itt_measure_names[["qts_teaching"]]), "rate")
+
+  expect_equal(swc_value_digits(itt_measure_names[["need_met"]]), 0)
+  expect_equal(swc_value_digits(itt_measure_names[["trainees"]]), 0)
+  expect_equal(swc_value_labeller(itt_measure_names[["need_met"]])(1.28), "128%")
+
+  expect_equal(
+    swc_x_axis_title(itt_measure_names[["qts_teaching"]]),
+    "Academic year of training"
+  )
+  expect_equal(
+    swc_y_axis_title(itt_measure_names[["need_met"]]),
+    "Percentage of PGITT trainee need met (%)"
+  )
+})
+
+test_that("chart captions name the ITT census or ITT performance profiles as the source", {
+  expect_equal(swc_data_source(swc_measure_names[["leavers"]]), "school workforce census (SWC)")
+
+  need_met <- make_swc_df(itt_measure_names[["need_met"]]) |>
+    dplyr::mutate(value = ifelse(breakdown == "Total", 0.8, 0.6))
+  p <- plot_swc_measures(need_met)
+  expect_match(p$labels$caption, "initial teacher training \\(ITT\\) census")
+  expect_match(p$labels$caption, "100% of need met")
+  expect_no_error(ggplot2::ggplot_build(p))
+
+  # 100% reference line is drawn, and the axis reaches it even if no value does
+  expect_true(any(vapply(p$layers, function(x) inherits(x$geom, "GeomHline"), logical(1))))
+  y_range <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y.range
+  expect_gte(max(y_range), 1)
+
+  qts <- make_swc_df(itt_measure_names[["qts_teaching"]]) |>
+    dplyr::mutate(value = 0.75)
+  expect_match(plot_swc_measures(qts)$labels$caption, "ITT performance profiles")
+})
+
 test_that("in service chart labels the x axis as the year of qualification", {
   df <- make_swc_df(swc_quality_measure_names[["in_service"]]) |>
     dplyr::mutate(value = ifelse(breakdown == "Total", 0.86, 0.7))
