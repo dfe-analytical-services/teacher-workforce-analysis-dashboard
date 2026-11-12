@@ -9,3 +9,6 @@ README.html
 *unpublished*
 *dummy*
 .posit/assistant
+data/16_itt_census_trainees_2026-11-02.parquet
+data/17_itt_census_need_met_2026-11-02.parquet
+data/18_itt_performance_profiles_qts_teaching_2026-11-02.parquet
