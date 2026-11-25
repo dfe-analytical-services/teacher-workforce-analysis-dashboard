@@ -147,6 +147,29 @@ test_that("swc_value_type() classifies every SWC measure", {
   expect_equal(swc_value_type(swc_quality_measure_names[["in_service"]]), "rate")
   expect_equal(swc_value_type(swc_quality_measure_names[["qts"]]), "rate")
   expect_equal(swc_value_type(swc_subject_measure_names[["specialism"]]), "rate")
+  expect_equal(swc_value_type(swc_subject_measure_names[["teaching_hours"]]), "count")
+  expect_equal(swc_value_type(swc_subject_measure_names[["teachers_per_1000"]]), "ratio")
+})
+
+test_that("subject level measures name the overall subject and format values appropriately", {
+  hours <- swc_subject_measure_names[["teaching_hours"]]
+  per_1000 <- swc_subject_measure_names[["teachers_per_1000"]]
+
+  expect_equal(swc_subject_overall, "All subjects")
+
+  expect_equal(swc_value_digits(hours), 0)
+  expect_equal(swc_value_digits(per_1000), 2)
+  expect_equal(swc_value_labeller(hours)(3366165), "3,366,165")
+  expect_equal(swc_value_labeller(per_1000)(0.08), "0.08")
+  # Ratios elsewhere are still shown to 1 dp
+  expect_equal(swc_value_labeller(swc_measure_names[["ptr_all"]])(17.34), "17.3")
+})
+
+test_that("every subject level measure lists its overall subject first in its subject list", {
+  for (m in choices_subject_measure) {
+    expect_equal(choices_subject_breakdown_by_measure[[m]][1], swc_subject_overall)
+    expect_gt(length(choices_subject_breakdown_by_measure[[m]]), 1)
+  }
 })
 
 test_that("swc_value_digits() and swc_value_labeller() handle counts", {

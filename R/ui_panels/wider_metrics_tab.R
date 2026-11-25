@@ -62,8 +62,8 @@ wider_metrics_tab_panel <- function() {
                   tags$li(
                     gov_text(
                       actionLink("link_to_subject_metrics", "Subject level metrics"),
-                      " shows the specialism rate for secondary subjects, using data from the school ",
-                      "workforce census (SWC)."
+                      " shows the specialism rate, teaching hours and teachers per 1,000 pupils for ",
+                      "secondary subjects, using data from the school workforce census (SWC)."
                     )
                   ),
                   tags$li(
@@ -240,7 +240,8 @@ wider_metrics_tab_panel <- function() {
               prefix = "subject",
               title = "Subject level metrics",
               intro = gov_text(
-                "This section shows historic trends in the specialism rate for secondary subjects. ",
+                "This section shows historic trends in the specialism rate, teaching hours and teachers ",
+                "per 1,000 pupils for secondary subjects. ",
                 "All of the data in this section comes from the school workforce census (SWC), rather ",
                 "than from the teacher workforce model used in the other sections of this dashboard. ",
                 "Figures cover state-funded secondary schools in England."
@@ -250,13 +251,18 @@ wider_metrics_tab_panel <- function() {
               breakdown_label = "Select a subject:",
               about = tagList(
                 gov_text(
-                  "Select a subject to view its specialism rate over time. The rate for all secondary ",
-                  "subjects is also shown for comparison. Hovering over the chart shows the value of ",
-                  "each line for that academic year."
+                  "Select a measure, then a subject, to view it over time. Select 'All subjects' to view ",
+                  "the figure across all secondary subjects. Hovering over the chart shows the value for ",
+                  "that academic year."
                 ),
                 gov_text(
-                  "Rates are shown as percentages and the y axis starts at zero. ",
-                  "Different shaped markers are used for each line as well as different colours."
+                  "The subjects available differ between measures, so the list of subjects updates when ",
+                  "a different measure is selected. The selected subject is kept if it is available."
+                ),
+                gov_text(
+                  "The specialism rate is shown as a percentage, teaching hours as a number of hours and ",
+                  "teachers per 1,000 pupils as a number. The y axis starts at zero and its upper limit ",
+                  "changes to fit the selected subject, so it is not comparable between subjects."
                 )
               ),
               definitions = tagList(
@@ -268,6 +274,16 @@ wider_metrics_tab_panel <- function() {
                 gov_text(
                   "A selection of subjects and subject groups is available, such as all sciences and all ",
                   "modern foreign languages. 'All subjects' is the rate across all secondary subjects."
+                ),
+                gov_text(strong("Teaching hours")),
+                gov_text(
+                  "The number of hours taught in each subject in state-funded secondary schools in the ",
+                  "census week. 'All subjects' is the number of hours taught across all subjects."
+                ),
+                gov_text(strong("Teachers per 1,000 pupils")),
+                gov_text(
+                  "The number of teachers (headcount) teaching each subject in state-funded secondary ",
+                  "schools for every 1,000 pupils. 'All subjects' is the figure across all subjects."
                 )
               )
             ),

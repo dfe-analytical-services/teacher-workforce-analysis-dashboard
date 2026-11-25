@@ -381,10 +381,22 @@ swc_quality_measure_names <- c(
   occasional = "Headcount of occasional teachers"
 )
 
-# Display name for the measure shown on the Subject level metrics tab
+# Display names for the measures shown on the Subject level metrics tab
 swc_subject_measure_names <- c(
-  specialism = "Specialism rate"
+  specialism = "Specialism rate",
+  teaching_hours = "Teaching hours",
+  teachers_per_1000 = "Teachers per 1,000 pupils"
 )
+
+# Teachers per 1,000 pupils is a ratio rather than a percentage rate
+swc_ratio_measures <- c(
+  swc_ratio_measures,
+  swc_subject_measure_names["teachers_per_1000"]
+)
+
+# The subject representing all subjects on the Subject level metrics tab. It is
+# listed first in each measure's subject filter
+swc_subject_overall <- "All subjects"
 
 # Display names for the measures shown on the PGITT metrics tab. These come
 # from the initial teacher training (ITT) census and ITT performance profiles
@@ -416,6 +428,7 @@ itt_measure_sources <- c(
 # Measures which are counts (headcounts) rather than rates or ratios
 swc_count_measures <- c(
   swc_quality_measure_names["occasional"],
+  swc_subject_measure_names["teaching_hours"],
   itt_measure_names["trainees"]
 )
 
@@ -743,6 +756,145 @@ read_swc_specialism <- function(
     distinct(breakdown, academic_year, .keep_all = TRUE) %>%
     mutate(breakdown = factor(breakdown, levels = subject_levels)) %>%
     arrange(start_year, breakdown)
+}
+
+# Read a long format SWC subject dataset
+#
+# Teaching hours and teachers per 1,000 pupils are supplied in long format
+# (one row per academic year and subject, with columns academic_year,
+# school_phase, subject and value) rather than the wide format used by the
+# other SWC files. The files only cover secondary schools. 'Total' in the files
+# is relabelled 'All subjects' and listed first, followed by subjects
+# alphabetically.
+#
+# Returns long format with columns:
+# measure, breakdown, academic_year, start_year, value
+
+read_swc_subject_long <- function(
+  file,
+  measure,
+  dp,
+  value_type = c("ratio", "count")
+) {
+  value_type <- match.arg(value_type)
+
+  df <- read_parquet(file)
+
+  required_cols <- c("academic_year", "school_phase", "subject", "value")
+  missing_cols <- setdiff(required_cols, names(df))
+
+  if (length(missing_cols) > 0) {
+    stop(
+      paste0(
+        "❌ Missing required columns in SWC ",
+        measure,
+        " file: ",
+        paste(missing_cols, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (!is.numeric(df$value)) {
+    stop(
+      paste0("❌ Non-numeric value column in SWC ", measure, " file"),
+      call. = FALSE
+    )
+  }
+
+  if (any(df$school_phase != "Secondary", na.rm = TRUE)) {
+    warning(
+      paste0(
+        "Unexpected school phase in SWC ",
+        measure,
+        " file. Only 'Secondary' is expected."
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (any(df$value < 0, na.rm = TRUE)) {
+    warning(
+      paste0("Negative values detected in SWC ", measure, " file."),
+      call. = FALSE
+    )
+  }
+
+  if (anyDuplicated(df[c("academic_year", "subject")]) > 0) {
+    warning(
+      paste0(
+        "Duplicate subject and academic year rows found in SWC ",
+        measure,
+        " file. The first value has been kept."
+      ),
+      call. = FALSE
+    )
+  }
+
+  invalid_academic_year <- !grepl("^\\d{4}/\\d{2}$", df$academic_year) &
+    !is.na(df$academic_year)
+
+  if (any(invalid_academic_year)) {
+    warning(
+      paste0(
+        "❌ Invalid academic_year format detected. ",
+        "Expected format: yyyy/yy (e.g. 2024/25). ",
+        "Invalid values: ",
+        paste(unique(df$academic_year[invalid_academic_year]), collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  # The source files label the figure across all subjects 'Total'. It is
+  # relabelled to match the specialism rate data
+  df <- df %>%
+    mutate(subject = if_else(subject == "Total", "All subjects", subject))
+
+  subject_levels <- c(
+    "All subjects",
+    sort(setdiff(unique(df$subject), "All subjects"))
+  )
+
+  df %>%
+    distinct(academic_year, subject, .keep_all = TRUE) %>%
+    mutate(
+      measure = measure,
+      breakdown = factor(subject, levels = subject_levels),
+      start_year = as.integer(substr(academic_year, 1, 4)),
+      value = dfeR::round_five_up(value, dp = dp)
+    ) %>%
+    filter(!is.na(value)) %>%
+    arrange(start_year, breakdown) %>%
+    select(measure, breakdown, academic_year, start_year, value)
+}
+
+# Read SWC teaching hours dataset
+# Hours taught in the school workforce census week, kept as whole hours
+
+read_swc_teaching_hours <- function(
+  file = "data/19_swc_teaching_hours_2026-11-02.parquet"
+) {
+  read_swc_subject_long(
+    file = file,
+    measure = swc_subject_measure_names[["teaching_hours"]],
+    dp = 0,
+    value_type = "count"
+  )
+}
+
+# Read SWC teachers per 1,000 pupils dataset
+# Values are published to 2 dp, and some subjects are small (below 0.1)
+
+read_swc_teachers_per_1000 <- function(
+  file = "data/20_swc_teachers_per_1000_pupils_2026-11-02.parquet"
+) {
+  read_swc_subject_long(
+    file = file,
+    measure = swc_subject_measure_names[["teachers_per_1000"]],
+    dp = 2,
+    value_type = "ratio"
+  )
 }
 
 # Initial teacher training (ITT) census and ITT performance profiles data ------------------------------------------

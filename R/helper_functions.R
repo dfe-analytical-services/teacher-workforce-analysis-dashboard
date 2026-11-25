@@ -387,6 +387,9 @@ swc_value_type <- function(measure) {
 swc_value_digits <- function(measure) {
   if (swc_value_type(measure) == "count") {
     0
+  } else if (identical(as.character(measure)[1], swc_subject_measure_names[["teachers_per_1000"]])) {
+    # Some subjects have fewer than 0.1 teachers per 1,000 pupils
+    2
   } else if (swc_value_type(measure) == "rate" && swc_percent_accuracy(measure) == 1) {
     0
   } else if (swc_percent_accuracy(measure) == 0.01) {
@@ -447,7 +450,7 @@ swc_y_axis_title <- function(measure) {
 
 swc_value_labeller <- function(measure) {
   switch(swc_value_type(measure),
-    ratio = scales::label_number(accuracy = 0.1),
+    ratio = scales::label_number(accuracy = 10^-swc_value_digits(measure)),
     count = scales::label_comma(accuracy = 1),
     scales::label_percent(accuracy = swc_percent_accuracy(measure))
   )

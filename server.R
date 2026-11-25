@@ -1254,8 +1254,9 @@ server <- function(input, output, session) {
   # Quality metrics: teachers in service after qualifying, QTS and occasional teachers
   swc_tab_server(input, output, session, prefix = "quality", data = swc_quality_data)
 
-  # Subject level metrics: specialism rate for the selected subject, with 'All subjects'
-  # always shown for comparison
+  # Subject level metrics: specialism rate, teaching hours and teachers per 1,000 pupils
+  # for the selected subject (including 'All subjects'). The subjects available
+  # differ by measure, and the chart y axis scales to the selected subject
   swc_tab_server(
     input,
     output,
@@ -1263,7 +1264,7 @@ server <- function(input, output, session) {
     prefix = "subject",
     data = swc_subject_data,
     breakdown_filter = TRUE,
-    comparator = "All subjects"
+    breakdown_choices_by_measure = choices_subject_breakdown_by_measure
   )
 
   # PGITT metrics: PGITT trainees and percentage of need met (ITT census), and

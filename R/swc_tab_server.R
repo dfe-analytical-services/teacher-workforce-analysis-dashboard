@@ -11,7 +11,8 @@
 #
 #   filter_<prefix>_measure       measure filter
 #   filter_<prefix>_teacher_type  optional teacher type filter (pupil to teacher ratio)
-#   filter_<prefix>_breakdown     optional breakdown filter (e.g. subject)
+#   filter_<prefix>_breakdown     optional breakdown filter (e.g. subject), whose choices
+#                                 can change with the selected measure
 #   file_type_<prefix>            download file type
 #   <prefix>_timeseries_plot      chart
 #   <prefix>_title_table_ui       table title
@@ -29,7 +30,11 @@
 # param: breakdown_filter If TRUE the tab has a filter for a single breakdown
 #        (e.g. subject), and only that breakdown is shown
 # param: comparator Optional breakdown which is always shown alongside the
-#        selected breakdown for comparison (e.g. "All subjects")
+#        selected breakdown for comparison (e.g. "All subjects"). If NULL only
+#        the selected breakdown is shown, and the y axis scales to it
+# param: breakdown_choices_by_measure Optional named list with measure names as
+#        names and the breakdown choices available for that measure as values.
+#        If given, the breakdown filter is updated when the measure changes
 # param: teacher_type_filter If TRUE the tab has a teacher type filter, used to
 #        choose between the pupil to teacher ratio datasets (qualified teachers
 #        only, or qualified and unqualified teachers)
@@ -45,6 +50,7 @@ swc_tab_server <- function(
   data,
   breakdown_filter = FALSE,
   comparator = NULL,
+  breakdown_choices_by_measure = NULL,
   teacher_type_filter = FALSE,
   file_prefix = "swc",
   data_date = swc_data_date
@@ -85,6 +91,35 @@ swc_tab_server <- function(
     measure_in
   })
 
+  # Update the breakdown filter when the measure changes, because each measure
+  # can have different breakdowns (e.g. subjects). The selected breakdown is
+  # kept if the new measure has it, otherwise the first choice is selected
+
+  if (breakdown_filter && !is.null(breakdown_choices_by_measure)) {
+    observeEvent(
+      selected_measure(),
+      {
+        new_choices <- breakdown_choices_by_measure[[selected_measure()]]
+        req(new_choices)
+
+        current <- input[[breakdown_id]]
+        new_selected <- if (!is.null(current) && current %in% new_choices) {
+          current
+        } else {
+          new_choices[1]
+        }
+
+        updateSelectInput(
+          session,
+          breakdown_id,
+          choices = new_choices,
+          selected = new_selected
+        )
+      },
+      ignoreInit = TRUE
+    )
+  }
+
   # Data
   # Reactive SWC data filtered by the selected measure (and breakdown)
 
@@ -99,8 +134,14 @@ swc_tab_server <- function(
       )
 
     if (breakdown_filter) {
-      # Selected breakdown first, so it takes the first colour on the chart
-      keep <- unique(c(selected_breakdown(), comparator))
+      # Selected breakdown first, so it takes the first colour on the chart.
+      # A selection left over from a previous measure which this measure has no
+      # data for is replaced by the first breakdown, until the filter has updated
+      selected <- selected_breakdown()
+      if (!selected %in% df$breakdown) {
+        selected <- levels(df$breakdown)[1]
+      }
+      keep <- unique(c(selected, comparator))
 
       df <- df %>%
         dplyr::filter(breakdown %in% keep) %>%

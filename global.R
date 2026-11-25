@@ -274,17 +274,35 @@ choices_quality_measure <- unname(swc_quality_measure_names)
 
 # Add data for the Subject level metrics tab (all from SWC) -------------------------
 
-swc_subject_data <- read_swc_specialism()
+swc_subject_data <- bind_rows(
+  read_swc_specialism(),
+  read_swc_teaching_hours(),
+  read_swc_teachers_per_1000()
+)
 
 # Choices for the measure filter on the Subject level metrics tab
 
 choices_subject_measure <- unname(swc_subject_measure_names)
 
-# Choices for the subject filter on the Subject level metrics tab
-# Sorted alphabetically, so the first subject shown is not 'All subjects'
-# (which is always shown on the chart for comparison)
+# Choices for the subject filter on the Subject level metrics tab. Each measure
+# has its own list of subjects, so the filter is updated when the measure changes.
+# The overall figure ('All subjects') is listed first, followed by
+# subjects alphabetically
 
-choices_subject_breakdown <- sort(levels(swc_subject_data$breakdown))
+choices_subject_breakdown_by_measure <- lapply(
+  stats::setNames(choices_subject_measure, choices_subject_measure),
+  function(m) {
+    subjects <- unique(as.character(swc_subject_data$breakdown[swc_subject_data$measure == m]))
+    c(
+      intersect(swc_subject_overall, subjects),
+      sort(setdiff(subjects, swc_subject_overall))
+    )
+  }
+)
+
+# Subjects shown when the tab first loads (the first measure)
+
+choices_subject_breakdown <- choices_subject_breakdown_by_measure[[1]]
 
 # Add data for the PGITT metrics tab (from the ITT census and ITT performance profiles) ----
 

@@ -920,6 +920,97 @@ test_that("real quality and subject level SWC data files load with the expected 
   expect_false(any(duplicated(specialism[c("breakdown", "academic_year")])))
 })
 
+# Teaching hours and teachers per 1,000 pupils are supplied in long format
+
+test_that("read_swc_teaching_hours() reads long format counts, relabelling 'Total' as 'All subjects' and listing it first", {
+  input <- tibble::tibble(
+    academic_year = rep(c("2023/24", "2024/25"), each = 3),
+    school_phase = "Secondary",
+    subject = rep(c("Biology", "Total", "Art and Design"), 2),
+    value = c(100.4, 300.6, 200, 110, 330, 220)
+  )
+
+  out <- expect_no_warning(read_swc_teaching_hours(write_test_parquet(input)))
+
+  expect_equal(levels(out$breakdown), c("All subjects", "Art and Design", "Biology"))
+  expect_equal(unique(out$measure), swc_subject_measure_names[["teaching_hours"]])
+  expect_equal(nrow(out), 6)
+  expect_equal(
+    out$value[out$breakdown == "All subjects" & out$academic_year == "2023/24"],
+    301
+  )
+  expect_equal(unique(out$start_year), c(2023L, 2024L))
+})
+
+test_that("read_swc_teachers_per_1000() keeps 2 dp and errors on missing columns", {
+  input <- tibble::tibble(
+    academic_year = "2024/25",
+    school_phase = "Secondary",
+    subject = c("Total", "Classics"),
+    value = c(59.8123, 0.0796)
+  )
+
+  out <- expect_no_warning(read_swc_teachers_per_1000(write_test_parquet(input)))
+
+  expect_equal(out$value, c(59.81, 0.08))
+  expect_equal(unique(out$measure), swc_subject_measure_names[["teachers_per_1000"]])
+
+  expect_error(
+    read_swc_teachers_per_1000(write_test_parquet(input[c("academic_year", "value")])),
+    regexp = "Missing required columns"
+  )
+})
+
+test_that("read_swc_subject_long() warns on duplicate rows and negative values", {
+  negative <- tibble::tibble(
+    academic_year = "2024/25",
+    school_phase = "Secondary",
+    subject = "Total",
+    value = -1
+  )
+  duplicated_rows <- tibble::tibble(
+    academic_year = c("2024/25", "2024/25"),
+    school_phase = "Secondary",
+    subject = "Total",
+    value = c(5, 5)
+  )
+
+  expect_warning(
+    read_swc_teaching_hours(write_test_parquet(negative)),
+    regexp = "Negative values"
+  )
+  expect_warning(
+    read_swc_teaching_hours(write_test_parquet(duplicated_rows)),
+    regexp = "Duplicate subject"
+  )
+})
+
+test_that("real teaching hours and teachers per 1,000 pupils files load with the expected structure", {
+  data_dir <- testthat::test_path("..", "..", "data")
+
+  find_file <- function(pattern) {
+    list.files(data_dir, pattern = pattern, full.names = TRUE)
+  }
+
+  hours <- expect_no_warning(
+    read_swc_teaching_hours(find_file("^[0-9]+_swc_teaching_hours_.*[.]parquet$"))
+  )
+  per_1000 <- expect_no_warning(
+    read_swc_teachers_per_1000(
+      find_file("^[0-9]+_swc_teachers_per_1000_pupils_.*[.]parquet$")
+    )
+  )
+
+  for (out in list(hours, per_1000)) {
+    expect_false(anyNA(out$value))
+    expect_true(all(out$value > 0))
+    expect_equal(levels(out$breakdown)[1], "All subjects")
+    expect_false("Total" %in% levels(out$breakdown))
+    expect_false(any(duplicated(out[c("breakdown", "academic_year")])))
+    expect_true(all(grepl("^[0-9]{4}/[0-9]{2}$", out$academic_year)))
+  }
+})
+
 
 # 7 - Tests for the ITT census and ITT performance profiles readers ------------------------------------------------
 

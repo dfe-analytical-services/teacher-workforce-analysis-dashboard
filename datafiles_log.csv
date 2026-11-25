@@ -17,3 +17,5 @@ data/15_swc_specialism_b_2026-11-02.parquet,published
 data/16_itt_census_trainees_2026-11-02.parquet,unpublished
 data/17_itt_census_need_met_2026-11-02.parquet,unpublished
 data/18_itt_performance_profiles_qts_teaching_2026-11-02.parquet,unpublished
+data/19_swc_teaching_hours_2026-11-02.parquet,unpublished
+data/20_swc_teachers_per_1000_pupils_2026-11-02.parquet,unpublished

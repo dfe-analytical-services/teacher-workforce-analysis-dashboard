@@ -120,6 +120,55 @@ test_that("the subject tab shows the selected subject alongside 'All subjects'",
 })
 
 
+test_that("the subject tab shows one subject at a time for every measure, including the overall figure", {
+  server_fn <- function(input, output, session) {
+    swc_tab_server(
+      input,
+      output,
+      session,
+      prefix = "subject",
+      data = swc_subject_data,
+      breakdown_filter = TRUE,
+      breakdown_choices_by_measure = choices_subject_breakdown_by_measure
+    )
+  }
+
+  shiny::testServer(server_fn, {
+    session$setInputs(file_type_subject = "CSV (Up to 1 MB)")
+
+    for (m in choices_subject_measure) {
+      overall <- swc_subject_overall
+      other <- choices_subject_breakdown_by_measure[[m]][2]
+
+      for (subject in c(overall, other)) {
+        session$setInputs(
+          filter_subject_measure = m,
+          filter_subject_breakdown = subject
+        )
+
+        expect_no_error(output$subject_timeseries_plot)
+
+        csv <- utils::read.csv(output$download_subject_measures, check.names = FALSE)
+
+        # A single line for the selected subject, with no comparator
+        expect_equal(ncol(csv), 3)
+        expect_true(startsWith(names(csv)[3], subject))
+        expect_equal(unique(csv$Measure), m)
+        expect_gt(nrow(csv), 10)
+      }
+    }
+
+    # A subject the new measure has no data for falls back to the first subject
+    session$setInputs(
+      filter_subject_measure = swc_subject_measure_names[["specialism"]],
+      filter_subject_breakdown = "Classics"
+    )
+    csv <- utils::read.csv(output$download_subject_measures, check.names = FALSE)
+    expect_true(startsWith(names(csv)[3], "All subjects"))
+  })
+})
+
+
 test_that("the occasional teachers download holds whole-number headcounts, not percentages", {
   server_fn <- function(input, output, session) {
     swc_tab_server(
