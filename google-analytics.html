@@ -38,15 +38,6 @@ dashboard.
     });
   });
 
-  $(document).on('click', 'ul#tabsetpanels', function(e) {
-    gtag('event', 'tab panels', {'event_category' : 'tab panel clicks',
-    'event_label' : document.querySelector(
-    'ul#tabsetpanels > li.active > a'
-    ).getAttribute('data-value')
-    });
-  });
-
-
   $(document).on('click', 'a#download_data', function(e) {
     gtag('event', 'Download button', {'event_category' : 'Download button click'
     });
