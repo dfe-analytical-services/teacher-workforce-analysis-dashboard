@@ -38,18 +38,6 @@ dashboard.
     });
   });
 
-  $(document).on('click', 'a#download_data', function(e) {
-    gtag('event', 'Download button', {'event_category' : 'Download button click'
-    });
-  });
-
-  $(document).on('shiny:disconnected', function(e) {
-    gtag('event', 'disconnect', {
-      'event_label' : 'Disconnect',
-      'event_category' : 'Disconnect'
-    });
-  });
-
    $(document).on('click', 'ul#navigation', function(e) {
     gtag(
       'event', 
@@ -74,5 +62,17 @@ dashboard.
       );
     }
   );
+  
+    $(document).on('click', 'a#download_data', function(e) {
+    gtag('event', 'Download button', {'event_category' : 'Download button click'
+    });
+  });
+
+  $(document).on('shiny:disconnected', function(e) {
+    gtag('event', 'disconnect', {
+      'event_label' : 'Disconnect',
+      'event_category' : 'Disconnect'
+    });
+  });
  
 </script>
