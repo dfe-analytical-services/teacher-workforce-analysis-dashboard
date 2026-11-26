@@ -61,14 +61,14 @@ dashboard.
     });
 
   $(document).on(
-    'click', 'ul#tabsetpanels', function(e) {
+    'click', 'ul#twm_tabsetpanels', function(e) {
       gtag(
         'event', 
-        'Example page tabset click', 
+        'TWM page tabset click', 
         {
           'event_category' : 'Mid level navigation',
           'event_label' : document.querySelector(
-            'ul#tabsetpanels > li > a.active'
+            'ul#twm_tabsetpanels > li > a.active'
           ).getAttribute('data-value')
         }
       );
