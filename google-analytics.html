@@ -26,17 +26,69 @@ The custom trackers below can be tailored to match the inputs used in your
 dashboard.
 */
 
-  $(document).on('change', 'select#selectPhase', function(e) {
-    gtag('event', 'select phase', {'event_category' : 'choose Phase',
-    'event_label' : document.querySelector('select#selectPhase').value
+  // Teacher demand trajectories
+  $(document).on('change', 'select#filter_phase', function(e) {
+    gtag('event', 'select phase teacher demand', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase').value
     });
   });
-
-  $(document).on('change', 'select#selectArea', function(e) {
-    gtag('event', 'select area', {'event_category' : 'choose Area',
-    'event_label' : document.querySelector('select#selectArea').value
+  
+  // PGITT trainee need time series
+  $(document).on('change', 'select#filter_phase_pgitt_need', function(e) {
+    gtag('event', 'select phase pgitt need', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase_pgitt_need').value
     });
   });
+  
+  $(document).on('change', 'select#filter_subject_pgitt_need', function(e) {
+    gtag('event', 'select subject pgitt need', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_subject_pgitt_need').value
+    });
+  });
+  
+  // Drivers of change in PGITT trainee need
+  $(document).on('change', 'select#filter_phase_drivers', function(e) {
+    gtag('event', 'select phase drivers', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase_drivers').value
+    });
+  });
+  
+  $(document).on('change', 'select#filter_subject_drivers', function(e) {
+    gtag('event', 'select subject drivers', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_subject_drivers').value
+    });
+  });
+  
+  // Flow trajectories
+  $(document).on('change', 'select#filter_phase_flow', function(e) {
+    gtag('event', 'select phase flows', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase_flow').value
+    });
+  });
+  
+  $(document).on('change', 'select#filter_subject_flow', function(e) {
+    gtag('event', 'select subject flows', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_subject_flow').value
+    });
+  });
+  
+  $(document).on('change', 'select#filter_flow_type', function(e) {
+    gtag('event', 'select flow type', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_flow_type').value
+    });
+  });
+  
+/*
+This one captures clicks on the top level service navigation component.
+*/
 
    $(document).on('click', 'ul#navigation', function(e) {
     gtag(
@@ -63,7 +115,7 @@ dashboard.
     }
   );
   
-    $(document).on('click', 'a#download_data', function(e) {
+  $(document).on('click', 'a#download_data', function(e) {
     gtag('event', 'Download button', {'event_category' : 'Download button click'
     });
   });
