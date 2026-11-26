@@ -278,7 +278,7 @@ swc_percent_accuracy <- function(measure) {
   if (identical(measure, swc_measure_names[["vacancies"]])) {
     0.01
   } else if (measure %in% itt_measure_names) {
-    # ITT census and performance profiles percentages are published as whole numbers
+    # Initial Teacher Training Census and performance profiles percentages are published as whole numbers
     1
   } else {
     0.1
@@ -289,8 +289,9 @@ swc_percent_accuracy <- function(measure) {
 # Data source for a measure shown on the SWC style tabs
 # --------------------------------------------------------------------------------------
 #
-# PGITT metrics come from the ITT census or ITT performance profiles; all other
-# measures come from the school workforce census (SWC).
+# PGITT metrics come from the Initial Teacher Training Census or Initial Teacher Training Performance Profiles, and teaching
+# hours come from the teacher workforce model (TWM); all other measures come from
+# the School Workforce Census (SWC).
 #
 # param: measure A character string, a measure name
 #
@@ -303,9 +304,26 @@ swc_data_source <- function(measure) {
 
   if (measure %in% names(itt_measure_sources)) {
     itt_measure_sources[[measure]]
+  } else if (identical(measure, swc_subject_measure_names[["teaching_hours"]])) {
+    twm_source
   } else {
-    "school workforce census (SWC)"
+    "School Workforce Census (SWC)"
   }
+}
+
+# --------------------------------------------------------------------------------------
+# Link to a data source, opening in a new tab
+# --------------------------------------------------------------------------------------
+#
+# param: text Link text
+# param: url Link address
+#
+# return: An HTML anchor tag
+#
+# --------------------------------------------------------------------------------------
+
+source_link <- function(text, url) {
+  tags$a(text, href = url, target = "_blank", rel = "noopener noreferrer")
 }
 
 # --------------------------------------------------------------------------------------
@@ -416,7 +434,7 @@ swc_x_axis_title <- function(measure) {
   if (identical(measure, swc_quality_measure_names[["in_service"]])) {
     "Academic year of qualification"
   } else if (identical(measure, itt_measure_names[["qts_teaching"]])) {
-    # ITT performance profiles report trainees by the year they trained
+    # Initial Teacher Training Performance Profiles report trainees by the year they trained
     "Academic year of training"
   } else {
     "Academic year"
@@ -464,7 +482,7 @@ swc_value_labeller <- function(measure) {
 # describing the selected measure and the academic year range covered.
 #
 # Generates the title displayed in the chart and above the table
-# on the School workforce census measures tab
+# on the School Workforce Census measures tab
 #
 # param: df A data frame containing at least the following columns:
 #           - measure

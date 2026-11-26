@@ -2,8 +2,8 @@
 #
 # USER INTERFACE COMPONENTS FOR: *Wider teacher supply metrics* tab
 # Contains the Introduction, Sufficiency, Quality, Subject level and PGITT metrics sub-tabs
-# (Sufficiency, Quality and Subject level metrics use data from the school workforce census;
-# PGITT metrics uses data from the ITT census and ITT performance profiles)
+# (Sufficiency, Quality and Subject level metrics use data from the School Workforce Census;
+# PGITT metrics uses data from the Initial Teacher Training Census and Initial Teacher Training Performance Profiles)
 #
 # # ---------------------------------------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ wider_metrics_tab_panel <- function() {
                     gov_text(
                       actionLink("link_to_swc_measures", "Sufficiency metrics"),
                       " shows historic teacher vacancy, entrant and leaver rates, and pupil to teacher ratios, ",
-                      "using data from the school workforce census (SWC)."
+                      "using data from the School Workforce Census (SWC)."
                     )
                   ),
                   tags$li(
@@ -56,39 +56,40 @@ wider_metrics_tab_panel <- function() {
                       actionLink("link_to_quality_metrics", "Quality metrics"),
                       " shows the percentage of teachers still in service after qualifying, the percentage ",
                       "of teachers with qualified teacher status, and the number of occasional teachers, ",
-                      "using data from the school workforce census (SWC)."
+                      "using data from the School Workforce Census (SWC)."
                     )
                   ),
                   tags$li(
                     gov_text(
                       actionLink("link_to_subject_metrics", "Subject level metrics"),
                       " shows the specialism rate, teaching hours and teachers per 1,000 pupils for ",
-                      "secondary subjects, using data from the school workforce census (SWC)."
+                      "secondary subjects, using data from the School Workforce Census (SWC) and, for ",
+                      "teaching hours, the teacher workforce model (TWM)."
                     )
                   ),
                   tags$li(
                     gov_text(
                       actionLink("link_to_pgitt_metrics", "PGITT metrics"),
                       " shows the number of postgraduate initial teacher training (PGITT) trainees and ",
-                      "the percentage of PGITT trainee need met, using data from the initial teacher ",
-                      "training (ITT) census, and the percentage of PGITT trainees that achieved QTS and ",
-                      "were teaching in a state-funded school, using data from the ITT performance profiles."
+                      "the percentage of PGITT trainee need met, using data from the Initial Teacher ",
+                      "Training Census, and the percentage of PGITT trainees that achieved QTS and ",
+                      "were teaching in a state-funded school, using data from the Initial Teacher Training Performance Profiles."
                     )
                   )
                 ),
                 gov_text(
-                  "The sufficiency, quality and subject level metrics use data from the school workforce ",
-                  "census (SWC). The PGITT metrics use data from the initial teacher training (ITT) census ",
-                  "and ITT performance profiles. None of the data in this section comes from the teacher ",
-                  "workforce model (TWM) used in the Teacher demand and PGITT need section of this ",
-                  "dashboard. Figures cover England."
+                  "The sufficiency, quality and subject level metrics use data from the School Workforce ",
+                  "Census (SWC), except for teaching hours, which come from the teacher workforce model ",
+                  "(TWM) used in the Teacher demand and PGITT need section of this dashboard. The PGITT ",
+                  "metrics use data from the Initial Teacher Training Census and Initial Teacher Training Performance ",
+                  "Profiles. Figures cover England."
                 )
               )
             ),
 
             #####################################################################
 
-            #   Sufficiency metrics tab (data from the school workforce census)
+            #   Sufficiency metrics tab (data from the School Workforce Census)
 
             #####################################################################
 
@@ -98,7 +99,7 @@ wider_metrics_tab_panel <- function() {
               intro = gov_text(
                 "This section shows historic trends in teacher vacancy rates, qualified teacher ",
                 "entrant and leaver rates, and pupil to teacher ratios. All of the data in this section ",
-                "comes from the school workforce census (SWC), rather than from the teacher workforce ",
+                "comes from the School Workforce Census (SWC), rather than from the teacher workforce ",
                 "model used in the other sections of this dashboard. Figures cover state-funded schools ",
                 "in England."
               ),
@@ -144,7 +145,7 @@ wider_metrics_tab_panel <- function() {
                 ),
                 gov_text(
                   "Returners to the state-funded sector are teachers who enter service in the English ",
-                  "state-funded schools sector, and are recorded within the school workforce census as ",
+                  "state-funded schools sector, and are recorded within the School Workforce Census as ",
                   "having worked in the state-funded sector before."
                 ),
                 gov_text(strong("Pupil to teacher ratios")),
@@ -179,7 +180,7 @@ wider_metrics_tab_panel <- function() {
 
             #####################################################################
 
-            #   Quality metrics tab (data from the school workforce census)
+            #   Quality metrics tab (data from the School Workforce Census)
 
             #####################################################################
 
@@ -190,7 +191,7 @@ wider_metrics_tab_panel <- function() {
                 "This section shows historic trends in the percentage of teachers still in service ",
                 "after qualifying, the percentage of teachers with qualified teacher status (QTS), and ",
                 "the number of occasional teachers. All of the data in this section comes from the ",
-                "school workforce census (SWC), rather than from the teacher workforce model used in ",
+                "School Workforce Census (SWC), rather than from the teacher workforce model used in ",
                 "the other sections of this dashboard. Figures cover state-funded schools in England."
               ),
               measure_choices = choices_quality_measure,
@@ -232,7 +233,7 @@ wider_metrics_tab_panel <- function() {
 
             #####################################################################
 
-            #   Subject level metrics tab (data from the school workforce census)
+            #   Subject level metrics tab (data from the School Workforce Census)
 
             #####################################################################
 
@@ -242,9 +243,16 @@ wider_metrics_tab_panel <- function() {
               intro = gov_text(
                 "This section shows historic trends in the specialism rate, teaching hours and teachers ",
                 "per 1,000 pupils for secondary subjects. ",
-                "All of the data in this section comes from the school workforce census (SWC), rather ",
-                "than from the teacher workforce model used in the other sections of this dashboard. ",
+                "The specialism rate and teachers per 1,000 pupils come from the School Workforce Census ",
+                "(SWC). Teaching hours come from the teacher workforce model (TWM) used in the other ",
+                "sections of this dashboard. The source of the selected measure is stated below the chart. ",
                 "Figures cover state-funded secondary schools in England."
+              ),
+              data_source = "School Workforce Census (SWC) and teacher workforce model (TWM)",
+              data_source_link = tagList(
+                source_link("School Workforce Census (SWC)", swc_publication_url),
+                " and ",
+                source_link("teacher workforce model (TWM)", parent_publication)
               ),
               measure_choices = choices_subject_measure,
               breakdown_choices = choices_subject_breakdown,
@@ -277,8 +285,9 @@ wider_metrics_tab_panel <- function() {
                 ),
                 gov_text(strong("Teaching hours")),
                 gov_text(
-                  "The number of hours taught in each subject in state-funded secondary schools in the ",
-                  "census week. 'All subjects' is the number of hours taught across all subjects."
+                  "The number of hours taught in each subject in state-funded secondary schools, from ",
+                  "the teacher workforce model (TWM). 'All subjects' is the number of hours taught ",
+                  "across all subjects."
                 ),
                 gov_text(strong("Teachers per 1,000 pupils")),
                 gov_text(
@@ -290,14 +299,19 @@ wider_metrics_tab_panel <- function() {
 
             #####################################################################
 
-            #   PGITT metrics tab (data from the ITT census and ITT performance profiles)
+            #   PGITT metrics tab (data from the Initial Teacher Training Census and Initial Teacher Training Performance Profiles)
 
             #####################################################################
 
             swc_tab_panel(
               prefix = "itt",
               title = "PGITT metrics",
-              data_source = "initial teacher training (ITT) census and ITT performance profiles",
+              data_source = "Initial Teacher Training Census and Initial Teacher Training Performance Profiles",
+              data_source_link = tagList(
+                source_link("Initial Teacher Training Census", itt_census_url),
+                " and ",
+                source_link("Initial Teacher Training Performance Profiles", itt_performance_profiles_url)
+              ),
               data_updated = itt_data_updated,
               intro = tagList(
                 gov_text(
@@ -308,9 +322,9 @@ wider_metrics_tab_panel <- function() {
                 ),
                 gov_text(
                   "The number of PGITT trainees and the percentage of PGITT trainee need met come from ",
-                  "the initial teacher training (ITT) census. The percentage of PGITT trainees that ",
-                  "achieved QTS and were teaching in a state-funded school comes from the ITT performance ",
-                  "profiles. None of the data in this section comes from the school workforce census or ",
+                  "the Initial Teacher Training Census. The percentage of PGITT trainees that ",
+                  "achieved QTS and were teaching in a state-funded school comes from the Initial Teacher Training Performance ",
+                  "Profiles. None of the data in this section comes from the School Workforce Census or ",
                   "the teacher workforce model used in the other sections of this dashboard."
                 )
               ),
@@ -335,18 +349,18 @@ wider_metrics_tab_panel <- function() {
                 gov_text(strong("Number of PGITT trainees")),
                 gov_text(
                   "The number of trainees recruited to postgraduate initial teacher training in each ",
-                  "academic year, from the ITT census."
+                  "academic year, from the Initial Teacher Training Census."
                 ),
                 gov_text(strong("Percentage of PGITT trainee need met")),
                 gov_text(
                   "The number of PGITT trainees recruited as a percentage of PGITT trainee need for that ",
-                  "academic year, from the ITT census. Values above 100% mean more trainees were ",
+                  "academic year, from the Initial Teacher Training Census. Values above 100% mean more trainees were ",
                   "recruited than were needed."
                 ),
                 gov_text(strong("PGITT trainees that achieved QTS and were teaching")),
                 gov_text(
                   "The percentage of PGITT trainees who were awarded qualified teacher status (QTS) and ",
-                  "were teaching in a state-funded school, from the ITT performance profiles. The ",
+                  "were teaching in a state-funded school, from the Initial Teacher Training Performance Profiles. The ",
                   "academic year is the year in which trainees trained."
                 )
               )

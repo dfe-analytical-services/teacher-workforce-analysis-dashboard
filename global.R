@@ -86,6 +86,14 @@ parent_pub_name <- "Teacher demand and postgraduate trainee need"
 parent_publication <-
   "https://explore-education-statistics.service.gov.uk/find-statistics/teacher-demand-and-postgraduate-trainee-need/2026-27"
 
+# Links to the data sources used in the Wider teacher supply metrics section
+swc_publication_url <-
+  "https://explore-education-statistics.service.gov.uk/find-statistics/school-workforce-in-england/2025"
+itt_census_url <-
+  "https://explore-education-statistics.service.gov.uk/find-statistics/initial-teacher-training-census/2025-26"
+itt_performance_profiles_url <-
+  "https://explore-education-statistics.service.gov.uk/find-statistics/initial-teacher-training-performance-profiles/2024-25"
+
 # Set the URLs that the site will be published to
 site_primary <- "https://department-for-education.shinyapps.io/teacher-workforce-analysis-dashboard/"
 
@@ -212,7 +220,7 @@ flow_type_labels <- dplyr::case_when(
 
 names(choices_flow_type) <- flow_type_labels
 
-# Add data for the Sufficiency metrics tab (all from the school workforce census, SWC) -----
+# Add data for the Sufficiency metrics tab (all from the School Workforce Census, SWC) -----
 
 # Date the SWC measures data files were produced (matches the file names in
 # data/). Used in download file names and the 'Data last updated' text.
@@ -304,7 +312,7 @@ choices_subject_breakdown_by_measure <- lapply(
 
 choices_subject_breakdown <- choices_subject_breakdown_by_measure[[1]]
 
-# Add data for the PGITT metrics tab (from the ITT census and ITT performance profiles) ----
+# Add data for the PGITT metrics tab (from the Initial Teacher Training Census and Initial Teacher Training Performance Profiles) ----
 
 # Date the ITT data files were produced (matches the file names in data/)
 itt_data_date <- "2026-11-02"

@@ -1,8 +1,8 @@
 # -----------------------------------------------------------------------------
-# Server logic shared by the tabs which show school workforce census (SWC)
+# Server logic shared by the tabs which show School Workforce Census (SWC)
 # measures over time: Sufficiency metrics, Quality metrics and
 # Subject level metrics. Also used by the PGITT metrics tab, which has the same
-# layout but uses data from the ITT census and ITT performance profiles.
+# layout but uses data from the Initial Teacher Training Census and Initial Teacher Training Performance Profiles.
 #
 # Each tab has the same layout (chart, table and download views with a measure
 # filter), so the server logic is written once here and registered per tab with

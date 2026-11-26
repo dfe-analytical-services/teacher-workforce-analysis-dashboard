@@ -98,6 +98,13 @@ server <- function(input, output, session) {
       parent_pub_name
     )
 
+    data_link <- function(text, url) {
+      sprintf('<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>', url, text)
+    }
+    swc_link <- data_link("School Workforce Census (SWC)", swc_publication_url)
+    itt_census_link <- data_link("Initial Teacher Training Census", itt_census_url)
+    itt_pp_link <- data_link("Initial Teacher Training Performance Profiles", itt_performance_profiles_url)
+
     df <- tibble::tribble(
       ~Tab,
       ~`Data from`,
@@ -120,23 +127,27 @@ server <- function(input, output, session) {
       "Supporting information data file ‘Calculation of 2026-27 postgraduate initial teacher training (PGITT) trainee need and related data’ from this year’s publication (includes data from last year’s publication).",
       "23/4/2026",
       "Sufficiency metrics",
-      "School workforce census (SWC)",
+      swc_link,
       "Teacher vacancy rate, qualified teacher entrant rate, qualified teacher leaver rate and pupil to teacher ratio charts",
       swc_data_updated,
       "Quality metrics",
-      "School workforce census (SWC)",
+      swc_link,
       "Percentage of teachers still in service after qualifying, percentage of teachers with qualified teacher status and headcount of occasional teachers charts",
       swc_data_updated,
       "Subject level metrics",
-      "School workforce census (SWC)",
-      "Proportion of secondary subject hours taught by a teacher with a relevant post A level qualification (specialism rate) charts",
+      swc_link,
+      "Proportion of secondary subject hours taught by a teacher with a relevant post A level qualification (specialism rate) and teachers per 1,000 pupils charts",
+      swc_data_updated,
+      "Subject level metrics",
+      parent_pub_link,
+      "Teaching hours charts",
       swc_data_updated,
       "PGITT metrics",
-      "Initial teacher training (ITT) census",
+      itt_census_link,
       "Number of postgraduate initial teacher training (PGITT) trainees and percentage of PGITT trainee need met charts",
       itt_data_updated,
       "PGITT metrics",
-      "ITT performance profiles",
+      itt_pp_link,
       "Percentage of PGITT trainees that achieved QTS and were teaching in a state-funded school chart",
       itt_data_updated
     )
@@ -1234,7 +1245,7 @@ server <- function(input, output, session) {
     }
   )
 
-  # School workforce census (SWC) tabs ----------------------------------------------------------------------------------
+  # School Workforce Census (SWC) tabs ----------------------------------------------------------------------------------
 
   # Sufficiency metrics, Quality metrics and Subject level metrics tabs all show
   # SWC measures with the same chart / table / download layout. The outputs for each
@@ -1267,8 +1278,8 @@ server <- function(input, output, session) {
     breakdown_choices_by_measure = choices_subject_breakdown_by_measure
   )
 
-  # PGITT metrics: PGITT trainees and percentage of need met (ITT census), and
-  # trainees that achieved QTS and were teaching (ITT performance profiles)
+  # PGITT metrics: PGITT trainees and percentage of need met (Initial Teacher Training Census), and
+  # trainees that achieved QTS and were teaching (Initial Teacher Training Performance Profiles)
   swc_tab_server(
     input,
     output,

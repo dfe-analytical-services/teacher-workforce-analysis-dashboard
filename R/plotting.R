@@ -938,7 +938,7 @@ plot_flow_trajectories <- function(df) {
 
 # Plot SWC measures ----------------------------------------------------------------
 
-# Plot historic school workforce census (SWC) measures over time, e.g. teacher
+# Plot historic School Workforce Census (SWC) measures over time, e.g. teacher
 # vacancy rates, qualified teacher entrant rates, leaver rates and pupil to
 # teacher ratios
 #

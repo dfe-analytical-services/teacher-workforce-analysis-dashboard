@@ -1,5 +1,5 @@
 # =============================================================================
-# Unit tests for the School workforce census (SWC) measures tab helpers
+# Unit tests for the School Workforce Census (SWC) measures tab helpers
 #   • swc_percent_accuracy()
 #   • build_swc_measure_title()
 #   • plot_swc_measures()
@@ -125,10 +125,10 @@ test_that("plot_swc_measures() handles ratio measures and states the SWC source"
   expect_false(any(grepl("%", y_labels)))
 
   # Source is stated on every SWC chart, including rates
-  expect_match(p$labels$caption, "school workforce census", ignore.case = TRUE)
+  expect_match(p$labels$caption, "School Workforce Census", ignore.case = TRUE)
   expect_match(
     plot_swc_measures(make_swc_df())$labels$caption,
-    "school workforce census",
+    "School Workforce Census",
     ignore.case = TRUE
   )
 })
@@ -242,13 +242,21 @@ test_that("PGITT measures use whole percentages, counts and the right axis title
   )
 })
 
-test_that("chart captions name the ITT census or ITT performance profiles as the source", {
-  expect_equal(swc_data_source(swc_measure_names[["leavers"]]), "school workforce census (SWC)")
+test_that("chart captions name the Initial Teacher Training Census or Initial Teacher Training Performance Profiles as the source", {
+  expect_equal(swc_data_source(swc_measure_names[["leavers"]]), "School Workforce Census (SWC)")
+  expect_equal(
+    swc_data_source(swc_subject_measure_names[["teaching_hours"]]),
+    "teacher workforce model (TWM)"
+  )
+  expect_equal(
+    swc_data_source(swc_subject_measure_names[["specialism"]]),
+    "School Workforce Census (SWC)"
+  )
 
   need_met <- make_swc_df(itt_measure_names[["need_met"]]) |>
     dplyr::mutate(value = ifelse(breakdown == "Total", 0.8, 0.6))
   p <- plot_swc_measures(need_met)
-  expect_match(p$labels$caption, "initial teacher training \\(ITT\\) census")
+  expect_match(p$labels$caption, "Initial Teacher Training Census")
   expect_match(p$labels$caption, "100% of need met")
   expect_no_error(ggplot2::ggplot_build(p))
 
@@ -259,7 +267,7 @@ test_that("chart captions name the ITT census or ITT performance profiles as the
 
   qts <- make_swc_df(itt_measure_names[["qts_teaching"]]) |>
     dplyr::mutate(value = 0.75)
-  expect_match(plot_swc_measures(qts)$labels$caption, "ITT performance profiles")
+  expect_match(plot_swc_measures(qts)$labels$caption, "Initial Teacher Training Performance Profiles")
 })
 
 test_that("in service chart labels the x axis as the year of qualification", {

@@ -347,10 +347,10 @@ read_flows_2026_publication_data <- function(
   )
 }
 
-# School workforce census (SWC) measures data ---------------------------------------------------------------------
+# School Workforce Census (SWC) measures data ---------------------------------------------------------------------
 
 # Display names for the three SWC measures shown on the
-# School workforce census measures tab
+# School Workforce Census measures tab
 swc_measure_names <- c(
   vacancies = "Teacher vacancy rate",
   entrants = "Qualified teacher entrant rate",
@@ -399,7 +399,7 @@ swc_ratio_measures <- c(
 swc_subject_overall <- "All subjects"
 
 # Display names for the measures shown on the PGITT metrics tab. These come
-# from the initial teacher training (ITT) census and ITT performance profiles
+# from the Initial Teacher Training Census and Initial Teacher Training Performance Profiles
 # rather than the SWC, but use the same chart / table / download layout
 itt_measure_names <- c(
   trainees = "Number of PGITT trainees",
@@ -410,9 +410,13 @@ itt_measure_names <- c(
   )
 )
 
+# Teaching hours on the Subject level metrics tab come from the teacher workforce
+# model (TWM) rather than the SWC
+twm_source <- "teacher workforce model (TWM)"
+
 # Data source of each PGITT measure, as shown in chart captions
-itt_census_source <- "initial teacher training (ITT) census"
-itt_performance_profiles_source <- "ITT performance profiles"
+itt_census_source <- "Initial Teacher Training Census"
+itt_performance_profiles_source <- "Initial Teacher Training Performance Profiles"
 
 itt_measure_sources <- c(
   stats::setNames(
@@ -870,7 +874,7 @@ read_swc_subject_long <- function(
 }
 
 # Read SWC teaching hours dataset
-# Hours taught in the school workforce census week, kept as whole hours
+# Hours taught in the School Workforce Census week, kept as whole hours
 
 read_swc_teaching_hours <- function(
   file = "data/19_swc_teaching_hours_2026-11-02.parquet"
@@ -897,13 +901,13 @@ read_swc_teachers_per_1000 <- function(
   )
 }
 
-# Initial teacher training (ITT) census and ITT performance profiles data ------------------------------------------
+# Initial Teacher Training Census and Initial Teacher Training Performance Profiles data ------------------------------------------
 
 # These files have the same wide structure as the SWC files (one row per
 # academic year in 'category', one column per phase), so are read with
 # read_swc_measure_data().
 
-# Read ITT census number of PGITT trainees dataset
+# Read Initial Teacher Training Census number of PGITT trainees dataset
 # Values are counts of trainees, so kept to 0 dp
 
 read_itt_trainees <- function(
@@ -918,7 +922,7 @@ read_itt_trainees <- function(
   )
 }
 
-# Read ITT census percentage of PGITT trainee need met dataset
+# Read Initial Teacher Training Census percentage of PGITT trainee need met dataset
 # Recruitment can exceed need, so rates above 100% are expected (up to 200%
 # before a warning). The file's '100% line' column is a chart reference line
 # rather than data, so is dropped (the chart draws its own 100% line).
@@ -937,7 +941,7 @@ read_itt_need_met <- function(
     mutate(breakdown = droplevels(breakdown))
 }
 
-# Read ITT performance profiles percentage of PGITT trainees that achieved QTS
+# Read Initial Teacher Training Performance Profiles percentage of PGITT trainees that achieved QTS
 # and were teaching in a state-funded school
 
 read_itt_qts_teaching <- function(

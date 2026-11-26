@@ -122,8 +122,8 @@ twm_tab_panel <- function() {
                       tags$li(
                         gov_text(
                           "Therefore, these data may differ slightly to that in subsequent updates to ",
-                          "the school workforce census (SWC), ITT census, and ITT performance ",
-                          "profiles data."
+                          "the School Workforce Census (SWC), Initial Teacher Training Census, and Initial Teacher Training Performance ",
+                          "Profiles data."
                         )
                       )
                     )
@@ -439,8 +439,8 @@ twm_tab_panel <- function() {
                     tags$ul(
                       tags$li(
                         gov_text(
-                          "The model assumes that the current number of teachers from the latest school workforce ",
-                          "census (2024/25) are sufficient to meet current pupil demand."
+                          "The model assumes that the current number of teachers from the latest School Workforce ",
+                          "Census (2024/25) are sufficient to meet current pupil demand."
                         )
                       ),
                       tags$li(
@@ -886,7 +886,7 @@ twm_tab_panel <- function() {
                         strong("Under-supply adjustment: "),
                         "This accounts for potential supply shortfalls between 2024/25 (the most recent SWC) and 2026/27, ",
                         "reflecting recruitment impacts from the two ITT cycles prior to 2026/27. ",
-                        "These are ITT cycles that have already occurred but are yet to be reflected in the school workforce census. ",
+                        "These are ITT cycles that have already occurred but are yet to be reflected in the School Workforce Census. ",
                         "If a shortfall is estimated, the model assumes additional teachers will need to be recruited via PGITT to correct it. ",
                         "The model accounts for ITT recruitment, teacher retention, and other recruitment routes (e.g., returners). ",
                         "This holistic assessment means the impact of missing historical PGITT trainee need may be offset by wider ",
@@ -944,7 +944,7 @@ twm_tab_panel <- function() {
                       gov_text(
                         tags$small("This table shows the latest data which relates to the April 2026 publication.
                              This was the latest data availability at this point in time but this data may differ
-                               to the latest school workforce census data.")
+                               to the latest School Workforce Census data.")
                       ),
                       govReactableOutput("table_flow_trajectories",
                         caption = "",
@@ -1064,7 +1064,7 @@ twm_tab_panel <- function() {
                     ),
                     gov_text(
                       "Returners are teachers who enter service in the English state-funded schools sector, ",
-                      "and are recorded within the school workforce census as having worked in the ",
+                      "and are recorded within the School Workforce Census as having worked in the ",
                       "state-funded sector before."
                     ),
                     gov_text(

@@ -75,28 +75,29 @@ user_guide_panel <- function() {
             tags$li(
               gov_text(
                 "View historic teacher vacancy, entrant and leaver rates, and pupil to teacher ratios, ",
-                "in the sufficiency metrics tab. This tab uses data from the school workforce census (SWC)."
+                "in the sufficiency metrics tab. This tab uses data from the School Workforce Census (SWC)."
               )
             ),
             tags$li(
               gov_text(
                 "View the percentage of teachers still in service after qualifying, the percentage of ",
                 "teachers with qualified teacher status and the number of occasional teachers in the ",
-                "quality metrics tab. This tab uses data from the school workforce census (SWC)."
+                "quality metrics tab. This tab uses data from the School Workforce Census (SWC)."
               )
             ),
             tags$li(
               gov_text(
-                "View the specialism rate for secondary subjects in the subject level metrics tab. ",
-                "This tab uses data from the school workforce census (SWC)."
+                "View the specialism rate, teaching hours and teachers per 1,000 pupils for secondary ",
+                "subjects in the subject level metrics tab. This tab uses data from the School Workforce ",
+                "Census (SWC), except for teaching hours, which come from the teacher workforce model (TWM)."
               )
             ),
             tags$li(
               gov_text(
                 "View the number of PGITT trainees, the percentage of PGITT trainee need met, and the ",
                 "percentage of PGITT trainees that achieved QTS and were teaching in a state-funded ",
-                "school in the PGITT metrics tab. This tab uses data from the initial teacher training ",
-                "(ITT) census and ITT performance profiles."
+                "school in the PGITT metrics tab. This tab uses data from the Initial Teacher Training ",
+                "Census and Initial Teacher Training Performance Profiles."
               )
             )
           ),
@@ -125,8 +126,8 @@ user_guide_panel <- function() {
                 tags$li(
                   gov_text(
                     "Therefore, these data may differ slightly to that in subsequent updates to ",
-                    "the school workforce census (SWC), ITT census, and ITT performance ",
-                    "profiles data."
+                    "the School Workforce Census (SWC), Initial Teacher Training Census, and Initial Teacher Training Performance ",
+                    "Profiles data."
                   )
                 )
               )

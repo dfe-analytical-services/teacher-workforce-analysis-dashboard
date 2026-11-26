@@ -1012,7 +1012,7 @@ test_that("real teaching hours and teachers per 1,000 pupils files load with the
 })
 
 
-# 7 - Tests for the ITT census and ITT performance profiles readers ------------------------------------------------
+# 7 - Tests for the Initial Teacher Training Census and Initial Teacher Training Performance Profiles readers ------------------------------------------------
 
 test_that("read_itt_need_met() drops the '100% line' column and allows rates above 100%", {
   input <- tibble::tibble(

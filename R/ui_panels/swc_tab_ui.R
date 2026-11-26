@@ -1,8 +1,8 @@
 # # ---------------------------------------------------------------------------------------------------------------
 #
-# USER INTERFACE COMPONENTS FOR: tabs showing school workforce census (SWC) measures over time
+# USER INTERFACE COMPONENTS FOR: tabs showing School Workforce Census (SWC) measures over time
 # (Sufficiency metrics, Quality metrics and Subject level metrics), and the PGITT metrics tab,
-# which uses the same layout with data from the ITT census and ITT performance profiles
+# which uses the same layout with data from the Initial Teacher Training Census and Initial Teacher Training Performance Profiles
 #
 # Each tab has the same layout: chart / table / download views on the left, and a measure filter
 # with an "About this graph" box on the right, followed by a definitions box.
@@ -27,7 +27,10 @@
 #        pupil to teacher ratio (swc_ptr_label) is selected in the measure filter.
 #        If NULL no teacher type filter is added
 # param: data_source Name of the data source(s), shown in the source text on the
-#        tab. Defaults to the school workforce census
+#        tab. Defaults to the School Workforce Census
+# param: data_source_link Link(s) to the data source(s), used in place of the plain
+#        data_source text where the source is named in the page. Defaults to a link
+#        to the School Workforce Census publication
 # param: data_updated Date the data was last updated, in d/m/yyyy format
 
 swc_tab_panel <- function(
@@ -40,7 +43,8 @@ swc_tab_panel <- function(
   breakdown_choices = NULL,
   breakdown_label = NULL,
   teacher_type_choices = NULL,
-  data_source = "school workforce census (SWC)",
+  data_source = "School Workforce Census (SWC)",
+  data_source_link = source_link(data_source, swc_publication_url),
   data_updated = swc_data_updated
 ) {
   has_second_filter <- !is.null(breakdown_choices) || !is.null(teacher_type_choices)
@@ -51,7 +55,7 @@ swc_tab_panel <- function(
     gov_main_layout(
       heading_text(title, level = 2, size = "m"),
       gov_text(
-        strong(paste0("Data source: ", data_source, "."))
+        strong("Data source: ", data_source_link, ".")
       ),
       intro,
       bslib::layout_columns(
@@ -75,7 +79,7 @@ swc_tab_panel <- function(
           table_output = div(
             uiOutput(paste0(prefix, "_title_table_ui")),
             gov_text(
-              tags$small(paste0("Source: ", data_source, "."))
+              tags$small("Source: ", data_source_link, ".")
             ),
             govReactableOutput(
               paste0("table_", prefix, "_measures"),
@@ -149,7 +153,9 @@ swc_tab_panel <- function(
             bslib::card_header(gov_text("About this graph")),
             bslib::card_body(
               gov_text(
-                paste0("The data on this tab comes from the ", data_source, ".")
+                "The data on this tab comes from the ",
+                data_source_link,
+                "."
               ),
               about
             )
@@ -162,7 +168,7 @@ swc_tab_panel <- function(
         bslib::card_header(gov_text("Definitions")),
         bslib::card_body(
           definitions,
-          gov_text(paste0("Data source: ", data_source, ".")),
+          gov_text("Data source: ", data_source_link, "."),
           gov_text("Data last updated: ", data_updated)
         )
       )
