@@ -26,35 +26,95 @@ The custom trackers below can be tailored to match the inputs used in your
 dashboard.
 */
 
-  $(document).on('change', 'select#selectPhase', function(e) {
-    gtag('event', 'select phase', {'event_category' : 'choose Phase',
-    'event_label' : document.querySelector('select#selectPhase').value
+  // Teacher demand trajectories
+  $(document).on('change', 'select#filter_phase', function(e) {
+    gtag('event', 'select phase teacher demand', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase').value
     });
   });
-
-  $(document).on('change', 'select#selectArea', function(e) {
-    gtag('event', 'select area', {'event_category' : 'choose Area',
-    'event_label' : document.querySelector('select#selectArea').value
+  
+  // PGITT trainee need time series
+  $(document).on('change', 'select#filter_phase_pgitt_need', function(e) {
+    gtag('event', 'select phase pgitt need', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase_pgitt_need').value
     });
   });
-
-  $(document).on('click', 'ul#navlistPanel', function(e) {
-    gtag('event', 'navlistPanel', {'event_category' : 'navbar click',
-    'event_label' : document.querySelector(
-    'ul#navlistPanel > li.active > a'
-    ).getAttribute('data-value')
+  
+  $(document).on('change', 'select#filter_subject_pgitt_need', function(e) {
+    gtag('event', 'select subject pgitt need', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_subject_pgitt_need').value
     });
   });
-
-  $(document).on('click', 'ul#tabsetpanels', function(e) {
-    gtag('event', 'tab panels', {'event_category' : 'tab panel clicks',
-    'event_label' : document.querySelector(
-    'ul#tabsetpanels > li.active > a'
-    ).getAttribute('data-value')
+  
+  // Drivers of change in PGITT trainee need
+  $(document).on('change', 'select#filter_phase_drivers', function(e) {
+    gtag('event', 'select phase drivers', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase_drivers').value
     });
   });
+  
+  $(document).on('change', 'select#filter_subject_drivers', function(e) {
+    gtag('event', 'select subject drivers', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_subject_drivers').value
+    });
+  });
+  
+  // Flow trajectories
+  $(document).on('change', 'select#filter_phase_flow', function(e) {
+    gtag('event', 'select phase flows', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_phase_flow').value
+    });
+  });
+  
+  $(document).on('change', 'select#filter_subject_flow', function(e) {
+    gtag('event', 'select subject flows', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_subject_flow').value
+    });
+  });
+  
+  $(document).on('change', 'select#filter_flow_type', function(e) {
+    gtag('event', 'select flow type', {
+      'event_category' : 'User input',
+      'event_label' : document.querySelector('select#filter_flow_type').value
+    });
+  });
+  
+/*
+This one captures clicks on the top level service navigation component.
+*/
 
+   $(document).on('click', 'ul#navigation', function(e) {
+    gtag(
+      'event', 
+      'Service navigation', 
+      {
+        'event_category' : 'Top level navigation',
+        'event_label' : e.target.closest('li').querySelector('a').getAttribute('id')
+      });
+    });
 
+  $(document).on(
+    'click', 'ul#twm_tabsetpanels', function(e) {
+      gtag(
+        'event', 
+        'TWM page tabset click', 
+        {
+          'event_category' : 'Mid level navigation',
+          'event_label' : document.querySelector(
+            'ul#twm_tabsetpanels > li > a.active'
+          ).getAttribute('data-value')
+        }
+      );
+    }
+  );
+  
   $(document).on('click', 'a#download_data', function(e) {
     gtag('event', 'Download button', {'event_category' : 'Download button click'
     });
@@ -66,5 +126,5 @@ dashboard.
       'event_category' : 'Disconnect'
     });
   });
-
+ 
 </script>

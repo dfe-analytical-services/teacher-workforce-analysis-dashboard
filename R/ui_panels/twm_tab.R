@@ -15,7 +15,11 @@ twm_tab_panel <- function() {
           width = 12,
           div(
             id = "main_col",
-            heading_text("Teacher demand trajectories and PGITT trainee need", level = 1, size = "l")
+            heading_text(
+              "Teacher demand trajectories and PGITT trainee need",
+              level = 1,
+              size = "l"
+            )
           )
         ),
 
@@ -40,33 +44,47 @@ twm_tab_panel <- function() {
                 heading_text("About this section", level = 3, size = "s"),
                 gov_text(
                   "The ",
-                  em("'Teacher demand trajectories and postgraduate initial teacher training (PGITT) trainee need'"),
+                  em(
+                    "'Teacher demand trajectories and postgraduate initial teacher training (PGITT) trainee need'"
+                  ),
                   " section of the dashboard can be explored across five areas:"
                 ),
                 tags$ul(
                   tags$li(
                     gov_text(
-                      actionLink("link_to_teacher_demand_traj", "Teacher demand trajectories"),
+                      actionLink(
+                        "link_to_teacher_demand_traj",
+                        "Teacher demand trajectories"
+                      ),
                       " shows historic trends in pupil and teacher numbers (including unqualified teachers), ",
                       "alongside projections of both future pupil numbers and teacher demand."
                     )
                   ),
                   tags$li(
                     gov_text(
-                      actionLink("link_to_pgitt_need_calc", "PGITT trainee need calculation"),
+                      actionLink(
+                        "link_to_pgitt_need_calc",
+                        "PGITT trainee need calculation"
+                      ),
                       " shows a flow chart illustrating how the teacher workforce model estimates ",
                       "teacher demand trajectories and PGITT trainee need."
                     )
                   ),
                   tags$li(
                     gov_text(
-                      actionLink("link_to_pgitt_need_ts", "PGITT trainee need time series"),
+                      actionLink(
+                        "link_to_pgitt_need_ts",
+                        "PGITT trainee need time series"
+                      ),
                       " shows PGITT trainee need by phase and secondary subject from 2021/22 to 2026/27."
                     )
                   ),
                   tags$li(
                     gov_text(
-                      actionLink("link_to_drivers_change_1", "Drivers of change in PGITT trainee need"),
+                      actionLink(
+                        "link_to_drivers_change_1",
+                        "Drivers of change in PGITT trainee need"
+                      ),
                       " compares the 2025/26 and 2026/27 PGITT trainee need and the estimated drivers ",
                       "behind these changes."
                     )
@@ -80,7 +98,8 @@ twm_tab_panel <- function() {
                 ),
                 gov_text(
                   "This interactive dashboard accompanies the ",
-                  a("Teacher demand and postgraduate trainee need publication.",
+                  a(
+                    "Teacher demand and postgraduate trainee need publication.",
                     href = parent_publication,
                     target = "_blank"
                   )
@@ -114,10 +133,14 @@ twm_tab_panel <- function() {
                     ),
                     tags$ul(
                       tags$li(
-                        gov_text("2026/27 PGITT trainee need will not be retrospectively updated in future. ")
+                        gov_text(
+                          "2026/27 PGITT trainee need will not be retrospectively updated in future. "
+                        )
                       ),
                       tags$li(
-                        gov_text("As a consequence, this part of the dashboard will not be updated after publication.")
+                        gov_text(
+                          "As a consequence, this part of the dashboard will not be updated after publication."
+                        )
                       ),
                       tags$li(
                         gov_text(
@@ -190,7 +213,6 @@ twm_tab_panel <- function() {
               )
             ),
 
-
             #####################################################################
 
             #   Demand trajectories tab
@@ -201,8 +223,10 @@ twm_tab_panel <- function() {
               id = "teacher_demand_traj",
               "Teacher demand trajectories",
               gov_main_layout(
-                heading_text("Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories",
-                  level = 2, size = "m"
+                heading_text(
+                  "Historical pupil and teacher numbers, projected pupil numbers and teacher demand trajectories",
+                  level = 2,
+                  size = "m"
                 ),
                 gov_text(
                   "This section shows historic trends in pupil and teacher numbers (including ",
@@ -223,19 +247,18 @@ twm_tab_panel <- function() {
                       style = "margin-top: 1.5rem;",
                       ggiraph::girafeOutput(
                         "pupil_teacher_plot",
-                        width  = NULL,
+                        width = NULL,
                         height = NULL
                       )
                     ),
 
                     # Mini tab 2 - table
                     table_output = div(
-                      # Reactive table title
-                      uiOutput("pupil_teacher_table_title"),
-                      govReactableOutput("pupil_teacher_table",
-                        caption = "",
+                      govReactableOutput(
+                        "pupil_teacher_table",
+                        caption = uiOutput("pupil_teacher_table_title"),
                         caption_size = "s",
-                        heading_level = "h3"
+                        heading_level = 3L
                       )
                     ),
 
@@ -297,7 +320,9 @@ twm_tab_panel <- function() {
                             )
                           )
                         ),
-                        gov_text("Select a school phase to view its data and hover over the data points to see the value."),
+                        gov_text(
+                          "Select a school phase to view its data and hover over the data points to see the value."
+                        ),
                         gov_text(
                           "Please note: pupil and teacher numbers are shown on separate y axes ",
                           "because they are on very different scales. ",
@@ -318,7 +343,9 @@ twm_tab_panel <- function() {
                 # Text boxes below graph
                 bslib::card(
                   style = "margin-top: 1rem;",
-                  bslib::card_header(gov_text("Pupil numbers and teacher demand")),
+                  bslib::card_header(gov_text(
+                    "Pupil numbers and teacher demand"
+                  )),
                   bslib::card_body(
                     gov_text(strong("Historic trends")),
                     gov_text(
@@ -383,8 +410,10 @@ twm_tab_panel <- function() {
               id = "pgitt_need_calc",
               "PGITT trainee need calculation",
               gov_main_layout(
-                heading_text("Calculation of postgraduate initial teacher training (PGITT) trainee need",
-                  level = 2, size = "m"
+                heading_text(
+                  "Calculation of postgraduate initial teacher training (PGITT) trainee need",
+                  level = 2,
+                  size = "m"
                 ),
                 gov_text(
                   "This year, the teacher workforce model has estimated PGITT trainee need ",
@@ -396,11 +425,13 @@ twm_tab_panel <- function() {
                 # Top box: flow chart
 
                 bslib::card(
-                  bslib::card_header(gov_text("Estimating PGITT trainee need for 2026/27")),
+                  bslib::card_header(gov_text(
+                    "Estimating PGITT trainee need for 2026/27"
+                  )),
                   bslib::card_body(
                     tags$img(
-                      src   = "pgitt_trainee_need_26_27_calculation_flow_chart.svg",
-                      alt   = "Schematic of how teacher demand trajectories and postgraduate
+                      src = "pgitt_trainee_need_26_27_calculation_flow_chart.svg",
+                      alt = "Schematic of how teacher demand trajectories and postgraduate
                       initial teacher training trainee need for 2026/27 is estimated by the teacher workforce model",
                       style = "width:100%; height:auto; display:block;"
                     )
@@ -410,7 +441,9 @@ twm_tab_panel <- function() {
                 # Bottom box: flow chart text guide
 
                 bslib::card(
-                  bslib::card_header(gov_text("Estimating PGITT trainee need for 2026/27")),
+                  bslib::card_header(gov_text(
+                    "Estimating PGITT trainee need for 2026/27"
+                  )),
                   bslib::card_body(
                     # Intro paragraph
                     gov_text(
@@ -434,8 +467,12 @@ twm_tab_panel <- function() {
                     ),
 
                     # Step 1
-                    gov_text(strong("Step 1: Calculate teacher demand trajectory to 2027/28")),
-                    gov_text("Firstly, the model estimates how many teachers are needed in future."),
+                    gov_text(strong(
+                      "Step 1: Calculate teacher demand trajectory to 2027/28"
+                    )),
+                    gov_text(
+                      "Firstly, the model estimates how many teachers are needed in future."
+                    ),
                     tags$ul(
                       tags$li(
                         gov_text(
@@ -458,7 +495,9 @@ twm_tab_panel <- function() {
                     ),
 
                     # Step 2
-                    gov_text(strong("Step 2: Calculate the number of PGITT trainees needed for 2026/27")),
+                    gov_text(strong(
+                      "Step 2: Calculate the number of PGITT trainees needed for 2026/27"
+                    )),
                     gov_text(
                       "Using estimated teacher demand for 2027/28, the model estimates the number of PGITT trainees ",
                       "needed in 2026/27 to meet it."
@@ -534,8 +573,10 @@ twm_tab_panel <- function() {
               id = "pgitt_need_ts",
               "PGITT trainee need time series",
               gov_main_layout(
-                heading_text("Postgraduate initial teacher training (PGITT) trainee need time series",
-                  level = 2, size = "m"
+                heading_text(
+                  "Postgraduate initial teacher training (PGITT) trainee need time series",
+                  level = 2,
+                  size = "m"
                 ),
                 gov_text(
                   "PGITT trainee need by phase and secondary subject, and how this has changed over time from ",
@@ -553,17 +594,18 @@ twm_tab_panel <- function() {
                       style = "margin-top: 3rem;",
                       ggiraph::girafeOutput(
                         "pgitt_need_timeseries_plot",
-                        width  = NULL,
+                        width = NULL,
                         height = NULL
                       )
                     ),
 
                     # Mini tab 2 - table
                     table_output = div(
-                      uiOutput("pgitt_need_ts_title_ui"),
-                      govReactableOutput("pgitt_need_timeseries_table",
-                        caption = "",
-                        caption_size = "s", heading_level = "h3"
+                      govReactableOutput(
+                        "pgitt_need_timeseries_table",
+                        caption = uiOutput("pgitt_need_ts_title_ui"),
+                        caption_size = "s",
+                        heading_level = 3L
                       )
                     ),
 
@@ -582,7 +624,6 @@ twm_tab_panel <- function() {
                       uiOutput("download_button_ui_pgitt_need")
                     )
                   ),
-
 
                   # Right column: sidebar with filters and about this graph text box
 
@@ -623,12 +664,16 @@ twm_tab_panel <- function() {
                         gov_text("Footnotes:"),
                         tags$ul(
                           tags$li(
-                            gov_text("PGITT trainee need has been rounded to the nearest 5.")
+                            gov_text(
+                              "PGITT trainee need has been rounded to the nearest 5."
+                            )
                           ),
                           tags$li(
-                            gov_text("‘Others’ includes Child Development, Citizenship, Law, Media Studies,
+                            gov_text(
+                              "‘Others’ includes Child Development, Citizenship, Law, Media Studies,
                                   Other Social Studies, Other Technology, Politics, Psychology, Sociology,
-                                  and Social Sciences among others.")
+                                  and Social Sciences among others."
+                            )
                           )
                         )
                       )
@@ -639,7 +684,9 @@ twm_tab_panel <- function() {
                 # Trends in PGITT trainee need over time text box below chart
                 bslib::card(
                   style = "margin-top: 1rem;",
-                  bslib::card_header(gov_text("Trends in PGITT trainee need over time")),
+                  bslib::card_header(gov_text(
+                    "Trends in PGITT trainee need over time"
+                  )),
                   bslib::card_body(
                     gov_text(
                       "Overall PGITT trainee need (primary and secondary combined) peaked in 2023/24 with ",
@@ -658,7 +705,10 @@ twm_tab_panel <- function() {
                     gov_text(
                       "Changes in individual subjects have been driven by individual circumstances, with ",
                       "further information available on the ",
-                      actionLink("link_to_drivers_change_2", "Drivers of change in PGITT trainee need"),
+                      actionLink(
+                        "link_to_drivers_change_2",
+                        "Drivers of change in PGITT trainee need"
+                      ),
                       " tab."
                     )
                   )
@@ -676,8 +726,10 @@ twm_tab_panel <- function() {
               id = "drivers_change",
               "Drivers of change in PGITT trainee need",
               gov_main_layout(
-                heading_text("Drivers of change in PGITT trainee need this year",
-                  level = 2, size = "m"
+                heading_text(
+                  "Drivers of change in PGITT trainee need this year",
+                  level = 2,
+                  size = "m"
                 ),
                 gov_text(
                   "Comparison of the 2025/26 and 2026/27 PGITT trainee need and the ",
@@ -693,22 +745,25 @@ twm_tab_panel <- function() {
                     # Mini tab 1 - chart
                     chart_output = div(
                       style = "margin-top: 3rem;",
-                      ggiraph::girafeOutput("drivers_waterfall_plot",
-                        width  = NULL,
+                      ggiraph::girafeOutput(
+                        "drivers_waterfall_plot",
+                        width = NULL,
                         height = NULL
                       )
                     ),
                     # Mini tab 2 - table
                     table_output = div(
-                      # Reactive table title
-                      uiOutput("drivers_table_1_heading"),
-                      govReactableOutput("table_pgitt_need_diff",
-                        caption = "",
-                        caption_size = "s", heading_level = "h3"
+                      govReactableOutput(
+                        "table_pgitt_need_diff",
+                        caption = uiOutput("drivers_table_1_heading"),
+                        caption_size = "s",
+                        heading_level = 3L
                       ),
-                      govReactableOutput("table_drivers_breakdown",
+                      govReactableOutput(
+                        "table_drivers_breakdown",
                         caption = "Drivers of change in PGITT trainee need",
-                        caption_size = "s", heading_level = "h3"
+                        caption_size = "s",
+                        heading_level = 3L
                       )
                     ),
 
@@ -940,15 +995,20 @@ twm_tab_panel <- function() {
 
                     # Mini tab 2 - table
                     table_output = div(
-                      uiOutput("flow_traj_title_table_ui"),
-                      gov_text(
-                        tags$small("This table shows the latest data which relates to the April 2026 publication.
+                      govReactableOutput(
+                        "table_flow_trajectories",
+                        caption = tagList(
+                          uiOutput("flow_traj_title_table_ui"),
+                          gov_text(
+                            tags$small(
+                              "This table shows the latest data which relates to the April 2026 publication.
                              This was the latest data availability at this point in time but this data may differ
-                               to the latest school workforce census data.")
-                      ),
-                      govReactableOutput("table_flow_trajectories",
-                        caption = "",
-                        caption_size = "s", heading_level = "h3"
+                               to the latest school workforce census data."
+                            )
+                          )
+                        ),
+                        caption_size = "s",
+                        heading_level = 3L
                       )
                     ),
 
@@ -967,7 +1027,6 @@ twm_tab_panel <- function() {
                       uiOutput("download_button_ui_flows")
                     )
                   ),
-
 
                   # Right column:  sidebar with filters and about this graph
                   div(
