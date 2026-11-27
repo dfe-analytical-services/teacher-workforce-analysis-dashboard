@@ -254,11 +254,9 @@ twm_tab_panel <- function() {
 
                     # Mini tab 2 - table
                     table_output = div(
-                      # Reactive table title
-                      uiOutput("pupil_teacher_table_title"),
                       govReactableOutput(
                         "pupil_teacher_table",
-                        caption = "",
+                        caption = uiOutput("pupil_teacher_table_title"),
                         caption_size = "s",
                         heading_level = 3L
                       )
@@ -603,10 +601,9 @@ twm_tab_panel <- function() {
 
                     # Mini tab 2 - table
                     table_output = div(
-                      uiOutput("pgitt_need_ts_title_ui"),
                       govReactableOutput(
                         "pgitt_need_timeseries_table",
-                        caption = "",
+                        caption = uiOutput("pgitt_need_ts_title_ui"),
                         caption_size = "s",
                         heading_level = 3L
                       )
@@ -756,11 +753,9 @@ twm_tab_panel <- function() {
                     ),
                     # Mini tab 2 - table
                     table_output = div(
-                      # Reactive table title
-                      uiOutput("drivers_table_1_heading"),
                       govReactableOutput(
                         "table_pgitt_need_diff",
-                        caption = "",
+                        caption = uiOutput("drivers_table_1_heading"),
                         caption_size = "s",
                         heading_level = 3L
                       ),
@@ -1000,17 +995,18 @@ twm_tab_panel <- function() {
 
                     # Mini tab 2 - table
                     table_output = div(
-                      uiOutput("flow_traj_title_table_ui"),
-                      gov_text(
-                        tags$small(
-                          "This table shows the latest data which relates to the April 2026 publication.
-                             This was the latest data availability at this point in time but this data may differ
-                               to the latest school workforce census data."
-                        )
-                      ),
                       govReactableOutput(
                         "table_flow_trajectories",
-                        caption = "",
+                        caption = tagList(
+                          uiOutput("flow_traj_title_table_ui"),
+                          gov_text(
+                            tags$small(
+                              "This table shows the latest data which relates to the April 2026 publication.
+                             This was the latest data availability at this point in time but this data may differ
+                               to the latest school workforce census data."
+                            )
+                          )
+                        ),
                         caption_size = "s",
                         heading_level = 3L
                       )

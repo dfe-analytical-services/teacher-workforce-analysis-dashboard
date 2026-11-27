@@ -169,10 +169,12 @@ user_guide_panel <- function() {
             )
           ),
           heading_text("Data sources and updates", level = 2, size = "m"),
-          gov_text(em("'Teacher demand and PGITT need'"), " section:"),
           govReactableOutput(
             "data_sources_updates",
-            caption = ""
+            caption = gov_text(
+              em("'Teacher demand and PGITT need'"),
+              " section:"
+            )
           ),
           heading_text("User tips", level = 2, size = "m"),
           tags$ul(
