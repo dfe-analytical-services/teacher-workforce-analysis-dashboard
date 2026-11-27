@@ -67,7 +67,6 @@ ui <- function(input, output, session) {
     # Google analytics --------------------------------------------------------
     tags$head(includeHTML(("google-analytics.html"))),
 
-
     # Header ------------------------------------------------------------------
     max_width_overrides(),
     shinyGovstyle::header(
@@ -81,7 +80,7 @@ ui <- function(input, output, session) {
       )
     ),
     # Beta banner
-    banner(
+    phase_banner(
       inputId = "beta-banner",
       type = "Beta",
       label = paste0(

@@ -12,7 +12,11 @@ user_guide_panel <- function() {
       gov_row(
         column(
           12,
-          heading_text("Teacher workforce analysis dashboard user guide", level = 1, size = "l"),
+          heading_text(
+            "Teacher workforce analysis dashboard user guide",
+            level = 1,
+            size = "l"
+          ),
           heading_text("Introduction", level = 2, size = "m"),
           gov_text(
             "The Department for Education (DfE) has developed the ",
@@ -166,7 +170,10 @@ user_guide_panel <- function() {
           ),
           heading_text("Data sources and updates", level = 2, size = "m"),
           gov_text(em("'Teacher demand and PGITT need'"), " section:"),
-          govReactableOutput("data_sources_updates", caption = ""),
+          govReactableOutput(
+            "data_sources_updates",
+            caption = ""
+          ),
           heading_text("User tips", level = 2, size = "m"),
           tags$ul(
             tags$li(
