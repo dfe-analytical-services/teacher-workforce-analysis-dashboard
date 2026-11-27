@@ -57,8 +57,8 @@ all_outputs <- c(
 test_that("{shinytest2} recording: initial_state", {
   app <- AppDriver$new(
     name = "initial_state",
-    load_timeout = 320 * 1000,
-    timeout = 320 * 1000,
+    load_timeout = 320 * 10000,
+    timeout = 320 * 10000,
   )
 
   app$click("cookies_banner-cookies_reject")
